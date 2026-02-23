@@ -16,6 +16,8 @@ import { TitleComponent, TooltipComponent, LegendComponent,
          MarkAreaComponent, AxisPointerComponent } from 'echarts/components';
 import { CanvasRenderer, SVGRenderer } from 'echarts/renderers';
 
+import 'echarts-gl';
+
 import {
     Component,
     ComponentProps,
