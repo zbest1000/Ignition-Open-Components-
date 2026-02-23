@@ -910,3 +910,246 @@ Planned docs (Markdown):
 - Theme storage backend choice (file vs persistence utilities).
 - Whether to ship TypeScript or plain JS for web package.
 - Whether to include optional 3D (`echarts-gl`) as a separate opt-in extension.
+
+---
+
+## Component Resources & Reference Library
+
+This section serves as a comprehensive resource catalog for ECharts, web components, data visualization, and industrial open-source projects. Use it as a reference when designing components, selecting dependencies, or exploring integration patterns.
+
+---
+
+### Apache ECharts — Official Resources
+
+| Resource | URL | Description |
+|----------|-----|-------------|
+| **Examples Gallery** | https://echarts.apache.org/examples/en/index.html | Hundreds of interactive examples covering every chart type, coordinate system, and feature. The primary reference for option authoring. |
+| **Feature Overview** | https://echarts.apache.org/en/feature.html | High-level tour of ECharts capabilities: rendering, interaction, accessibility, datasets, and more. |
+| **Theme Builder** | https://echarts.apache.org/en/theme-builder.html | Online visual theme editor. Our gateway-hosted Theme Builder replicates this functionality for offline/air-gapped environments. |
+| **GitHub Repository** | https://github.com/apache/echarts | Source code, issues, and release notes. Apache-2.0 license. |
+| **Awesome ECharts** | https://github.com/ecomfe/awesome-echarts | Community-curated list of extensions, wrappers, tools, and learning resources. |
+| **API Reference** | https://echarts.apache.org/en/api.html | Full JavaScript API documentation for `echarts` global and instance methods. |
+| **Option Reference** | https://echarts.apache.org/en/option.html | Exhaustive documentation for every option key, sub-object, and series type. |
+| **Handbook / Tutorial** | https://echarts.apache.org/handbook/en/get-started/ | Step-by-step guides for beginners and intermediate users. |
+| **Cheat Sheet** | https://echarts.apache.org/en/cheat-sheet.html | Visual quick reference for common option structures. |
+| **Changelog** | https://github.com/apache/echarts/blob/master/CHANGELOG.md | Release history and breaking changes to track when upgrading the bundled version. |
+
+---
+
+### ECharts Official Extensions
+
+These are maintained under the Apache ECharts umbrella and can be optionally bundled or offered as opt-in extensions.
+
+| Extension | Repository / Link | Description |
+|-----------|-------------------|-------------|
+| **ECharts GL** | https://github.com/ecomfe/echarts-gl | 3D charts (bar3D, scatter3D, surface, globe), WebGL-accelerated rendering. Large bundle; ship as opt-in. |
+| **Word Cloud** | https://github.com/ecomfe/echarts-wordcloud | Word cloud layouts with image mask support. |
+| **Liquid Fill** | https://github.com/ecomfe/echarts-liquidfill | Animated liquid-fill gauge for single-value KPIs. Useful for industrial dashboards. |
+| **echarts-stat** | https://github.com/ecomfe/echarts-stat | Statistical transforms: histogram, clustering, regression, and more. |
+| **echarts-graph-modularity** | https://github.com/ecomfe/echarts-graph-modularity | Community detection plugin for graph/network visualizations. |
+| **echarts-bar-racing** | https://github.com/apache/echarts-bar-racing | Tool for generating animated bar-racing charts. |
+| **echarts-from-mermaid** | https://github.com/apache/echarts-from-mermaid | Converts Mermaid-like syntax to ECharts options; useful for LLM-generated charts. |
+
+#### Map Provider Extensions
+
+| Extension | Repository / Link | Description |
+|-----------|-------------------|-------------|
+| **Baidu Map** | https://github.com/apache/echarts/tree/master/extension-src/bmap | Baidu Maps integration for geo-based charts. |
+| **AMap (Gaode)** | https://github.com/plainheart/echarts-extension-amap | AMap integration. |
+| **Leaflet** | https://github.com/gnijuohz/echarts-leaflet | Leaflet.js integration for open-source map tiles. Relevant for air-gapped deployments with self-hosted tiles. |
+| **Mapbox GL** | https://github.com/lzxue/echarts-mapboxgl | Mapbox GL JS integration. |
+
+---
+
+### ECharts Framework Wrappers & Integrations
+
+Reference implementations for how other frameworks wrap ECharts. Useful for design patterns and API inspiration.
+
+| Library | Repository | Framework | Notes |
+|---------|------------|-----------|-------|
+| **echarts-for-react** | https://github.com/hustcc/echarts-for-react | React | Most popular React wrapper (~4k stars). Study its lifecycle management and option diffing. |
+| **vue-echarts** | https://github.com/ecomfe/vue-echarts | Vue 2/3 | Official Vue integration. Good reference for reactive option binding. |
+| **ngx-echarts** | https://github.com/xieziyu/ngx-echarts | Angular | Angular directive wrapper. |
+| **pyecharts** | https://github.com/pyecharts/pyecharts | Python | Python-to-ECharts bridge. Demonstrates server-side option generation patterns. |
+| **echarts4r** | https://github.com/JohnCoene/echarts4r | R | R wrapper; relevant if Ignition pipelines generate chart configs server-side. |
+
+---
+
+### Open-Source Data Visualization Libraries
+
+Peer libraries for reference, competitive analysis, and potential interoperability. Understanding their APIs and design choices informs our own component design.
+
+#### High-Level Charting Libraries
+
+| Library | Repository / Site | License | Strengths |
+|---------|-------------------|---------|-----------|
+| **Chart.js** | https://github.com/chartjs/Chart.js | MIT | Lightweight (~60 KB), beginner-friendly, canvas-based. Good baseline for simple chart comparisons. |
+| **Recharts** | https://github.com/recharts/recharts | MIT | Composable React charting (~12M weekly downloads). Study its declarative API design. |
+| **Nivo** | https://github.com/plouc/nivo | MIT | React + D3, fully declarative, server-side rendering support. Rich theming system worth studying. |
+| **Plotly.js** | https://github.com/plotly/plotly.js | MIT | Scientific/statistical visualization. 40+ chart types including 3D. Large bundle. |
+| **Visx** | https://github.com/airbnb/visx | MIT | Low-level React + D3 primitives by Airbnb. Small bundles, maximum flexibility. |
+| **Victory** | https://github.com/FormidableLabs/victory | MIT | React + React Native charting. Modular, good animation support. |
+| **ApexCharts** | https://github.com/apexcharts/apexcharts.js | MIT | Interactive charts with built-in annotations, zoom, and export. |
+| **Frappe Charts** | https://github.com/frappe/charts | MIT | Simple, modern SVG charts with zero dependencies. |
+| **uPlot** | https://github.com/leeoniya/uPlot | MIT | Ultra-fast time-series plotting (~35 KB). Handles millions of points. Relevant benchmark for our performance targets. |
+| **Dygraphs** | https://github.com/danvk/dygraphs | MIT | Dense time-series data with zoom/pan. Long-standing industrial use. |
+
+#### Low-Level / Foundational
+
+| Library | Repository / Site | License | Strengths |
+|---------|-------------------|---------|-----------|
+| **D3.js** | https://github.com/d3/d3 | ISC | The foundational visualization grammar (~112k stars). Maximum flexibility; steep learning curve. |
+| **Observable Plot** | https://github.com/observablehq/plot | ISC | Concise, modern grammar-of-graphics layer atop D3. |
+| **Vega / Vega-Lite** | https://github.com/vega/vega-lite | BSD-3 | Declarative JSON grammar for visualization. Interesting comparison for our JSON-driven approach. |
+
+---
+
+### Open-Source Web Component Libraries
+
+General-purpose UI component libraries built as framework-agnostic Web Components or for specific frameworks. Relevant for non-chart industrial UI components where Perspective has gaps.
+
+#### Framework-Agnostic (Web Components / Custom Elements)
+
+| Library | Repository / Site | License | Notes |
+|---------|-------------------|---------|-------|
+| **Lit** | https://lit.dev / https://github.com/lit/lit | BSD-3 | Lightweight (~5 KB) web component framework. Excellent for building interoperable custom elements. |
+| **Shoelace / Web Awesome** | https://shoelace.style / https://github.com/shoelace-style/shoelace | MIT | Polished, accessible web components with dark theme, localization, and framework adapters. |
+| **FAST (Microsoft)** | https://github.com/microsoft/fast | MIT | Adaptive UI system with web components. Good design token and theming patterns. |
+| **Vaadin** | https://github.com/vaadin/web-components | Apache-2.0 | Enterprise-grade components (grid, form, upload). Strong accessibility guarantees. |
+| **Spectrum Web Components (Adobe)** | https://github.com/adobe/spectrum-web-components | Apache-2.0 | Adobe's design system as web components. High-quality accessibility and theming. |
+| **Carbon Web Components (IBM)** | https://github.com/carbon-design-system/carbon-web-components | Apache-2.0 | IBM's Carbon design system. Enterprise/industrial design language. |
+| **Lion (ING)** | https://github.com/ing-bank/lion | MIT | White-label web components focused on accessibility and extensibility. |
+| **Patternfly Elements (Red Hat)** | https://github.com/patternfly/patternfly-elements | MIT | Enterprise UI components following Red Hat's PatternFly design. |
+
+#### React-Specific (Reference for Perspective Component Design)
+
+| Library | Repository / Site | License | Notes |
+|---------|-------------------|---------|-------|
+| **Radix UI** | https://github.com/radix-ui/primitives | MIT | Unstyled, accessible primitives. Study for accessible component patterns. |
+| **shadcn/ui** | https://github.com/shadcn-ui/ui | MIT | Copy-paste React components built on Radix + Tailwind. Modern design patterns. |
+| **Ant Design** | https://github.com/ant-design/ant-design | MIT | Enterprise UI with comprehensive component set. Strong data table and form components. |
+| **Mantine** | https://github.com/mantinedev/mantine | MIT | Full-featured React library with hooks, theming, and 100+ components. |
+| **Material UI (MUI)** | https://github.com/mui/material-ui | MIT | Most popular React UI library. Rich theming and layout system. |
+| **Blueprint (Palantir)** | https://github.com/palantir/blueprint | Apache-2.0 | Data-dense enterprise UI. Excellent table, tree, and form components for industrial apps. |
+| **Tremor** | https://github.com/tremorlabs/tremor | Apache-2.0 | React dashboard components (KPI cards, charts, tables). Directly relevant to industrial dashboards. |
+
+---
+
+### Open-Source Industrial & SCADA/HMI Components
+
+Components and platforms specifically targeting industrial automation, SCADA, HMI, and process visualization.
+
+#### Visualization Platforms
+
+| Project | Repository / Site | License | Description |
+|---------|-------------------|---------|-------------|
+| **FUXA** | https://github.com/frangoteam/FUXA | MIT | Web-based SCADA/HMI/Dashboard. Angular frontend, Node.js backend. Supports Modbus, S7, OPC-UA, MQTT, BACnet. Rich SVG-based HMI editor. |
+| **Grafana** | https://github.com/grafana/grafana | AGPL-3.0 | Industry-standard dashboarding for time-series data. Extensive plugin ecosystem. Study its panel architecture and alerting patterns. |
+| **Node-RED** | https://github.com/node-red/node-red | Apache-2.0 | Flow-based programming for IoT/industrial data pipelines. Dashboard nodes provide basic HMI capability. |
+| **Node-RED Dashboard 2.0** | https://github.com/FlowFuse/node-red-dashboard | Apache-2.0 | Next-gen dashboard UI for Node-RED using Vue 3. |
+| **Thingsboard** | https://github.com/thingsboard/thingsboard | Apache-2.0 | IoT platform with device management, data collection, and visualization dashboards. |
+| **United Manufacturing Hub** | https://github.com/united-manufacturing-hub/united-manufacturing-hub | Apache-2.0 | Open-source IT/OT integration platform using MQTT, Kafka, TimescaleDB, and Grafana. |
+
+#### Industrial Component & Symbol Libraries
+
+| Project | Repository / Site | License | Description |
+|---------|-------------------|---------|-------------|
+| **SVG-Schematic** | https://github.com/nicholasgasior/svg-schematic | MIT | SVG-based schematic/electrical diagram components. |
+| **OpenPLC** | https://github.com/thiagoralves/OpenPLC_v3 | GPL-3.0 | Open-source PLC runtime with web-based editor. Reference for industrial control UI patterns. |
+| **P&ID Symbols (Various)** | Search GitHub for "pid symbols svg" | Various | Community P&ID symbol sets in SVG format for process diagrams. |
+| **ControlsFX** | https://github.com/controlsfx/controlsfx | BSD-3 | JavaFX UI controls; relevant for Vision-side component patterns. |
+
+#### Industrial Data & Protocol Libraries
+
+| Library | Repository / Site | License | Description |
+|---------|-------------------|---------|-------------|
+| **node-opcua** | https://github.com/node-opcua/node-opcua | MIT | OPC-UA client/server in Node.js. Reference for data connectivity patterns. |
+| **Eclipse Milo** | https://github.com/eclipse/milo | EPL-2.0 | Java OPC-UA stack. Directly relevant for Ignition module gateway-side integrations. |
+| **Sparkplug** | https://github.com/eclipse/tahu | EPL-2.0 | MQTT Sparkplug B reference implementation. Standard in Ignition ecosystems. |
+
+---
+
+### Dashboard, Table & Data Grid Components
+
+Data tables and grids are among the most requested industrial UI components. These are reference implementations.
+
+| Library | Repository / Site | License | Notes |
+|---------|-------------------|---------|-------|
+| **AG Grid** | https://github.com/ag-grid/ag-grid | MIT (Community) | Feature-rich data grid. Enterprise edition is commercial. |
+| **TanStack Table** | https://github.com/TanStack/table | MIT | Headless table logic for React/Vue/Solid/Svelte. |
+| **Tabulator** | https://github.com/olifolkerd/tabulator | MIT | Framework-agnostic interactive table. |
+| **Handsontable** | https://github.com/handsontable/handsontable | Custom (free for eval) | Spreadsheet-like data grid. |
+| **Glide Data Grid** | https://github.com/glideapps/glide-data-grid | MIT | High-performance React canvas-based grid. Handles millions of cells. |
+
+---
+
+### Gauge, KPI & Specialty Visualization Components
+
+Specialty components commonly needed in industrial dashboards.
+
+| Library | Repository / Site | License | Notes |
+|---------|-------------------|---------|-------|
+| **canvas-gauges** | https://github.com/nicholasgasior/canvas-gauges | MIT | Customizable radial and linear gauges. |
+| **GaugeJS** | https://github.com/bernii/gauge.js | MIT | Animated JavaScript gauges. |
+| **JustGage** | https://github.com/toorshia/justgage | MIT | SVG-powered gauges using Raphael. |
+| **Keen Slider** | https://github.com/rcbyr/keen-slider | MIT | Touch-friendly slider/carousel; useful for dashboard navigation. |
+| **Rough Notation** | https://github.com/rough-stuff/rough-notation | MIT | Hand-drawn annotation overlays; creative for highlighting alarm states. |
+
+---
+
+### Industrial Fonts, Icon Sets & Design Systems
+
+Visual assets relevant for building HMI/SCADA-style UIs.
+
+| Resource | Repository / Site | License | Description |
+|----------|-------------------|---------|-------------|
+| **Material Symbols** | https://github.com/google/material-design-icons | Apache-2.0 | Massive icon set with filled/outlined/rounded variants. |
+| **Lucide** | https://github.com/lucide-icons/lucide | ISC | Fork of Feather Icons with 1000+ icons. Clean, modern. |
+| **Phosphor Icons** | https://github.com/phosphor-icons/homepage | MIT | Flexible icon family with 6 weights per icon. |
+| **Tabler Icons** | https://github.com/tabler/tabler-icons | MIT | 4000+ SVG icons, open-source. |
+| **Inter** | https://github.com/rsms/inter | OFL-1.1 | Highly readable UI typeface, ideal for dashboards and HMI. |
+| **JetBrains Mono** | https://github.com/JetBrains/JetBrainsMono | OFL-1.1 | Monospace font for data-heavy displays and engineering values. |
+| **IBM Plex** | https://github.com/IBM/plex | OFL-1.1 | IBM's open typeface family; industrial feel, excellent legibility. |
+
+---
+
+### Reference Architectures & Learning Resources
+
+| Resource | URL | Description |
+|----------|-----|-------------|
+| **ECharts Examples Gallery** | https://echarts.apache.org/examples/en/index.html | Browsable, filterable examples with live editor. Primary reference for option patterns. |
+| **ECharts Handbook** | https://echarts.apache.org/handbook/en/get-started/ | Official tutorial and concept guide. |
+| **Awesome ECharts** | https://github.com/ecomfe/awesome-echarts | Curated extensions, tools, articles, and community projects. |
+| **Awesome Visualization** | https://github.com/AlanIsrworthy/awesome-dataviz | Broad data visualization resource collection. |
+| **Awesome Web Components** | https://github.com/web-padawan/awesome-web-components | Curated list of web component resources, frameworks, and patterns. |
+| **Awesome React Components** | https://github.com/brillout/awesome-react-components | Extensive catalog of React components for every category. |
+| **MING Stack (IoT)** | https://github.com/ibenim/MING-Stack | Mosquitto + InfluxDB + Node-RED + Grafana reference architecture for industrial IoT. |
+| **Open Source SCADA list** | https://github.com/topics/scada | GitHub topic page for SCADA projects. |
+| **Ignition SDK Docs** | https://www.sdk-docs.inductiveautomation.com/docs/8.3/intro | Official Ignition 8.3 module SDK documentation. |
+| **Inductive Automation Exchange** | https://inductiveautomation.com/exchange | Community-contributed Ignition modules, templates, and resources. |
+
+---
+
+### Design & Color Palette Resources
+
+Industrial-specific palette and accessibility resources for theme design.
+
+| Resource | URL | Description |
+|----------|-----|-------------|
+| **ColorBrewer** | https://colorbrewer2.org | Cartography-driven palettes with colorblind-safe options. Useful for sequential, diverging, and qualitative series palettes. |
+| **Coolors** | https://coolors.co | Palette generator with contrast checking and export. |
+| **Colour Contrast Analyser** | https://www.tpgi.com/color-contrast-checker/ | WCAG contrast ratio verification. Critical for glare-condition readability. |
+| **Viz Palette** | https://projects.susielu.com/viz-palette | Palette tool designed for data visualization; checks for colorblind safety and name confusion. |
+| **Data Color Picker** | https://www.learnui.design/tools/data-color-picker.html | Generate evenly-spaced palettes optimized for charts. |
+
+---
+
+### How to Use This Resource Library
+
+1. **Building new components**: Check the industrial and web component sections for prior art before designing from scratch.
+2. **Authoring ECharts options**: Start from the Examples Gallery, then refine using the Option Reference and Handbook.
+3. **Theming**: Use the ECharts Theme Builder as a starting point, then validate with ColorBrewer and contrast tools.
+4. **Performance benchmarking**: Compare against uPlot and Dygraphs for time-series performance targets.
+5. **Accessibility compliance**: Reference Radix, Shoelace, and Carbon for accessible component patterns.
+6. **Industrial standards**: Study FUXA, Grafana, and the MING stack for real-world industrial deployment patterns.
+7. **Extension evaluation**: Before building custom functionality, check Awesome ECharts and the official extensions for existing solutions.
