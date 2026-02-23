@@ -55,12 +55,36 @@ Copy the `.modl` file to your Ignition gateway → Config → Modules → Instal
 
 ## Components
 
-### ECharts Chart (`open.echarts.EChart`)
+### Grouped Chart Components
 
-Universal renderer that accepts **any valid ECharts option JSON**. Supports all 20 chart types and all coordinate systems.
+Instead of one monolithic renderer, the module provides **13 focused components** organised by chart category. Each component shares the same ECharts runtime but has its own default option, palette entry, and default size.
 
-**Key properties:**
-- `option` — ECharts option object (series, axes, tooltip, legend, etc.)
+#### Open Components / ECharts
+
+| Component | ID | Chart Types |
+|-----------|-----|-------------|
+| **ECharts Chart** | `open.echarts.EChart` | Universal/advanced — accepts any option JSON |
+| **Line Chart** | `open.echarts.LineChart` | Line, area, step series |
+| **Bar Chart** | `open.echarts.BarChart` | Bar, stacked, horizontal |
+| **Pie Chart** | `open.echarts.PieChart` | Pie, donut, rose |
+| **Scatter Chart** | `open.echarts.ScatterChart` | Scatter, bubble, effectScatter |
+| **Gauge Chart** | `open.echarts.GaugeChart` | Gauge, funnel |
+| **Statistical Chart** | `open.echarts.StatChart` | Candlestick, boxplot, heatmap |
+| **Hierarchy Chart** | `open.echarts.HierarchyChart` | Tree, treemap, sunburst |
+| **Relation Chart** | `open.echarts.RelationChart` | Graph, sankey |
+| **Radar Chart** | `open.echarts.RadarChart` | Radar / spider |
+
+#### Open Components / Industrial
+
+| Component | ID | Purpose |
+|-----------|-----|---------|
+| **Industrial Trend** | `open.industrial.Trend` | Time-series PV/SP with alarm limits |
+| **OEE Summary** | `open.industrial.OEE` | Multi-ring OEE gauge (A/P/Q) |
+| **Pareto Chart** | `open.industrial.Pareto` | Pareto bar + cumulative % line |
+
+### Shared Properties (all components)
+
+- `option` — ECharts option object
 - `theme` — Theme name (`IgnitionIndustrialDark`, `IgnitionIndustrialLight`, or custom)
 - `renderer` — `canvas` (default) or `svg`
 - `autoResize` — Automatic resize on container change
