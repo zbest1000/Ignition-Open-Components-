@@ -1,0 +1,90 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "option": {
+      "type": "object",
+      "description": "ECharts option object. Pre-configured for time-series trending.",
+      "default": {}
+    },
+    "data": {
+      "type": "object",
+      "description": "Data configuration for the trend.",
+      "default": {},
+      "properties": {
+        "pvData": {
+          "type": "array",
+          "description": "Process variable data as [[timestamp, value], ...] or array of objects.",
+          "default": []
+        },
+        "spData": {
+          "type": "array",
+          "description": "Setpoint data as [[timestamp, value], ...].",
+          "default": []
+        },
+        "timeField": {
+          "type": "string",
+          "description": "Field name for timestamp when using object arrays.",
+          "default": "t"
+        },
+        "valueField": {
+          "type": "string",
+          "description": "Field name for value when using object arrays.",
+          "default": "v"
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "description": "Alarm and warning limits displayed as horizontal markLines.",
+      "default": {},
+      "properties": {
+        "hiAlarm":   { "type": "number", "description": "High alarm limit." },
+        "hiWarning": { "type": "number", "description": "High warning limit." },
+        "loWarning": { "type": "number", "description": "Low warning limit." },
+        "loAlarm":   { "type": "number", "description": "Low alarm limit." }
+      }
+    },
+    "yAxisLabel": {
+      "type": "string",
+      "description": "Label for the Y axis (e.g. unit of measurement).",
+      "default": ""
+    },
+    "showSetpoint": {
+      "type": "boolean",
+      "description": "Whether to show the setpoint line.",
+      "default": true
+    },
+    "showDataZoom": {
+      "type": "boolean",
+      "description": "Whether to show the data zoom slider.",
+      "default": true
+    },
+    "theme": {
+      "type": "string",
+      "default": ""
+    },
+    "renderer": {
+      "type": "string",
+      "enum": ["canvas", "svg"],
+      "default": "canvas"
+    },
+    "autoResize": {
+      "type": "boolean",
+      "default": true
+    },
+    "resizeDebounceMs": {
+      "type": "integer",
+      "default": 150
+    },
+    "notMerge": { "type": "boolean", "default": false },
+    "lazyUpdate": { "type": "boolean", "default": true },
+    "showLoading": { "type": "boolean", "default": false },
+    "loadingOptions": { "type": "object", "default": {} },
+    "sanitizeTooltip": { "type": "boolean", "default": true },
+    "style": {
+      "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
+      "default": { "classes": "" }
+    }
+  }
+}

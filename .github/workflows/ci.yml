@@ -62,8 +62,23 @@ jobs:
             echo "version=0.1.0-dev+${SHORT_SHA}" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Install web dependencies
+        run: npm ci
+        working-directory: web
+
+      - name: Lint TypeScript
+        run: npm run lint
+        working-directory: web
+
+      - name: Run TypeScript tests
+        run: npm run test:ci
+        working-directory: web
+
       - name: Build module
         run: ./gradlew clean build -PmoduleVersion=${{ steps.version.outputs.version }}
+
+      - name: Run Java tests
+        run: ./gradlew :common:test
 
       - name: Verify .modl artifact
         run: |

@@ -1,0 +1,49 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "option": {
+      "type": "object",
+      "description": "ECharts option object. Pre-configured for OEE gauge.",
+      "default": {}
+    },
+    "availability": {
+      "type": "number",
+      "description": "Availability percentage (0-100).",
+      "default": 92
+    },
+    "performance": {
+      "type": "number",
+      "description": "Performance percentage (0-100).",
+      "default": 95
+    },
+    "quality": {
+      "type": "number",
+      "description": "Quality percentage (0-100).",
+      "default": 97
+    },
+    "oeeOverride": {
+      "type": "number",
+      "description": "Override the calculated OEE value. If null, OEE is computed as A*P*Q/10000.",
+      "default": null
+    },
+    "showLabels": {
+      "type": "boolean",
+      "description": "Show A/P/Q/OEE labels on the gauge.",
+      "default": true
+    },
+    "theme": { "type": "string", "default": "" },
+    "renderer": { "type": "string", "enum": ["canvas", "svg"], "default": "canvas" },
+    "autoResize": { "type": "boolean", "default": true },
+    "resizeDebounceMs": { "type": "integer", "default": 150 },
+    "notMerge": { "type": "boolean", "default": false },
+    "lazyUpdate": { "type": "boolean", "default": true },
+    "showLoading": { "type": "boolean", "default": false },
+    "loadingOptions": { "type": "object", "default": {} },
+    "sanitizeTooltip": { "type": "boolean", "default": true },
+    "style": {
+      "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
+      "default": { "classes": "" }
+    }
+  }
+}

@@ -32,11 +32,17 @@ public class ComponentDefs {
     private static ComponentDescriptor chart(
             String id, String name, String description,
             String category, String metaName) {
+        return chartWithSchema(id, name, description, category, metaName, SCHEMA);
+    }
+
+    private static ComponentDescriptor chartWithSchema(
+            String id, String name, String description,
+            String category, String metaName, String schemaPath) {
         return ComponentDescriptorImpl.ComponentBuilder.newBuilder()
             .setPaletteCategory(category)
             .setId(id)
             .setModuleId(OpenEChartsConstants.MODULE_ID)
-            .setSchema(ComponentUtilities.getSchemaFromFilePath(SCHEMA))
+            .setSchema(ComponentUtilities.getSchemaFromFilePath(schemaPath))
             .setEvents(CHART_EVENTS)
             .setName(name)
             .addPaletteEntry("", name, description, null, null)
@@ -195,12 +201,15 @@ public class ComponentDefs {
     public static final String OEE_ID    = "open.industrial.OEE";
     public static final String PARETO_ID = "open.industrial.Pareto";
 
-    public static final ComponentDescriptor TREND = chart(TREND_ID,
-        "Industrial Trend", "Time-series PV/SP trend with alarm limits.", IND, "industrialTrend");
-    public static final ComponentDescriptor OEE = chart(OEE_ID,
-        "OEE Summary", "Overall Equipment Effectiveness gauge (A/P/Q).", IND, "oeeChart");
-    public static final ComponentDescriptor PARETO = chart(PARETO_ID,
-        "Pareto Chart", "Pareto analysis with cumulative percentage.", IND, "paretoChart");
+    public static final ComponentDescriptor TREND = chartWithSchema(TREND_ID,
+        "Industrial Trend", "Time-series PV/SP trend with alarm limits, data zoom, and quality.",
+        IND, "industrialTrend", "/props/industrial-trend.props.json");
+    public static final ComponentDescriptor OEE = chartWithSchema(OEE_ID,
+        "OEE Summary", "Overall Equipment Effectiveness gauge with A/P/Q inputs.",
+        IND, "oeeChart", "/props/industrial-oee.props.json");
+    public static final ComponentDescriptor PARETO = chartWithSchema(PARETO_ID,
+        "Pareto Chart", "Pareto analysis with categories, counts, and cumulative percentage.",
+        IND, "paretoChart", "/props/industrial-pareto.props.json");
 
     // ── Master lists ────────────────────────────────────────────────────
 

@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.inductiveautomation.ignition.common.licensing.LicenseState;
 import com.inductiveautomation.ignition.common.util.LoggerEx;
+import com.inductiveautomation.ignition.gateway.dataroutes.RouteGroup;
 import com.inductiveautomation.ignition.gateway.model.AbstractGatewayModuleHook;
 import com.inductiveautomation.ignition.gateway.model.GatewayContext;
 import com.inductiveautomation.perspective.common.api.ComponentRegistry;
@@ -11,10 +12,13 @@ import com.inductiveautomation.perspective.gateway.api.PerspectiveContext;
 
 import com.opencomponents.echarts.common.OpenEChartsConstants;
 import com.opencomponents.echarts.common.components.ComponentDefs;
+import com.opencomponents.echarts.gateway.api.ThemeEndpoints;
+import com.opencomponents.echarts.gateway.api.ThemeRepository;
 
 /**
  * Gateway-scope hook for the Open ECharts module. Registers all Perspective
- * components with the gateway's ComponentRegistry.
+ * components, serves bundled web resources, and exposes a REST API for
+ * theme management.
  */
 public class OpenEChartsGatewayHook extends AbstractGatewayModuleHook {
 
@@ -24,10 +28,14 @@ public class OpenEChartsGatewayHook extends AbstractGatewayModuleHook {
     private GatewayContext gatewayContext;
     private PerspectiveContext perspectiveContext;
     private ComponentRegistry componentRegistry;
+    private ThemeRepository themeRepository;
+    private ThemeEndpoints themeEndpoints;
 
     @Override
     public void setup(GatewayContext context) {
         this.gatewayContext = context;
+        this.themeRepository = new ThemeRepository(context.getSystemManager().getDataDir().toPath());
+        this.themeEndpoints = new ThemeEndpoints(themeRepository);
         log.info("Setting up Open ECharts module.");
     }
 
@@ -54,6 +62,11 @@ public class OpenEChartsGatewayHook extends AbstractGatewayModuleHook {
         } else {
             log.warn("Component registry was null during shutdown.");
         }
+    }
+
+    @Override
+    public void mountRouteHandlers(RouteGroup routes) {
+        themeEndpoints.mount(routes);
     }
 
     @Override

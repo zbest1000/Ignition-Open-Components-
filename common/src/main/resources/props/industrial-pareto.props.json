@@ -1,0 +1,54 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "option": {
+      "type": "object",
+      "description": "ECharts option object. Pre-configured for Pareto analysis.",
+      "default": {}
+    },
+    "categories": {
+      "type": "array",
+      "description": "Category labels for the X axis.",
+      "default": ["Mechanical", "Electrical", "Operator", "Material", "Other"]
+    },
+    "counts": {
+      "type": "array",
+      "description": "Count values for each category (bars).",
+      "default": [42, 28, 18, 12, 5]
+    },
+    "showCumulativeLine": {
+      "type": "boolean",
+      "description": "Show the cumulative percentage line.",
+      "default": true
+    },
+    "show80PercentLine": {
+      "type": "boolean",
+      "description": "Show the 80% threshold markLine.",
+      "default": true
+    },
+    "barLabel": {
+      "type": "string",
+      "description": "Label for the bar series.",
+      "default": "Count"
+    },
+    "lineLabel": {
+      "type": "string",
+      "description": "Label for the cumulative line series.",
+      "default": "Cumulative %"
+    },
+    "theme": { "type": "string", "default": "" },
+    "renderer": { "type": "string", "enum": ["canvas", "svg"], "default": "canvas" },
+    "autoResize": { "type": "boolean", "default": true },
+    "resizeDebounceMs": { "type": "integer", "default": 150 },
+    "notMerge": { "type": "boolean", "default": false },
+    "lazyUpdate": { "type": "boolean", "default": true },
+    "showLoading": { "type": "boolean", "default": false },
+    "loadingOptions": { "type": "object", "default": {} },
+    "sanitizeTooltip": { "type": "boolean", "default": true },
+    "style": {
+      "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
+      "default": { "classes": "" }
+    }
+  }
+}
