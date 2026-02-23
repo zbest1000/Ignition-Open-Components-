@@ -5,7 +5,7 @@ import { BarChart, LineChart as ELineChart, PieChart as EPieChart,
          FunnelChart, HeatmapChart, TreeChart, TreemapChart, SunburstChart,
          GraphChart, SankeyChart, BoxplotChart, CandlestickChart, LinesChart,
          EffectScatterChart, ThemeRiverChart, RadarChart as ERadarChart,
-         PictorialBarChart, CustomChart } from 'echarts/charts';
+         PictorialBarChart, CustomChart, MapChart, ParallelChart } from 'echarts/charts';
 import { TitleComponent, TooltipComponent, LegendComponent,
          GridComponent, DataZoomComponent, ToolboxComponent,
          VisualMapComponent, TimelineComponent, CalendarComponent,
@@ -28,7 +28,7 @@ echarts.use([
     FunnelChart, HeatmapChart, TreeChart, TreemapChart, SunburstChart,
     GraphChart, SankeyChart, BoxplotChart, CandlestickChart, LinesChart,
     EffectScatterChart, ThemeRiverChart, ERadarChart,
-    PictorialBarChart, CustomChart,
+    PictorialBarChart, CustomChart, MapChart, ParallelChart,
     TitleComponent, TooltipComponent, LegendComponent,
     GridComponent, DataZoomComponent, ToolboxComponent,
     VisualMapComponent, TimelineComponent, CalendarComponent,
