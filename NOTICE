@@ -1,0 +1,44 @@
+Open ECharts — Ignition Perspective Component Module
+Copyright 2026 zbest
+
+This product bundles the following third-party software:
+
+────────────────────────────────────────────────────────────────────────────────
+
+Apache ECharts
+Copyright 2017-2024 The Apache Software Foundation
+Licensed under the Apache License, Version 2.0
+https://github.com/apache/echarts
+
+────────────────────────────────────────────────────────────────────────────────
+
+ECharts-GL
+Copyright 2014, echarts-gl contributors
+Licensed under the BSD 2-Clause License
+https://github.com/ecomfe/echarts-gl
+
+────────────────────────────────────────────────────────────────────────────────
+
+ZRender (bundled by ECharts)
+Copyright 2017-2024 The Apache Software Foundation
+Licensed under the BSD 3-Clause License
+https://github.com/ecomfe/zrender
+
+────────────────────────────────────────────────────────────────────────────────
+
+ClayGL (bundled by ECharts-GL)
+Copyright 2013, Yi Shen
+Licensed under the BSD 2-Clause License
+https://github.com/pissang/claygl
+
+────────────────────────────────────────────────────────────────────────────────
+
+React (external — provided by Ignition Perspective runtime)
+Copyright (c) Meta Platforms, Inc. and affiliates
+Licensed under the MIT License
+
+────────────────────────────────────────────────────────────────────────────────
+
+Inductive Automation Perspective Client SDK (external — provided by Ignition)
+Copyright Inductive Automation
+Proprietary — used under SDK terms

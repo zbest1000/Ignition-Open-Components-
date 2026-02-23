@@ -1,0 +1,21 @@
+# Copy this file to gradle.properties and adjust values.
+# gradle.properties is gitignored to protect secrets.
+
+org.gradle.parallel=true
+org.gradle.daemon=true
+org.gradle.jvmargs=-Xms1024m -Xmx2048m -Xss2m -Djava.awt.headless=true
+org.gradle.configureondemand=true
+
+# Module version (overridden by CI via -PmoduleVersion)
+version=0.1.0-SNAPSHOT
+
+# Module signing (set true and configure below for production)
+signModule=false
+# ignition.signing.keystoreFile=/path/to/keystore.jks
+# ignition.signing.keystorePassword=changeit
+# ignition.signing.certFile=/path/to/cert.pem
+# ignition.signing.certAlias=alias
+# ignition.signing.certPassword=changeit
+
+# Gateway deploy target (for ./gradlew deployModl)
+# hostGateway=http://localhost:8088

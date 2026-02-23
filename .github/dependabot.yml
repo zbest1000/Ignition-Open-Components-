@@ -1,0 +1,31 @@
+version: 2
+
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      actions:
+        patterns: ["*"]
+
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      ignition-sdk:
+        patterns: ["com.inductiveautomation*"]
+      gradle-plugins:
+        patterns: ["io.ia.sdk*", "com.github.node-gradle*"]
+
+  - package-ecosystem: "npm"
+    directory: "/web"
+    schedule:
+      interval: "weekly"
+    groups:
+      echarts:
+        patterns: ["echarts*"]
+      dev-dependencies:
+        dependency-type: "development"
+        patterns: ["*"]
