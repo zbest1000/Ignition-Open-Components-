@@ -20,7 +20,7 @@ The module depends on the Perspective module (`com.inductiveautomation.perspecti
 
 ### From GitHub Releases
 
-1. Go to the [GitHub Releases](https://github.com/opencomponents/echarts/releases) page.
+1. Go to the [GitHub Releases](https://github.com/zbest1000/Ignition-Open-Components/releases) page.
 2. Download the latest `Open-ECharts-<version>.modl` (or `Open-ECharts-<version>.unsigned.modl`).
 3. Optionally verify the SHA-256 checksum from the release notes.
 
@@ -39,8 +39,8 @@ See [Build from Source](#3-build-from-source) below.
 | **Node.js** | 18+ (auto-downloaded by Gradle) |
 
 ```bash
-git clone https://github.com/opencomponents/echarts.git
-cd echarts
+git clone https://github.com/zbest1000/Ignition-Open-Components.git
+cd Ignition-Open-Components
 ./gradlew clean build
 ```
 
