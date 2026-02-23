@@ -5,6 +5,12 @@ plugins {
     id("com.github.node-gradle.node") version("3.2.1")
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
 val projectOutput: String by extra("$buildDir/generated-resources/")
 
 node {
@@ -44,6 +50,11 @@ tasks {
     processResources {
         dependsOn(webpack)
         from(projectOutput) { into("") }
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
+    jar {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 
     clean {

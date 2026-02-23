@@ -38,7 +38,7 @@ public abstract class DelegatingComponentDescriptor implements ComponentDescript
     @Override @Nonnull public String moduleId() { return delegate.moduleId(); }
     @Override public JsonObject defaultProperties() { return delegate.defaultProperties(); }
     @Override public Optional<JsonObject> childPositionDefaults() { return delegate.childPositionDefaults(); }
-    @Override @Nonnull public Set<BrowserResource> resources() { return delegate.browserResources(); }
+    @Override @Nonnull public Set<BrowserResource> browserResources() { return delegate.browserResources(); }
     @Override @Nullable public JsonSchema schema() { return delegate.schema(); }
     @Override @Nullable public JsonSchema childPositionSchema() { return delegate.childPositionSchema(); }
     @Override @Nonnull public Collection<ComponentEventDescriptor> events() { return delegate.events(); }
