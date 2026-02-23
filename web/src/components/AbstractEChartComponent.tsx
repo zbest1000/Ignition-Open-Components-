@@ -191,7 +191,7 @@ export abstract class AbstractEChartComponent<
                 try {
                     const safeParams = serializeEventParams(params);
                     this.props.componentEvents.fireComponentEvent(perspectiveEvent, safeParams);
-                } catch (_) { /* swallow */ }
+                } catch { /* swallow serialization errors */ }
             });
         });
     }

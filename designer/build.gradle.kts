@@ -1,5 +1,11 @@
 plugins {
     `java-library`
+    checkstyle
+}
+
+checkstyle {
+    configFile = rootProject.file("config/checkstyle/checkstyle.xml")
+    toolVersion = "10.12.5"
 }
 
 java {

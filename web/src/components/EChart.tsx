@@ -1,5 +1,5 @@
 import {
-    ComponentMeta, ComponentProps, PComponent, PropertyTree, SizeObject
+    ComponentMeta, PComponent, PropertyTree, SizeObject
 } from '@inductiveautomation/perspective-client';
 import { AbstractEChartComponent, BaseEChartProps } from './AbstractEChartComponent';
 

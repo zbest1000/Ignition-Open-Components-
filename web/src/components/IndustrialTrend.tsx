@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
     ComponentMeta, ComponentProps, PComponent, PropertyTree, SizeObject
 } from '@inductiveautomation/perspective-client';
