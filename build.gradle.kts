@@ -3,8 +3,12 @@ plugins {
     id("io.ia.sdk.modl") version("0.3.0")
 }
 
+val moduleVersion: String = findProperty("moduleVersion")?.toString()
+    ?: findProperty("version")?.toString()
+    ?: "0.1.0-SNAPSHOT"
+
 allprojects {
-    version = "0.1.0-SNAPSHOT"
+    version = moduleVersion
     group = "com.opencomponents.echarts"
 }
 
