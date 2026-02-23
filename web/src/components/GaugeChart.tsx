@@ -1,23 +1,26 @@
 import {
-    ComponentMeta, ComponentProps, PComponent, PropertyTree, SizeObject
+    ComponentMeta, PComponent, PropertyTree, SizeObject
 } from '@inductiveautomation/perspective-client';
 import { AbstractEChartComponent, BaseEChartProps } from './AbstractEChartComponent';
 
-export const COMPONENT_TYPE = "open.echarts.EChart";
+export const COMPONENT_TYPE = "open.echarts.GaugeChart";
 
-export type EChartProps = BaseEChartProps;
+export type GaugeChartProps = BaseEChartProps;
 
-export class EChartComponent extends AbstractEChartComponent<EChartProps> {
-    protected getCssClass() { return 'open-echarts-chart'; }
+export class GaugeChartComponent extends AbstractEChartComponent<GaugeChartProps> {
+    protected getCssClass() { return 'open-echarts-gauge'; }
 }
 
-export class EChartMeta implements ComponentMeta {
+export class GaugeChartMeta implements ComponentMeta {
     getComponentType(): string { return COMPONENT_TYPE; }
-    getViewComponent(): PComponent { return EChartComponent; }
-    getDefaultSize(): SizeObject { return { width: 600, height: 400 }; }
-    getPropsReducer(tree: PropertyTree): EChartProps {
+    getViewComponent(): PComponent { return GaugeChartComponent; }
+    getDefaultSize(): SizeObject { return { width: 400, height: 350 }; }
+    getPropsReducer(tree: PropertyTree): GaugeChartProps {
         return {
-            option:           tree.read("option", {}),
+            option:           tree.read("option", {
+                series: [{ type: 'gauge', detail: { valueAnimation: true },
+                    data: [{ value: 72, name: 'Score' }] }]
+            }),
             theme:            tree.readString("theme", ""),
             renderer:         tree.readString("renderer", "canvas") as 'canvas' | 'svg',
             autoResize:       tree.readBoolean("autoResize", true),

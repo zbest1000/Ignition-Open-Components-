@@ -1,23 +1,29 @@
 import {
-    ComponentMeta, ComponentProps, PComponent, PropertyTree, SizeObject
+    ComponentMeta, PComponent, PropertyTree, SizeObject
 } from '@inductiveautomation/perspective-client';
 import { AbstractEChartComponent, BaseEChartProps } from './AbstractEChartComponent';
 
-export const COMPONENT_TYPE = "open.echarts.EChart";
+export const COMPONENT_TYPE = "open.echarts.ScatterChart";
 
-export type EChartProps = BaseEChartProps;
+export type ScatterChartProps = BaseEChartProps;
 
-export class EChartComponent extends AbstractEChartComponent<EChartProps> {
-    protected getCssClass() { return 'open-echarts-chart'; }
+export class ScatterChartComponent extends AbstractEChartComponent<ScatterChartProps> {
+    protected getCssClass() { return 'open-echarts-scatter'; }
 }
 
-export class EChartMeta implements ComponentMeta {
+export class ScatterChartMeta implements ComponentMeta {
     getComponentType(): string { return COMPONENT_TYPE; }
-    getViewComponent(): PComponent { return EChartComponent; }
+    getViewComponent(): PComponent { return ScatterChartComponent; }
     getDefaultSize(): SizeObject { return { width: 600, height: 400 }; }
-    getPropsReducer(tree: PropertyTree): EChartProps {
+    getPropsReducer(tree: PropertyTree): ScatterChartProps {
         return {
-            option:           tree.read("option", {}),
+            option:           tree.read("option", {
+                xAxis: {}, yAxis: {},
+                tooltip: { trigger: 'item' },
+                series: [{ type: 'scatter', symbolSize: 10,
+                    data: [[10,8],[8,7],[13,8],[9,9],[11,8],[14,10],[6,7],[4,4],[12,11],[7,5]]
+                }]
+            }),
             theme:            tree.readString("theme", ""),
             renderer:         tree.readString("renderer", "canvas") as 'canvas' | 'svg',
             autoResize:       tree.readBoolean("autoResize", true),

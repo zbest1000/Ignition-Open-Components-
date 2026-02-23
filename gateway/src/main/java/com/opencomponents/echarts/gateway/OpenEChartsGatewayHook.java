@@ -10,12 +10,11 @@ import com.inductiveautomation.perspective.common.api.ComponentRegistry;
 import com.inductiveautomation.perspective.gateway.api.PerspectiveContext;
 
 import com.opencomponents.echarts.common.OpenEChartsConstants;
-import com.opencomponents.echarts.common.components.EChart;
+import com.opencomponents.echarts.common.components.ComponentDefs;
 
 /**
- * Gateway-scope hook for the Open ECharts module. Registers Perspective
- * components with the gateway's ComponentRegistry so they are served to
- * browser sessions.
+ * Gateway-scope hook for the Open ECharts module. Registers all Perspective
+ * components with the gateway's ComponentRegistry.
  */
 public class OpenEChartsGatewayHook extends AbstractGatewayModuleHook {
 
@@ -40,8 +39,8 @@ public class OpenEChartsGatewayHook extends AbstractGatewayModuleHook {
         this.componentRegistry = this.perspectiveContext.getComponentRegistry();
 
         if (this.componentRegistry != null) {
-            log.info("Registering Open ECharts components.");
-            this.componentRegistry.registerComponent(EChart.DESCRIPTOR);
+            log.info("Registering " + ComponentDefs.ALL.size() + " Open ECharts components.");
+            ComponentDefs.ALL.forEach(this.componentRegistry::registerComponent);
         } else {
             log.error("Component registry not found — Open ECharts components will not function.");
         }
@@ -51,7 +50,7 @@ public class OpenEChartsGatewayHook extends AbstractGatewayModuleHook {
     public void shutdown() {
         log.info("Shutting down Open ECharts module.");
         if (this.componentRegistry != null) {
-            this.componentRegistry.removeComponent(EChart.COMPONENT_ID);
+            ComponentDefs.ALL_IDS.forEach(this.componentRegistry::removeComponent);
         } else {
             log.warn("Component registry was null during shutdown.");
         }

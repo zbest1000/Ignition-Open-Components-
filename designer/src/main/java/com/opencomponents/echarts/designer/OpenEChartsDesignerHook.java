@@ -8,11 +8,11 @@ import com.inductiveautomation.ignition.designer.model.DesignerContext;
 import com.inductiveautomation.perspective.designer.DesignerComponentRegistry;
 import com.inductiveautomation.perspective.designer.api.PerspectiveDesignerInterface;
 
-import com.opencomponents.echarts.common.components.EChart;
+import com.opencomponents.echarts.common.components.ComponentDefs;
 
 /**
- * Designer-scope hook for the Open ECharts module. Registers components onto
- * the Perspective component palette so designers can drag them onto views.
+ * Designer-scope hook for the Open ECharts module. Registers all components
+ * onto the Perspective component palette.
  */
 public class OpenEChartsDesignerHook extends AbstractDesignerModuleHook {
 
@@ -41,14 +41,14 @@ public class OpenEChartsDesignerHook extends AbstractDesignerModuleHook {
         PerspectiveDesignerInterface pdi = PerspectiveDesignerInterface.get(context);
         registry = pdi.getDesignerComponentRegistry();
 
-        registry.registerComponent(EChart.DESCRIPTOR);
+        ComponentDefs.ALL.forEach(registry::registerComponent);
     }
 
     @Override
     public void shutdown() {
         log.info("Shutting down Open ECharts Designer hook.");
         if (registry != null) {
-            registry.removeComponent(EChart.COMPONENT_ID);
+            ComponentDefs.ALL_IDS.forEach(registry::removeComponent);
         }
     }
 }
