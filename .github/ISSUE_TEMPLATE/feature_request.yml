@@ -1,0 +1,37 @@
+name: Feature Request
+description: Suggest an enhancement or new component
+labels: [enhancement]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What feature or improvement would you like?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - New chart component
+        - Existing component improvement
+        - Theme / styling
+        - Template
+        - Industrial component
+        - Build / CI
+        - Documentation
+        - Other
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case
+      description: How would this be used in an industrial/automation context?
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Links to ECharts examples, mockups, or related issues.

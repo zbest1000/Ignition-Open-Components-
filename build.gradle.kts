@@ -47,6 +47,15 @@ ignitionModule {
     skipModlSigning.set(!findProperty("signModule").toString().toBoolean())
 }
 
+tasks.named("assembleModlStructure") {
+    doLast {
+        copy {
+            from("NOTICE")
+            into(layout.buildDirectory.dir("moduleContent"))
+        }
+    }
+}
+
 tasks.withType<io.ia.sdk.gradle.modl.task.Deploy>().configureEach {
     hostGateway.set(project.findProperty("hostGateway")?.toString() ?: "")
 }

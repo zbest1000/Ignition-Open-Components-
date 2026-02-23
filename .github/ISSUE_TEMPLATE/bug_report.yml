@@ -1,0 +1,110 @@
+name: Bug Report
+description: Report a problem with the Open ECharts module
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please fill out the sections below.
+
+  - type: input
+    id: module-version
+    attributes:
+      label: Module Version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: ignition-version
+    attributes:
+      label: Ignition Version
+      placeholder: "8.3.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which component is affected?
+      options:
+        - EChart (universal)
+        - LineChart
+        - BarChart
+        - PieChart
+        - ScatterChart
+        - EffectScatterChart
+        - GaugeChart
+        - FunnelChart
+        - CandlestickChart
+        - BoxplotChart
+        - HeatmapChart
+        - TreeChart
+        - TreemapChart
+        - SunburstChart
+        - GraphChart
+        - SankeyChart
+        - RadarChart
+        - ParallelChart
+        - ThemeRiverChart
+        - CalendarChart
+        - PictorialBarChart
+        - CustomChart
+        - GraphicChart
+        - DatasetChart
+        - MapChart
+        - LinesChart
+        - Bar3DChart
+        - Line3DChart
+        - Scatter3DChart
+        - SurfaceChart
+        - Map3DChart
+        - GlobeChart
+        - Lines3DChart
+        - Polygons3DChart
+        - ScatterGLChart
+        - GraphGLChart
+        - FlowGLChart
+        - IndustrialTrend
+        - IndustrialOEE
+        - IndustrialPareto
+        - Other / Module-level
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened? What did you expect?
+    validations:
+      required: true
+
+  - type: textarea
+    id: option-json
+    attributes:
+      label: Option JSON (if applicable)
+      description: Paste the option object that triggers the issue.
+      render: json
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      value: |
+        1.
+        2.
+        3.
+
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options:
+        - Chrome / Chromium
+        - Firefox
+        - Edge
+        - Safari (iOS)
+        - Android Chrome
+        - Other

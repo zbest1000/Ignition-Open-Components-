@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: ECharts Documentation
+    url: https://echarts.apache.org/en/option.html
+    about: Official ECharts option reference
+  - name: ECharts Examples Gallery
+    url: https://echarts.apache.org/examples/en/index.html
+    about: Browse 300+ interactive chart examples
+  - name: Ignition SDK Docs
+    url: https://sdk-docs.inductiveautomation.com/docs/8.3/intro
+    about: Ignition 8.3 module SDK documentation
