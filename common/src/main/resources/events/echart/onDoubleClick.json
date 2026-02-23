@@ -1,0 +1,36 @@
+{
+  "name": "onDoubleClick",
+  "description": "Fired when the chart is double-clicked. Provides series/data point information.",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "componentType": {
+        "type": "string",
+        "description": "ECharts component type that was double-clicked."
+      },
+      "seriesType": {
+        "type": "string",
+        "description": "Series type (e.g. 'bar', 'line', 'pie')."
+      },
+      "seriesIndex": {
+        "type": "integer",
+        "description": "Index of the series."
+      },
+      "seriesName": {
+        "type": "string",
+        "description": "Name of the series."
+      },
+      "name": {
+        "type": "string",
+        "description": "Data item name."
+      },
+      "dataIndex": {
+        "type": "integer",
+        "description": "Index of the data item within the series."
+      },
+      "value": {
+        "description": "Value of the data item."
+      }
+    }
+  }
+}

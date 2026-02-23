@@ -1,0 +1,46 @@
+# Build outputs
+build/
+**/build/
+out/
+**/out/
+dist/
+**/dist/
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+**/.project
+**/.classpath
+**/.settings/
+
+# Node / npm
+node_modules/
+**/node_modules/
+web/.awcache/
+
+# Gradle
+.gradle/
+**/.gradle/
+gradle.properties
+
+# Module signing
+sign.props
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Generated resources
+**/generated-resources/
+gateway/src/main/resources/mounted/*.js
+gateway/src/main/resources/mounted/*.css
+
+# Logs
+*.log
+yarn-error.log

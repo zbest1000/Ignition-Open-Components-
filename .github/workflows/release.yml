@@ -1,0 +1,143 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+*"
+
+permissions:
+  contents: write
+
+env:
+  JAVA_VERSION: "17"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true"
+
+jobs:
+  release:
+    name: Build & Publish Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${GITHUB_REF#refs/tags/v}"
+          echo "version=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${TAG}" >> "$GITHUB_OUTPUT"
+          echo "Building release version: ${TAG}"
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Cache npm packages
+        uses: actions/cache@v4
+        with:
+          path: web/node_modules
+          key: npm-${{ runner.os }}-${{ hashFiles('web/package-lock.json') }}
+          restore-keys: npm-${{ runner.os }}-
+
+      - name: Build unsigned module
+        run: ./gradlew clean build -PmoduleVersion=${{ steps.version.outputs.version }}
+
+      - name: Sign module (if configured)
+        if: env.SIGNING_KEYSTORE_BASE64 != ''
+        env:
+          SIGNING_KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+          SIGNING_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
+          SIGNING_CERT_FILE_BASE64: ${{ secrets.SIGNING_CERT_FILE_BASE64 }}
+          SIGNING_CERT_ALIAS: ${{ secrets.SIGNING_CERT_ALIAS }}
+          SIGNING_CERT_PASSWORD: ${{ secrets.SIGNING_CERT_PASSWORD }}
+        run: |
+          echo "$SIGNING_KEYSTORE_BASE64" | base64 -d > /tmp/keystore.jks
+          echo "$SIGNING_CERT_FILE_BASE64" | base64 -d > /tmp/cert.pem
+          ./gradlew signModule \
+            -PsignModule=true \
+            -Pignition.signing.keystoreFile=/tmp/keystore.jks \
+            -Pignition.signing.keystorePassword="$SIGNING_KEYSTORE_PASSWORD" \
+            -Pignition.signing.certFile=/tmp/cert.pem \
+            -Pignition.signing.certAlias="$SIGNING_CERT_ALIAS" \
+            -Pignition.signing.certPassword="$SIGNING_CERT_PASSWORD" \
+            -PmoduleVersion=${{ steps.version.outputs.version }}
+          rm -f /tmp/keystore.jks /tmp/cert.pem
+
+      - name: Prepare release artifacts
+        id: artifacts
+        run: |
+          MODL=$(find build -name '*.modl' | head -1)
+          BASENAME="Open-ECharts-${{ steps.version.outputs.version }}"
+
+          if echo "$MODL" | grep -q "unsigned"; then
+            FINAL="${BASENAME}.unsigned.modl"
+          else
+            FINAL="${BASENAME}.modl"
+          fi
+
+          cp "$MODL" "build/${FINAL}"
+          sha256sum "build/${FINAL}" > "build/${FINAL}.sha256"
+
+          echo "modl=build/${FINAL}" >> "$GITHUB_OUTPUT"
+          echo "checksum=build/${FINAL}.sha256" >> "$GITHUB_OUTPUT"
+          echo "name=${FINAL}" >> "$GITHUB_OUTPUT"
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          cat > /tmp/release-notes.md << 'NOTES'
+          ## Open ECharts ${{ steps.version.outputs.version }}
+
+          ### Module Info
+          | Property | Value |
+          |----------|-------|
+          | Ignition SDK | 8.3.0 |
+          | Java | 17 |
+          | ECharts | 5.6.0 |
+          | ECharts-GL | 2.0.9 |
+          | Components | 40 (27 2D + 8 3D + 3 WebGL + 3 Industrial) |
+
+          ### Installation
+          1. Download the `.modl` file below
+          2. In your Ignition Gateway, go to **Config → Modules → Install or Upgrade a Module**
+          3. Upload the `.modl` file
+          4. Restart if prompted
+
+          ### Verify Integrity
+          ```
+          sha256sum -c Open-ECharts-${{ steps.version.outputs.version }}*.sha256
+          ```
+          NOTES
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: Open ECharts ${{ steps.version.outputs.version }}
+          body_path: /tmp/release-notes.md
+          draft: false
+          prerelease: ${{ contains(steps.version.outputs.version, '-') }}
+          files: |
+            ${{ steps.artifacts.outputs.modl }}
+            ${{ steps.artifacts.outputs.checksum }}
+
+      - name: Release summary
+        run: |
+          echo "## Release Published" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Version:** \`${{ steps.version.outputs.version }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Tag:** \`${{ steps.version.outputs.tag }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Artifact:** \`${{ steps.artifacts.outputs.name }}\`" >> "$GITHUB_STEP_SUMMARY"
