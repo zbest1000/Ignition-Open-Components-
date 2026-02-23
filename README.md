@@ -55,9 +55,9 @@ Copy the `.modl` file to your Ignition gateway → Config → Modules → Instal
 
 ## Components
 
-### 28 Components — Full ECharts Gallery Coverage
+### 40 Components — Complete ECharts + ECharts-GL Suite
 
-Every chart category from the [ECharts examples gallery](https://echarts.apache.org/examples/en/index.html) has its own focused component. All share the same ECharts runtime but each provides its own default option, palette entry, and default size.
+Every chart type from the [ECharts examples gallery](https://echarts.apache.org/examples/en/index.html) and [ECharts-GL](https://github.com/ecomfe/echarts-gl) has its own focused component. All share the same runtime but each provides its own default option, palette entry, and default size.
 
 #### Basic Charts
 
@@ -67,7 +67,8 @@ Every chart category from the [ECharts examples gallery](https://echarts.apache.
 | **Line Chart** | `open.echarts.LineChart` | Line, area, step, stacked area |
 | **Bar Chart** | `open.echarts.BarChart` | Bar, stacked, horizontal, polar, waterfall, race |
 | **Pie Chart** | `open.echarts.PieChart` | Pie, donut, rose, nested |
-| **Scatter Chart** | `open.echarts.ScatterChart` | Scatter, bubble, effectScatter |
+| **Scatter Chart** | `open.echarts.ScatterChart` | Scatter, bubble |
+| **Effect Scatter** | `open.echarts.EffectScatterChart` | Ripple-animated scatter markers |
 
 #### KPI / Proportion
 
@@ -118,6 +119,27 @@ Every chart category from the [ECharts examples gallery](https://echarts.apache.
 |-----------|-----|--------|
 | **Map Chart** | `open.echarts.MapChart` | Choropleth, SVG maps, geo scatter |
 | **Lines Chart** | `open.echarts.LinesChart` | Flight routes, bus lines, migration flows |
+
+#### 3D Charts (ECharts-GL)
+
+| Component | ID | Covers |
+|-----------|-----|--------|
+| **Bar 3D** | `open.echarts.Bar3DChart` | 3D bar charts on grid3D |
+| **Line 3D** | `open.echarts.Line3DChart` | 3D line / trajectory |
+| **Scatter 3D** | `open.echarts.Scatter3DChart` | 3D scatter / point cloud |
+| **Surface** | `open.echarts.SurfaceChart` | 3D mathematical surfaces |
+| **Map 3D** | `open.echarts.Map3DChart` | 3D geo map with elevation |
+| **Globe** | `open.echarts.GlobeChart` | 3D globe with layers |
+| **Lines 3D** | `open.echarts.Lines3DChart` | 3D flight/route lines |
+| **Polygons 3D** | `open.echarts.Polygons3DChart` | 3D polygon regions |
+
+#### WebGL-Accelerated (ECharts-GL)
+
+| Component | ID | Covers |
+|-----------|-----|--------|
+| **Scatter GL** | `open.echarts.ScatterGLChart` | Millions of points, WebGL |
+| **Graph GL** | `open.echarts.GraphGLChart` | Large-scale graph layout, WebGL |
+| **Flow GL** | `open.echarts.FlowGLChart` | Vector field flow, WebGL |
 
 #### Industrial (Open Components / Industrial)
 
