@@ -55,26 +55,71 @@ Copy the `.modl` file to your Ignition gateway → Config → Modules → Instal
 
 ## Components
 
-### Grouped Chart Components
+### 28 Components — Full ECharts Gallery Coverage
 
-Instead of one monolithic renderer, the module provides **13 focused components** organised by chart category. Each component shares the same ECharts runtime but has its own default option, palette entry, and default size.
+Every chart category from the [ECharts examples gallery](https://echarts.apache.org/examples/en/index.html) has its own focused component. All share the same ECharts runtime but each provides its own default option, palette entry, and default size.
 
-#### Open Components / ECharts
+#### Basic Charts
 
-| Component | ID | Chart Types |
-|-----------|-----|-------------|
-| **ECharts Chart** | `open.echarts.EChart` | Universal/advanced — accepts any option JSON |
-| **Line Chart** | `open.echarts.LineChart` | Line, area, step series |
-| **Bar Chart** | `open.echarts.BarChart` | Bar, stacked, horizontal |
-| **Pie Chart** | `open.echarts.PieChart` | Pie, donut, rose |
+| Component | ID | Covers |
+|-----------|-----|--------|
+| **ECharts Chart** | `open.echarts.EChart` | Universal/advanced — any option JSON |
+| **Line Chart** | `open.echarts.LineChart` | Line, area, step, stacked area |
+| **Bar Chart** | `open.echarts.BarChart` | Bar, stacked, horizontal, polar, waterfall, race |
+| **Pie Chart** | `open.echarts.PieChart` | Pie, donut, rose, nested |
 | **Scatter Chart** | `open.echarts.ScatterChart` | Scatter, bubble, effectScatter |
-| **Gauge Chart** | `open.echarts.GaugeChart` | Gauge, funnel |
-| **Statistical Chart** | `open.echarts.StatChart` | Candlestick, boxplot, heatmap |
-| **Hierarchy Chart** | `open.echarts.HierarchyChart` | Tree, treemap, sunburst |
-| **Relation Chart** | `open.echarts.RelationChart` | Graph, sankey |
-| **Radar Chart** | `open.echarts.RadarChart` | Radar / spider |
 
-#### Open Components / Industrial
+#### KPI / Proportion
+
+| Component | ID | Covers |
+|-----------|-----|--------|
+| **Gauge Chart** | `open.echarts.GaugeChart` | Gauge, speed, progress, ring, temperature |
+| **Funnel Chart** | `open.echarts.FunnelChart` | Funnel, conversion pipeline |
+
+#### Financial / Statistical
+
+| Component | ID | Covers |
+|-----------|-----|--------|
+| **Candlestick Chart** | `open.echarts.CandlestickChart` | K-line, OHLC |
+| **Boxplot Chart** | `open.echarts.BoxplotChart` | Box-and-whisker |
+| **Heatmap Chart** | `open.echarts.HeatmapChart` | Cartesian, calendar, geo heatmaps |
+
+#### Hierarchy
+
+| Component | ID | Covers |
+|-----------|-----|--------|
+| **Tree Chart** | `open.echarts.TreeChart` | LR, RL, TB, BT, radial, polyline |
+| **Treemap Chart** | `open.echarts.TreemapChart` | Area-proportional treemap |
+| **Sunburst Chart** | `open.echarts.SunburstChart` | Radial sunburst |
+
+#### Relations / Flow
+
+| Component | ID | Covers |
+|-----------|-----|--------|
+| **Graph Chart** | `open.echarts.GraphChart` | Force, circular, grid graph |
+| **Sankey Chart** | `open.echarts.SankeyChart` | Sankey flow diagrams |
+
+#### Specialty
+
+| Component | ID | Covers |
+|-----------|-----|--------|
+| **Radar Chart** | `open.echarts.RadarChart` | Radar / spider |
+| **Parallel Chart** | `open.echarts.ParallelChart` | Parallel coordinates |
+| **Theme River Chart** | `open.echarts.ThemeRiverChart` | Time-stream river |
+| **Calendar Chart** | `open.echarts.CalendarChart` | Calendar heatmap/scatter |
+| **Pictorial Bar Chart** | `open.echarts.PictorialBarChart` | Symbol-based pictorial bars |
+| **Custom Chart** | `open.echarts.CustomChart` | Custom renderItem series |
+| **Graphic Chart** | `open.echarts.GraphicChart` | Shape/text/image overlays |
+| **Dataset Chart** | `open.echarts.DatasetChart` | Dataset-driven with encode/transform |
+
+#### Geo / Map
+
+| Component | ID | Covers |
+|-----------|-----|--------|
+| **Map Chart** | `open.echarts.MapChart` | Choropleth, SVG maps, geo scatter |
+| **Lines Chart** | `open.echarts.LinesChart` | Flight routes, bus lines, migration flows |
+
+#### Industrial (Open Components / Industrial)
 
 | Component | ID | Purpose |
 |-----------|-----|---------|
