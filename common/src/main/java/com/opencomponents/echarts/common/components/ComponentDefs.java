@@ -197,9 +197,12 @@ public class ComponentDefs {
 
     // ── Industrial ──────────────────────────────────────────────────────
 
+    // ── Industrial — core ─────────────────────────────────────────────
+
     public static final String TREND_ID  = "open.industrial.Trend";
     public static final String OEE_ID    = "open.industrial.OEE";
     public static final String PARETO_ID = "open.industrial.Pareto";
+    public static final String SPC_ID    = "open.industrial.SPCChart";
 
     public static final ComponentDescriptor TREND = chartWithSchema(TREND_ID,
         "Industrial Trend", "Time-series PV/SP trend with alarm limits, data zoom, and quality.",
@@ -210,6 +213,43 @@ public class ComponentDefs {
     public static final ComponentDescriptor PARETO = chartWithSchema(PARETO_ID,
         "Pareto Chart", "Pareto analysis with categories, counts, and cumulative percentage.",
         IND, "paretoChart", "/props/industrial-pareto.props.json");
+    public static final ComponentDescriptor SPC = chart(SPC_ID,
+        "SPC Chart", "Statistical Process Control — Individuals and Moving Range with run rules.",
+        IND, "spcChart");
+
+    // ── Industrial — scheduling & timelines ─────────────────────────────
+
+    private static final String SCHED = "Open Components / Scheduling";
+
+    public static final String STATE_TIMELINE_ID    = "open.industrial.StateTimeline";
+    public static final String GANTT_ID             = "open.industrial.Gantt";
+    public static final String SCHEDULE_CALENDAR_ID = "open.industrial.ScheduleCalendar";
+    public static final String SHIFT_CALENDAR_ID    = "open.industrial.ShiftCalendar";
+    public static final String DOWNTIME_TRACKER_ID  = "open.industrial.DowntimeTracker";
+    public static final String BATCH_TIMELINE_ID    = "open.industrial.BatchTimeline";
+    public static final String RESOURCE_HEATMAP_ID  = "open.industrial.ResourceHeatmap";
+
+    public static final ComponentDescriptor STATE_TIMELINE = chart(STATE_TIMELINE_ID,
+        "State Timeline", "Equipment state/alarm timeline with colour-coded event bars on lanes.",
+        SCHED, "stateTimeline");
+    public static final ComponentDescriptor GANTT = chart(GANTT_ID,
+        "Gantt Chart", "Task scheduling with bars, dependencies, milestones, and progress.",
+        SCHED, "ganttChart");
+    public static final ComponentDescriptor SCHEDULE_CALENDAR = chart(SCHEDULE_CALENDAR_ID,
+        "Schedule Calendar", "Annual calendar heatmap for shift schedules and resource allocation.",
+        SCHED, "scheduleCalendar");
+    public static final ComponentDescriptor SHIFT_CALENDAR = chart(SHIFT_CALENDAR_ID,
+        "Shift Calendar", "Crew shift patterns with rotating assignments and day/week views.",
+        SCHED, "shiftCalendar");
+    public static final ComponentDescriptor DOWNTIME_TRACKER = chart(DOWNTIME_TRACKER_ID,
+        "Downtime Tracker", "Categorised downtime events on equipment timeline with reason codes.",
+        SCHED, "downtimeTracker");
+    public static final ComponentDescriptor BATCH_TIMELINE = chart(BATCH_TIMELINE_ID,
+        "Batch Timeline", "Batch recipe phase durations (S88 model) on timeline lanes.",
+        SCHED, "batchTimeline");
+    public static final ComponentDescriptor RESOURCE_HEATMAP = chart(RESOURCE_HEATMAP_ID,
+        "Resource Heatmap", "Equipment utilisation percentage as heatmap (resource x time).",
+        SCHED, "resourceHeatmap");
 
     // ── Master lists ────────────────────────────────────────────────────
 
@@ -224,7 +264,9 @@ public class ComponentDefs {
         MAP, LINES,
         BAR3D, LINE3D, SCATTER3D, SURFACE, MAP3D, GLOBE, LINES3D, POLYGONS3D,
         SCATTERGL, GRAPHGL, FLOWGL,
-        TREND, OEE, PARETO
+        TREND, OEE, PARETO, SPC,
+        STATE_TIMELINE, GANTT, SCHEDULE_CALENDAR, SHIFT_CALENDAR,
+        DOWNTIME_TRACKER, BATCH_TIMELINE, RESOURCE_HEATMAP
     );
 
     public static final List<String> ALL_IDS = List.of(
@@ -238,6 +280,8 @@ public class ComponentDefs {
         MAP_ID, LINES_ID,
         BAR3D_ID, LINE3D_ID, SCATTER3D_ID, SURFACE_ID, MAP3D_ID, GLOBE_ID, LINES3D_ID, POLYGONS3D_ID,
         SCATTERGL_ID, GRAPHGL_ID, FLOWGL_ID,
-        TREND_ID, OEE_ID, PARETO_ID
+        TREND_ID, OEE_ID, PARETO_ID, SPC_ID,
+        STATE_TIMELINE_ID, GANTT_ID, SCHEDULE_CALENDAR_ID, SHIFT_CALENDAR_ID,
+        DOWNTIME_TRACKER_ID, BATCH_TIMELINE_ID, RESOURCE_HEATMAP_ID
     );
 }

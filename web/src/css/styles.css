@@ -37,7 +37,15 @@
 .open-echarts-flowgl,
 .open-industrial-trend,
 .open-industrial-oee,
-.open-industrial-pareto {
+.open-industrial-pareto,
+.open-industrial-spc,
+.open-industrial-state-timeline,
+.open-industrial-gantt,
+.open-industrial-schedule-calendar,
+.open-industrial-shift-calendar,
+.open-industrial-downtime,
+.open-industrial-batch-timeline,
+.open-industrial-resource-heatmap {
     width: 100%;
     height: 100%;
     min-height: 100px;

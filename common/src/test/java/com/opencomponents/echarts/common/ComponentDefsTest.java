@@ -9,15 +9,14 @@ import java.util.HashSet;
 class ComponentDefsTest {
 
     @Test
-    void allListHas40Components() {
-        assertEquals(40, ComponentDefs.ALL.size(),
-            "Should register exactly 40 components (1 universal + 26 2D + 8 3D + 3 GL + 3 industrial) but got "
-            + ComponentDefs.ALL.size());
+    void allListHas48Components() {
+        assertEquals(48, ComponentDefs.ALL.size(),
+            "Should register 48 components but got " + ComponentDefs.ALL.size());
     }
 
     @Test
-    void allIdsHas40Entries() {
-        assertEquals(40, ComponentDefs.ALL_IDS.size());
+    void allIdsHas48Entries() {
+        assertEquals(48, ComponentDefs.ALL_IDS.size());
     }
 
     @Test
@@ -97,5 +96,29 @@ class ComponentDefsTest {
             .contains("3D"));
         assertTrue(ComponentDefs.SCATTERGL.paletteCategory()
             .contains("3D"));
+    }
+
+    @Test
+    void schedulingComponentsUseSchedulingCategory() {
+        assertTrue(ComponentDefs.GANTT.paletteCategory()
+            .contains("Scheduling"));
+        assertTrue(ComponentDefs.STATE_TIMELINE.paletteCategory()
+            .contains("Scheduling"));
+        assertTrue(ComponentDefs.SCHEDULE_CALENDAR.paletteCategory()
+            .contains("Scheduling"));
+        assertTrue(ComponentDefs.SHIFT_CALENDAR.paletteCategory()
+            .contains("Scheduling"));
+        assertTrue(ComponentDefs.DOWNTIME_TRACKER.paletteCategory()
+            .contains("Scheduling"));
+        assertTrue(ComponentDefs.BATCH_TIMELINE.paletteCategory()
+            .contains("Scheduling"));
+        assertTrue(ComponentDefs.RESOURCE_HEATMAP.paletteCategory()
+            .contains("Scheduling"));
+    }
+
+    @Test
+    void spcComponentUsesIndustrialCategory() {
+        assertTrue(ComponentDefs.SPC.paletteCategory()
+            .contains("Industrial"));
     }
 }

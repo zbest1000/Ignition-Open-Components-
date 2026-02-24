@@ -23,4 +23,13 @@ dependencies {
     implementation(libs.ignition.perspective.gateway)
     implementation(libs.ignition.perspective.common)
     compileOnly(libs.ia.gson)
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    testImplementation(libs.ignition.common)
+    testImplementation(libs.ignition.gateway.api)
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

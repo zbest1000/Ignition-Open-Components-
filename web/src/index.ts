@@ -58,10 +58,20 @@ import { ScatterGLChartMeta }      from './components/ScatterGLChart';
 import { GraphGLChartMeta }        from './components/GraphGLChart';
 import { FlowGLChartMeta }         from './components/FlowGLChart';
 
-// Industrial
+// Industrial — core
 import { IndustrialTrendMeta }     from './components/IndustrialTrend';
 import { IndustrialOEEMeta }       from './components/IndustrialOEE';
 import { IndustrialParetoMeta }    from './components/IndustrialPareto';
+import { IndustrialSPCMeta }       from './components/IndustrialSPC';
+
+// Industrial — scheduling & timelines
+import { IndustrialStateTimelineMeta }     from './components/IndustrialStateTimeline';
+import { IndustrialGanttMeta }             from './components/IndustrialGantt';
+import { IndustrialScheduleCalendarMeta }  from './components/IndustrialScheduleCalendar';
+import { IndustrialShiftCalendarMeta }     from './components/IndustrialShiftCalendar';
+import { IndustrialDowntimeTrackerMeta }   from './components/IndustrialDowntimeTracker';
+import { IndustrialBatchTimelineMeta }     from './components/IndustrialBatchTimeline';
+import { IndustrialResourceHeatmapMeta }   from './components/IndustrialResourceHeatmap';
 
 export { TEMPLATES } from './templates';
 export { BUILT_IN_THEMES } from './themes';
@@ -118,10 +128,19 @@ const components: Array<ComponentMeta> = [
     new ScatterGLChartMeta(),
     new GraphGLChartMeta(),
     new FlowGLChartMeta(),
-    // Industrial
+    // Industrial — core
     new IndustrialTrendMeta(),
     new IndustrialOEEMeta(),
     new IndustrialParetoMeta(),
+    new IndustrialSPCMeta(),
+    // Industrial — scheduling & timelines
+    new IndustrialStateTimelineMeta(),
+    new IndustrialGanttMeta(),
+    new IndustrialScheduleCalendarMeta(),
+    new IndustrialShiftCalendarMeta(),
+    new IndustrialDowntimeTrackerMeta(),
+    new IndustrialBatchTimelineMeta(),
+    new IndustrialResourceHeatmapMeta(),
 ];
 
 components.forEach((c: ComponentMeta) => ComponentRegistry.register(c));
