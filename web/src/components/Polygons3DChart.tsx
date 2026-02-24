@@ -16,7 +16,7 @@ export class Polygons3DChartMeta implements ComponentMeta {
     getDefaultSize(): SizeObject { return { width: 700, height: 500 }; }
     getPropsReducer(tree: PropertyTree): Polygons3DChartProps {
         return {
-            option:           tree.read("option", {}),
+            option:           tree.read("option", { title: { text: 'Polygons 3D', subtext: 'Requires geo3D coordinate system with polygon data', left: 'center' }, series: [] }),
             theme:            tree.readString("theme", ""),
             renderer:         tree.readString("renderer", "canvas") as 'canvas' | 'svg',
             autoResize:       tree.readBoolean("autoResize", true),

@@ -16,7 +16,7 @@ export class FlowGLChartMeta implements ComponentMeta {
     getDefaultSize(): SizeObject { return { width: 700, height: 500 }; }
     getPropsReducer(tree: PropertyTree): FlowGLChartProps {
         return {
-            option:           tree.read("option", {}),
+            option:           tree.read("option", { title: { text: 'Flow GL', subtext: 'Requires vector field data for flow visualization', left: 'center' }, series: [] }),
             theme:            tree.readString("theme", ""),
             renderer:         tree.readString("renderer", "canvas") as 'canvas' | 'svg',
             autoResize:       tree.readBoolean("autoResize", true),
