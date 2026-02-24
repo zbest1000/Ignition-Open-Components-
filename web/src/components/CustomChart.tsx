@@ -17,7 +17,13 @@ export class CustomChartMeta implements ComponentMeta {
     getDefaultSize(): SizeObject { return { width: 600, height: 400 }; }
     getPropsReducer(tree: PropertyTree): CustomChartProps {
         return {
-            option:           tree.read("option", {}),
+            option:           tree.read("option", {
+                title: { text: 'Custom Chart', subtext: 'Set sanitizeTooltip=false to use renderItem functions', left: 'center' },
+                tooltip: {},
+                xAxis: { type: 'category', data: ['A', 'B', 'C', 'D', 'E'] },
+                yAxis: { type: 'value' },
+                series: []
+            }),
             theme:            tree.readString("theme", ""),
             renderer:         tree.readString("renderer", "canvas") as 'canvas' | 'svg',
             autoResize:       tree.readBoolean("autoResize", true),

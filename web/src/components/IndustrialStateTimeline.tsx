@@ -20,10 +20,10 @@ export interface StateTimelineProps extends BaseEChartProps {
 }
 
 const DEFAULT_STATE_COLORS: Record<string, string> = {
-    'Running':  '#91cc75',
-    'Idle':     '#fac858',
-    'Alarm':    '#ee6666',
-    'Stopped':  '#999999',
+    'Running':     '#91cc75',
+    'Idle':        '#fac858',
+    'Alarm':       '#ee6666',
+    'Stopped':     '#999999',
     'Maintenance': '#73c0de',
 };
 
@@ -33,26 +33,36 @@ function buildOption(props: StateTimelineProps): object {
     const events = props.events || [];
     const colors = { ...DEFAULT_STATE_COLORS, ...props.stateColors };
     const lanes = [...new Set(events.map(e => e.lane))];
+    const states = [...new Set(events.map(e => e.state))];
 
-    const data = events.map(e => ({
-        name: e.state,
-        value: [lanes.indexOf(e.lane), e.start, e.end, e.state],
-        itemStyle: { color: e.color || colors[e.state] || '#5470c6' }
-    }));
+    const seriesMap: Record<string, any[]> = {};
+    for (const s of states) {
+        seriesMap[s] = new Array(lanes.length).fill(null).map(() => [0, 0]);
+    }
+
+    const allSeries: any[] = [];
+    for (const state of states) {
+        const durations = lanes.map(lane => {
+            const evts = events.filter(e => e.lane === lane && e.state === state);
+            return evts.reduce((sum, e) => sum + (e.end - e.start), 0);
+        });
+        allSeries.push({
+            name: state,
+            type: 'bar',
+            stack: 'timeline',
+            data: durations.map(d => Math.round(d / 60000)),
+            itemStyle: { color: colors[state] || '#5470c6' },
+        });
+    }
 
     return {
         title: { text: props.title || 'State Timeline', left: 'center' },
-        tooltip: {
-            trigger: 'item',
-        },
-        grid: { top: 60, bottom: 40, left: 120, right: 40 },
-        xAxis: { type: 'time', position: 'top' },
-        yAxis: { type: 'category', data: lanes, inverse: true },
-        series: [{
-            type: 'custom',
-            encode: { x: [1, 2], y: 0 },
-            data
-        }]
+        tooltip: { trigger: 'axis' },
+        legend: { data: states, bottom: 0 },
+        grid: { top: 60, bottom: 60, left: 120, right: 40 },
+        xAxis: { type: 'value', name: 'Minutes' },
+        yAxis: { type: 'category', data: lanes },
+        series: allSeries,
     };
 }
 

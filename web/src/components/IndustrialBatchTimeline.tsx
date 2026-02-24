@@ -20,13 +20,13 @@ export interface BatchTimelineProps extends BaseEChartProps {
 }
 
 const DEFAULT_PHASE_COLORS: Record<string, string> = {
-    'Charge':     '#5470c6',
-    'Heat':       '#ee6666',
-    'React':      '#fac858',
-    'Cool':       '#73c0de',
-    'Transfer':   '#91cc75',
-    'CIP':        '#999999',
-    'Hold':       '#9a60b4',
+    'Charge':   '#5470c6',
+    'Heat':     '#ee6666',
+    'React':    '#fac858',
+    'Cool':     '#73c0de',
+    'Transfer': '#91cc75',
+    'CIP':      '#999999',
+    'Hold':     '#9a60b4',
 };
 
 function buildOption(props: BatchTimelineProps): object {
@@ -35,28 +35,31 @@ function buildOption(props: BatchTimelineProps): object {
     const phases = props.phases || [];
     const colors = { ...DEFAULT_PHASE_COLORS, ...props.phaseColors };
     const batches = [...new Set(phases.map(p => p.batch))];
+    const phaseTypes = [...new Set(phases.map(p => p.phase))];
 
-    const data = phases.map(p => ({
-        name: p.phase,
-        value: [batches.indexOf(p.batch), p.start, p.end, p.phase, p.status || 'Complete'],
-        itemStyle: { color: colors[p.phase] || '#5470c6' }
-    }));
-
-    const uniquePhases = [...new Set(phases.map(p => p.phase))];
+    const allSeries: any[] = phaseTypes.map(pt => {
+        const durations = batches.map(batch => {
+            const matching = phases.filter(p => p.batch === batch && p.phase === pt);
+            return matching.reduce((sum, p) => sum + Math.round((p.end - p.start) / 60000), 0);
+        });
+        return {
+            name: pt,
+            type: 'bar',
+            stack: 'batch',
+            data: durations,
+            itemStyle: { color: colors[pt] || '#5470c6' },
+        };
+    });
 
     return {
         title: { text: props.title || 'Batch Timeline', left: 'center' },
-        tooltip: { trigger: 'item' },
-        legend: { data: uniquePhases, bottom: 0 },
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        legend: { data: phaseTypes, bottom: 0 },
         grid: { top: 60, bottom: 60, left: 120, right: 40 },
-        xAxis: { type: 'time', position: 'top' },
+        xAxis: { type: 'value', name: 'Minutes' },
         yAxis: { type: 'category', data: batches, inverse: true },
         dataZoom: [{ type: 'inside' }],
-        series: [{
-            type: 'custom',
-            encode: { x: [1, 2], y: 0 },
-            data,
-        }]
+        series: allSeries,
     };
 }
 

@@ -15,14 +15,8 @@ interface GanttTask {
     milestone?: boolean;
 }
 
-interface GanttDependency {
-    from: string;
-    to: string;
-}
-
 export interface GanttProps extends BaseEChartProps {
     tasks?: GanttTask[];
-    dependencies?: GanttDependency[];
     title?: string;
     showProgress?: boolean;
 }
@@ -40,37 +34,58 @@ function buildOption(props: GanttProps): object {
     const tasks = props.tasks || [];
     const taskNames = tasks.map(t => t.name);
 
-    const data = tasks.map((t, _i) => ({
-        name: t.name,
-        value: [taskNames.indexOf(t.name), t.start, t.end, t.progress ?? 100],
-        itemStyle: {
-            color: t.color || CATEGORY_COLORS[t.category || ''] || '#5470c6',
-            opacity: t.milestone ? 1 : 0.85,
-        },
-    }));
+    const barData = tasks.map(t => {
+        const duration = (t.end - t.start) / 3600000;
+        return {
+            value: duration,
+            itemStyle: {
+                color: t.color || CATEGORY_COLORS[t.category || ''] || '#5470c6',
+            },
+        };
+    });
 
-    const milestoneData = tasks
+    const offsetData = tasks.map(t => {
+        const allStarts = tasks.map(x => x.start);
+        const earliest = Math.min(...allStarts);
+        return (t.start - earliest) / 3600000;
+    });
+
+    const milestoneMarkers = tasks
         .filter(t => t.milestone)
         .map(t => ({
-            coord: [t.start, taskNames.indexOf(t.name)],
+            name: t.name + ' (milestone)',
+            xAxis: ((t.start - Math.min(...tasks.map(x => x.start))) / 3600000),
+            yAxis: t.name,
             symbol: 'diamond',
             symbolSize: 14,
             itemStyle: { color: '#ee6666' },
+            label: { show: false },
         }));
 
     return {
         title: { text: props.title || 'Gantt Chart', left: 'center' },
-        tooltip: { trigger: 'item' },
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
         grid: { top: 60, bottom: 40, left: 160, right: 40 },
-        xAxis: { type: 'time', position: 'top' },
+        xAxis: { type: 'value', name: 'Hours', min: 0 },
         yAxis: { type: 'category', data: taskNames, inverse: true },
-        dataZoom: [{ type: 'inside' }, { type: 'slider' }],
-        series: [{
-            type: 'custom',
-            encode: { x: [1, 2], y: 0 },
-            data,
-            markPoint: milestoneData.length > 0 ? { data: milestoneData } : undefined,
-        }]
+        series: [
+            {
+                name: 'Offset',
+                type: 'bar',
+                stack: 'gantt',
+                data: offsetData,
+                itemStyle: { color: 'transparent' },
+                emphasis: { itemStyle: { color: 'transparent' } },
+            },
+            {
+                name: 'Duration',
+                type: 'bar',
+                stack: 'gantt',
+                data: barData,
+                markPoint: milestoneMarkers.length > 0 ? { data: milestoneMarkers } : undefined,
+            }
+        ],
+        dataZoom: [{ type: 'inside' }],
     };
 }
 
@@ -104,7 +119,6 @@ export class IndustrialGanttMeta implements ComponentMeta {
                 { name: 'Testing',       start: now + 15 * day, end: now + 18 * day, category: 'Review' },
                 { name: 'Commissioning', start: now + 18 * day, end: now + 18 * day, category: 'Review', milestone: true },
             ]),
-            dependencies:    tree.read("dependencies", []),
             title:           tree.readString("title", ""),
             showProgress:    tree.readBoolean("showProgress", true),
         };

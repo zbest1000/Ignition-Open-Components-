@@ -17,7 +17,11 @@ export class MapChartMeta implements ComponentMeta {
     getDefaultSize(): SizeObject { return { width: 700, height: 500 }; }
     getPropsReducer(tree: PropertyTree): MapChartProps {
         return {
-            option:           tree.read("option", {}),
+            option:           tree.read("option", {
+                title: { text: 'Map Chart', subtext: 'Register GeoJSON via echarts.registerMap() before use', left: 'center' },
+                tooltip: { trigger: 'item' },
+                series: []
+            }),
             theme:            tree.readString("theme", ""),
             renderer:         tree.readString("renderer", "canvas") as 'canvas' | 'svg',
             autoResize:       tree.readBoolean("autoResize", true),

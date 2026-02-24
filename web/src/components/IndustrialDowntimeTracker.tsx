@@ -35,32 +35,31 @@ function buildOption(props: DowntimeTrackerProps): object {
     const events = props.events || [];
     const colors = { ...DEFAULT_CATEGORY_COLORS, ...props.categoryColors };
     const equipment = [...new Set(events.map(e => e.equipment))];
-
-    const data = events.map(e => ({
-        name: e.category + (e.reason ? ': ' + e.reason : ''),
-        value: [equipment.indexOf(e.equipment), e.start, e.end, e.category],
-        itemStyle: { color: colors[e.category] || '#5470c6' }
-    }));
-
     const categories = [...new Set(events.map(e => e.category))];
-    const legendData = categories.map(c => ({
-        name: c,
-        itemStyle: { color: colors[c] || '#5470c6' }
-    }));
+
+    const allSeries: any[] = categories.map(cat => {
+        const durations = equipment.map(eq => {
+            const evts = events.filter(e => e.equipment === eq && e.category === cat);
+            return evts.reduce((sum, e) => sum + Math.round((e.end - e.start) / 60000), 0);
+        });
+        return {
+            name: cat,
+            type: 'bar',
+            stack: 'downtime',
+            data: durations,
+            itemStyle: { color: colors[cat] || '#5470c6' },
+        };
+    });
 
     return {
         title: { text: props.title || 'Downtime Tracker', left: 'center' },
-        tooltip: { trigger: 'item' },
-        legend: { data: legendData, bottom: 0 },
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        legend: { data: categories, bottom: 0 },
         grid: { top: 60, bottom: 60, left: 140, right: 40 },
-        xAxis: { type: 'time', position: 'top' },
-        yAxis: { type: 'category', data: equipment, inverse: true },
-        dataZoom: [{ type: 'inside' }, { type: 'slider' }],
-        series: [{
-            type: 'custom',
-            encode: { x: [1, 2], y: 0 },
-            data,
-        }]
+        xAxis: { type: 'value', name: 'Minutes' },
+        yAxis: { type: 'category', data: equipment },
+        dataZoom: [{ type: 'inside' }],
+        series: allSeries,
     };
 }
 
@@ -87,7 +86,7 @@ export class IndustrialDowntimeTrackerMeta implements ComponentMeta {
             sanitizeTooltip: tree.readBoolean("sanitizeTooltip", true),
             events:          tree.read("events", [
                 { equipment: 'Line 1', start: now - 7200000, end: now - 5400000, category: 'Mechanical', reason: 'Belt failure' },
-                { equipment: 'Line 1', start: now - 3600000, end: now - 2700000, category: 'Changeover', reason: 'Product A → B' },
+                { equipment: 'Line 1', start: now - 3600000, end: now - 2700000, category: 'Changeover', reason: 'Product A to B' },
                 { equipment: 'Line 2', start: now - 6000000, end: now - 4200000, category: 'Electrical', reason: 'Drive fault' },
                 { equipment: 'Line 3', start: now - 5400000, end: now - 5100000, category: 'Operator', reason: 'Wrong setup' },
             ]),

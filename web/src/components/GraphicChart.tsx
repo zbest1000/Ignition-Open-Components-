@@ -17,7 +17,30 @@ export class GraphicChartMeta implements ComponentMeta {
     getDefaultSize(): SizeObject { return { width: 600, height: 400 }; }
     getPropsReducer(tree: PropertyTree): GraphicChartProps {
         return {
-            option:           tree.read("option", {}),
+            option:           tree.read("option", {
+                graphic: [
+                    {
+                        type: 'group',
+                        left: 'center',
+                        top: 'center',
+                        children: [
+                            {
+                                type: 'rect',
+                                shape: { width: 200, height: 40, r: 5 },
+                                style: { fill: '#5470c6', stroke: '#333', lineWidth: 1 },
+                                left: 'center',
+                                top: 0
+                            },
+                            {
+                                type: 'text',
+                                style: { text: 'Graphic Overlay', fill: '#fff', fontSize: 16, fontWeight: 'bold', textAlign: 'center' },
+                                left: 'center',
+                                top: 10
+                            }
+                        ]
+                    }
+                ]
+            }),
             theme:            tree.readString("theme", ""),
             renderer:         tree.readString("renderer", "canvas") as 'canvas' | 'svg',
             autoResize:       tree.readBoolean("autoResize", true),
