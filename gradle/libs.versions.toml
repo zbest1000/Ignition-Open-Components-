@@ -9,6 +9,6 @@
     ignition-perspective-designer = { module = "com.inductiveautomation.ignitionsdk:perspective-designer", version.ref = "ignition" }
     ignition-perspective-gateway = { module = "com.inductiveautomation.ignitionsdk:perspective-gateway", version.ref = "ignition" }
 
-    google-guava = { module = "com.google.guava:guava", version = "23.3-jre" }
+    google-guava = { module = "com.google.guava:guava", version = "33.5.0-jre" }
     google-jsr305 = { module = "com.google.code.findbugs:jsr305", version = "3.0.2" }
     ia-gson = { module = "com.inductiveautomation.ignition:ia-gson", version = "2.10.1" }
