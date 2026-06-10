@@ -1,6 +1,7 @@
 import {
-    ComponentMeta, PComponent, PropertyTree, SizeObject
+    ComponentMeta, PComponent, PropertyTree
 } from '@inductiveautomation/perspective-client';
+import { SizeObject } from '@inductiveautomation/perspective-common';
 import { AbstractEChartComponent, BaseEChartProps } from './AbstractEChartComponent';
 
 export const COMPONENT_TYPE = "open.echarts.GraphGLChart";

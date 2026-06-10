@@ -21,6 +21,7 @@
     "pretty": true,
     "preserveConstEnums": true,
     "sourceMap": true,
+    "skipLibCheck": true,
     "strictNullChecks": true,
     "target": "es6",
     "lib": ["es6", "dom", "es7", "es2017"],
