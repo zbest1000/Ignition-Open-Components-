@@ -1,4 +1,4 @@
-import { sanitizeOption, serializeEventParams } from '../utils/optionSanitizer';
+import { sanitizeOption, serializeEventParams, MAX_ARRAY_ITEMS } from '../utils/optionSanitizer';
 
 describe('sanitizeOption', () => {
     it('passes through plain objects unchanged', () => {
@@ -54,11 +54,19 @@ describe('sanitizeOption', () => {
         expect(result.self).toBeUndefined();
     });
 
-    it('caps large arrays', () => {
-        const bigArray = new Array(6000).fill(1);
+    it('preserves realistically large data arrays (no truncation)', () => {
+        // A day of 1-second samples ≈ 86,400 points — must not be truncated.
+        const bigArray = new Array(86_400).fill(1);
         const option = { series: [{ data: bigArray }] };
         const result = sanitizeOption(option);
-        expect(result.series[0].data.length).toBe(5000);
+        expect(result.series[0].data.length).toBe(86_400);
+    });
+
+    it('caps only pathologically large arrays at MAX_ARRAY_ITEMS', () => {
+        const huge = new Array(MAX_ARRAY_ITEMS + 10).fill(1);
+        const option = { series: [{ data: huge }] };
+        const result = sanitizeOption(option);
+        expect(result.series[0].data.length).toBe(MAX_ARRAY_ITEMS);
     });
 
     it('caps long strings', () => {

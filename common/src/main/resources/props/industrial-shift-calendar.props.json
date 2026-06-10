@@ -1,0 +1,62 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "patterns": {
+      "type": "array",
+      "description": "Shift patterns: { name, color, days (array of weekday indices 0=Sun..6=Sat) }. Empty uses built-in demo patterns.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name":  { "type": "string" },
+          "color": { "type": "string" },
+          "days":  { "type": "array", "items": { "type": "integer" } }
+        }
+      },
+      "default": []
+    },
+    "crews": {
+      "type": "array",
+      "description": "Crew assignments: { crew, pattern, startDate (YYYY-MM-DD), rotationDays? }. Empty uses built-in demo crews.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "crew":         { "type": "string" },
+          "pattern":      { "type": "string" },
+          "startDate":    { "type": "string" },
+          "rotationDays": { "type": "number" }
+        }
+      },
+      "default": []
+    },
+    "dateRange": {
+      "type": "array",
+      "description": "Inclusive [startDate, endDate] as YYYY-MM-DD strings.",
+      "items": { "type": "string" },
+      "default": ["2025-01-01", "2025-01-31"]
+    },
+    "title": {
+      "type": "string",
+      "description": "Chart title. Leave blank for the default title.",
+      "default": ""
+    },
+    "option": {
+      "type": "object",
+      "description": "Advanced override. If non-empty, this ECharts option is used verbatim and the domain props above are ignored.",
+      "default": {}
+    },
+    "theme": { "type": "string", "default": "" },
+    "renderer": { "type": "string", "enum": ["canvas", "svg"], "default": "canvas" },
+    "autoResize": { "type": "boolean", "default": true },
+    "resizeDebounceMs": { "type": "integer", "default": 150 },
+    "notMerge": { "type": "boolean", "default": false },
+    "lazyUpdate": { "type": "boolean", "default": true },
+    "showLoading": { "type": "boolean", "default": false },
+    "loadingOptions": { "type": "object", "default": {} },
+    "sanitizeTooltip": { "type": "boolean", "default": true },
+    "style": {
+      "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
+      "default": { "classes": "" }
+    }
+  }
+}

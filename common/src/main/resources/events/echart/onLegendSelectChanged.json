@@ -1,0 +1,36 @@
+{
+  "name": "onLegendSelectChanged",
+  "description": "Fired when a legend item's selected state changes.",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "componentType": {
+        "type": "string",
+        "description": "ECharts component type emitting the event (e.g. 'legend')."
+      },
+      "seriesType": {
+        "type": "string",
+        "description": "Series type, when applicable."
+      },
+      "seriesIndex": {
+        "type": "integer",
+        "description": "Index of the series, when applicable."
+      },
+      "seriesName": {
+        "type": "string",
+        "description": "Series name, when applicable."
+      },
+      "name": {
+        "type": "string",
+        "description": "Name of the legend item whose selection changed."
+      },
+      "dataIndex": {
+        "type": "integer",
+        "description": "Index of the data item, when applicable."
+      },
+      "value": {
+        "description": "Associated value, when applicable."
+      }
+    }
+  }
+}

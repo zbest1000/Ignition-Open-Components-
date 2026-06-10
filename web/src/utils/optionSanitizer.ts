@@ -7,7 +7,13 @@
  */
 
 const MAX_DEPTH = 20;
-const MAX_ARRAY_ITEMS = 5000;
+/**
+ * Upper bound on array length, as a denial-of-service guard against
+ * pathological structures — NOT a limit on legitimate chart data. It is set
+ * far above realistic series sizes (e.g. a day of 1-second samples ≈ 86,400
+ * points) so industrial datasets are never silently truncated.
+ */
+export const MAX_ARRAY_ITEMS = 1_000_000;
 const MAX_STRING_LENGTH = 50_000;
 
 /**

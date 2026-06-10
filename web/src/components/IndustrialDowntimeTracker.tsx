@@ -72,7 +72,6 @@ export class IndustrialDowntimeTrackerMeta implements ComponentMeta {
     getViewComponent(): PComponent { return IndustrialDowntimeTrackerComponent; }
     getDefaultSize(): SizeObject { return { width: 900, height: 350 }; }
     getPropsReducer(tree: PropertyTree): DowntimeTrackerProps {
-        const now = Date.now();
         const base: DowntimeTrackerProps = {
             option:          tree.read("option", {}),
             theme:           tree.readString("theme", ""),
@@ -84,12 +83,7 @@ export class IndustrialDowntimeTrackerMeta implements ComponentMeta {
             showLoading:     tree.readBoolean("showLoading", false),
             loadingOptions:  tree.read("loadingOptions", {}),
             sanitizeTooltip: tree.readBoolean("sanitizeTooltip", true),
-            events:          tree.read("events", [
-                { equipment: 'Line 1', start: now - 7200000, end: now - 5400000, category: 'Mechanical', reason: 'Belt failure' },
-                { equipment: 'Line 1', start: now - 3600000, end: now - 2700000, category: 'Changeover', reason: 'Product A to B' },
-                { equipment: 'Line 2', start: now - 6000000, end: now - 4200000, category: 'Electrical', reason: 'Drive fault' },
-                { equipment: 'Line 3', start: now - 5400000, end: now - 5100000, category: 'Operator', reason: 'Wrong setup' },
-            ]),
+            events:          tree.read("events", []),
             categoryColors:  tree.read("categoryColors", {}),
             title:           tree.readString("title", ""),
             showSummary:     tree.readBoolean("showSummary", true),

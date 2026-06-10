@@ -75,7 +75,6 @@ export class IndustrialStateTimelineMeta implements ComponentMeta {
     getViewComponent(): PComponent { return IndustrialStateTimelineComponent; }
     getDefaultSize(): SizeObject { return { width: 900, height: 300 }; }
     getPropsReducer(tree: PropertyTree): StateTimelineProps {
-        const now = Date.now();
         const base: StateTimelineProps = {
             option:          tree.read("option", {}),
             theme:           tree.readString("theme", ""),
@@ -87,16 +86,7 @@ export class IndustrialStateTimelineMeta implements ComponentMeta {
             showLoading:     tree.readBoolean("showLoading", false),
             loadingOptions:  tree.read("loadingOptions", {}),
             sanitizeTooltip: tree.readBoolean("sanitizeTooltip", true),
-            events:          tree.read("events", [
-                { lane: 'Reactor A', start: now - 7200000, end: now - 5400000, state: 'Running' },
-                { lane: 'Reactor A', start: now - 5400000, end: now - 3600000, state: 'Alarm' },
-                { lane: 'Reactor A', start: now - 3600000, end: now, state: 'Running' },
-                { lane: 'Pump B', start: now - 7200000, end: now - 6000000, state: 'Running' },
-                { lane: 'Pump B', start: now - 6000000, end: now - 4800000, state: 'Maintenance' },
-                { lane: 'Pump B', start: now - 4800000, end: now, state: 'Running' },
-                { lane: 'Conveyor C', start: now - 7200000, end: now - 1800000, state: 'Running' },
-                { lane: 'Conveyor C', start: now - 1800000, end: now, state: 'Idle' },
-            ]),
+            events:          tree.read("events", []),
             stateColors:     tree.read("stateColors", {}),
             title:           tree.readString("title", ""),
         };

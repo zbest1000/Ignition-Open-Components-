@@ -4,6 +4,7 @@ import com.inductiveautomation.ignition.common.gson.JsonArray;
 import com.inductiveautomation.ignition.common.gson.JsonObject;
 import com.inductiveautomation.ignition.common.gson.JsonParser;
 import com.inductiveautomation.ignition.common.util.LoggerEx;
+import com.inductiveautomation.ignition.gateway.dataroutes.HttpMethod;
 import com.inductiveautomation.ignition.gateway.dataroutes.RequestContext;
 import com.inductiveautomation.ignition.gateway.dataroutes.RouteGroup;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,9 +14,9 @@ import jakarta.servlet.http.HttpServletResponse;
  * at {@code /system/data/open-echarts/themes}.
  *
  * <ul>
- *   <li>GET  /themes          — list all theme names</li>
- *   <li>GET  /themes/:name    — load theme JSON by name</li>
- *   <li>POST /themes/:name    — save theme (body = theme JSON)</li>
+ *   <li>GET  /themes              — list all theme names</li>
+ *   <li>GET  /themes/:name        — load theme JSON by name</li>
+ *   <li>POST /themes/:name/save   — save theme (body = theme JSON)</li>
  *   <li>POST /themes/:name/delete — delete theme</li>
  * </ul>
  */
@@ -33,21 +34,25 @@ public class ThemeEndpoints {
         routes.newRoute("/themes")
             .type(RouteGroup.TYPE_JSON)
             .handler(this::listThemes)
+            .method(HttpMethod.GET)
             .mount();
 
         routes.newRoute("/themes/:name")
             .type(RouteGroup.TYPE_JSON)
             .handler(this::getTheme)
+            .method(HttpMethod.GET)
             .mount();
 
         routes.newRoute("/themes/:name/save")
             .type(RouteGroup.TYPE_JSON)
             .handler(this::saveTheme)
+            .method(HttpMethod.POST)
             .mount();
 
         routes.newRoute("/themes/:name/delete")
             .type(RouteGroup.TYPE_JSON)
             .handler(this::deleteTheme)
+            .method(HttpMethod.POST)
             .mount();
     }
 
@@ -61,6 +66,12 @@ public class ThemeEndpoints {
 
     private JsonObject getTheme(RequestContext req, HttpServletResponse resp) {
         String name = req.getParameter("name");
+        if (!ThemeRepository.isValidName(name)) {
+            resp.setStatus(400);
+            JsonObject err = new JsonObject();
+            err.addProperty("error", "Invalid theme name: " + name);
+            return err;
+        }
         var json = repo.load(name);
         if (json.isEmpty()) {
             resp.setStatus(404);
@@ -81,6 +92,11 @@ public class ThemeEndpoints {
     private JsonObject saveTheme(RequestContext req, HttpServletResponse resp) {
         String name = req.getParameter("name");
         JsonObject result = new JsonObject();
+        if (!ThemeRepository.isValidName(name)) {
+            resp.setStatus(400);
+            result.addProperty("error", "Invalid theme name: " + name);
+            return result;
+        }
         String body;
         try {
             body = req.readBody();
@@ -118,6 +134,11 @@ public class ThemeEndpoints {
     private JsonObject deleteTheme(RequestContext req, HttpServletResponse resp) {
         String name = req.getParameter("name");
         JsonObject result = new JsonObject();
+        if (!ThemeRepository.isValidName(name)) {
+            resp.setStatus(400);
+            result.addProperty("error", "Invalid theme name: " + name);
+            return result;
+        }
         if (repo.delete(name)) {
             log.info("Theme deleted: " + name);
             result.addProperty("status", "deleted");

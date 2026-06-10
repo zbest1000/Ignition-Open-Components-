@@ -72,8 +72,6 @@ export class IndustrialBatchTimelineMeta implements ComponentMeta {
     getViewComponent(): PComponent { return IndustrialBatchTimelineComponent; }
     getDefaultSize(): SizeObject { return { width: 900, height: 350 }; }
     getPropsReducer(tree: PropertyTree): BatchTimelineProps {
-        const now = Date.now();
-        const hr = 3600000;
         const base: BatchTimelineProps = {
             option:          tree.read("option", {}),
             theme:           tree.readString("theme", ""),
@@ -85,16 +83,7 @@ export class IndustrialBatchTimelineMeta implements ComponentMeta {
             showLoading:     tree.readBoolean("showLoading", false),
             loadingOptions:  tree.read("loadingOptions", {}),
             sanitizeTooltip: tree.readBoolean("sanitizeTooltip", true),
-            phases:          tree.read("phases", [
-                { batch: 'Batch-001', phase: 'Charge',   start: now - 10*hr, end: now - 9*hr },
-                { batch: 'Batch-001', phase: 'Heat',     start: now - 9*hr,  end: now - 7*hr },
-                { batch: 'Batch-001', phase: 'React',    start: now - 7*hr,  end: now - 4*hr },
-                { batch: 'Batch-001', phase: 'Cool',     start: now - 4*hr,  end: now - 3*hr },
-                { batch: 'Batch-001', phase: 'Transfer', start: now - 3*hr,  end: now - 2.5*hr },
-                { batch: 'Batch-002', phase: 'Charge',   start: now - 6*hr,  end: now - 5*hr },
-                { batch: 'Batch-002', phase: 'Heat',     start: now - 5*hr,  end: now - 3*hr },
-                { batch: 'Batch-002', phase: 'React',    start: now - 3*hr,  end: now },
-            ]),
+            phases:          tree.read("phases", []),
             phaseColors:     tree.read("phaseColors", {}),
             title:           tree.readString("title", ""),
         };

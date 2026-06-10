@@ -20,8 +20,8 @@ dependencies {
 
     compileOnly(libs.ignition.common)
     compileOnly(libs.ignition.gateway.api)
-    implementation(libs.ignition.perspective.gateway)
-    implementation(libs.ignition.perspective.common)
+    compileOnly(libs.ignition.perspective.gateway)
+    compileOnly(libs.ignition.perspective.common)
     compileOnly(libs.ia.gson)
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")

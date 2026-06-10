@@ -98,8 +98,6 @@ export class IndustrialGanttMeta implements ComponentMeta {
     getViewComponent(): PComponent { return IndustrialGanttComponent; }
     getDefaultSize(): SizeObject { return { width: 900, height: 400 }; }
     getPropsReducer(tree: PropertyTree): GanttProps {
-        const now = Date.now();
-        const day = 86400000;
         const base: GanttProps = {
             option:          tree.read("option", {}),
             theme:           tree.readString("theme", ""),
@@ -111,14 +109,7 @@ export class IndustrialGanttMeta implements ComponentMeta {
             showLoading:     tree.readBoolean("showLoading", false),
             loadingOptions:  tree.read("loadingOptions", {}),
             sanitizeTooltip: tree.readBoolean("sanitizeTooltip", true),
-            tasks:           tree.read("tasks", [
-                { name: 'Requirements',  start: now, end: now + 3 * day, category: 'Planning' },
-                { name: 'Design',        start: now + 2 * day, end: now + 5 * day, category: 'Planning' },
-                { name: 'Fabrication',   start: now + 5 * day, end: now + 12 * day, category: 'Execution' },
-                { name: 'Assembly',      start: now + 10 * day, end: now + 15 * day, category: 'Execution' },
-                { name: 'Testing',       start: now + 15 * day, end: now + 18 * day, category: 'Review' },
-                { name: 'Commissioning', start: now + 18 * day, end: now + 18 * day, category: 'Review', milestone: true },
-            ]),
+            tasks:           tree.read("tasks", []),
             title:           tree.readString("title", ""),
             showProgress:    tree.readBoolean("showProgress", true),
         };

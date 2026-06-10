@@ -20,17 +20,25 @@ function copyToResources(compilation, callback) {
         fs.mkdirSync(generatedResourcesDir, { recursive: true });
     }
 
+    const errors = [];
     toCopy.forEach(file => {
-        if (fs.existsSync(file.from)) {
-            try {
-                fs.copyFileSync(file.from, file.to);
-            } catch (err) {
-                console.error(`Error copying ${file.from}: ${err.message}`);
-            }
-        } else {
-            console.warn(`Source file ${file.from} does not exist, skipping.`);
+        if (!fs.existsSync(file.from)) {
+            errors.push(`expected bundle output not found: ${file.from}`);
+            return;
+        }
+        try {
+            fs.copyFileSync(file.from, file.to);
+        } catch (err) {
+            errors.push(`failed to copy ${file.from} -> ${file.to}: ${err.message}`);
         }
     });
+
+    // Fail the build rather than silently shipping an empty mounted/ folder,
+    // which would cause the gateway to serve 404s for the JS/CSS bundle.
+    if (errors.length > 0) {
+        callback(new Error(`CopyToResourcesPlugin: ${errors.join('; ')}`));
+        return;
+    }
 
     callback();
 }
@@ -83,8 +91,6 @@ module.exports = {
     externals: {
         "react": "React",
         "react-dom": "ReactDOM",
-        "mobx": "mobx",
-        "mobx-react": "mobxReact",
         "@inductiveautomation/perspective-client": "PerspectiveClient"
     },
     optimization: {

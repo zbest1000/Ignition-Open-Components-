@@ -1,0 +1,59 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "phases": {
+      "type": "array",
+      "description": "Batch phases (S88): { batch, phase, start (epoch ms), end (epoch ms), status? }. Bind to your batch records.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "batch":  { "type": "string" },
+          "phase":  { "type": "string" },
+          "start":  { "type": "number" },
+          "end":    { "type": "number" },
+          "status": { "type": "string" }
+        }
+      },
+      "default": [
+        { "batch": "Batch-001", "phase": "Charge",   "start": 1699964000000, "end": 1699967600000 },
+        { "batch": "Batch-001", "phase": "Heat",     "start": 1699967600000, "end": 1699974800000 },
+        { "batch": "Batch-001", "phase": "React",    "start": 1699974800000, "end": 1699985600000 },
+        { "batch": "Batch-001", "phase": "Cool",     "start": 1699985600000, "end": 1699989200000 },
+        { "batch": "Batch-001", "phase": "Transfer", "start": 1699989200000, "end": 1699991000000 },
+        { "batch": "Batch-002", "phase": "Charge",   "start": 1699978400000, "end": 1699982000000 },
+        { "batch": "Batch-002", "phase": "Heat",     "start": 1699982000000, "end": 1699989200000 },
+        { "batch": "Batch-002", "phase": "React",    "start": 1699989200000, "end": 1700000000000 }
+      ]
+    },
+    "phaseColors": {
+      "type": "object",
+      "description": "Map of phase name to colour. Merged over the built-in defaults.",
+      "additionalProperties": { "type": "string" },
+      "default": {}
+    },
+    "title": {
+      "type": "string",
+      "description": "Chart title. Leave blank for the default title.",
+      "default": ""
+    },
+    "option": {
+      "type": "object",
+      "description": "Advanced override. If non-empty, this ECharts option is used verbatim and the domain props above are ignored.",
+      "default": {}
+    },
+    "theme": { "type": "string", "default": "" },
+    "renderer": { "type": "string", "enum": ["canvas", "svg"], "default": "canvas" },
+    "autoResize": { "type": "boolean", "default": true },
+    "resizeDebounceMs": { "type": "integer", "default": 150 },
+    "notMerge": { "type": "boolean", "default": false },
+    "lazyUpdate": { "type": "boolean", "default": true },
+    "showLoading": { "type": "boolean", "default": false },
+    "loadingOptions": { "type": "object", "default": {} },
+    "sanitizeTooltip": { "type": "boolean", "default": true },
+    "style": {
+      "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
+      "default": { "classes": "" }
+    }
+  }
+}

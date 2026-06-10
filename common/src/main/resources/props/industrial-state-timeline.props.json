@@ -1,0 +1,59 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "events": {
+      "type": "array",
+      "description": "State events as objects: { lane, start (epoch ms), end (epoch ms), state, color? }. Bind to your equipment-state history.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "lane":  { "type": "string" },
+          "start": { "type": "number" },
+          "end":   { "type": "number" },
+          "state": { "type": "string" },
+          "color": { "type": "string" }
+        }
+      },
+      "default": [
+        { "lane": "Reactor A",  "start": 1699992800000, "end": 1699994600000, "state": "Running" },
+        { "lane": "Reactor A",  "start": 1699994600000, "end": 1699996400000, "state": "Alarm" },
+        { "lane": "Reactor A",  "start": 1699996400000, "end": 1700000000000, "state": "Running" },
+        { "lane": "Pump B",     "start": 1699992800000, "end": 1699994000000, "state": "Running" },
+        { "lane": "Pump B",     "start": 1699994000000, "end": 1699995200000, "state": "Maintenance" },
+        { "lane": "Pump B",     "start": 1699995200000, "end": 1700000000000, "state": "Running" },
+        { "lane": "Conveyor C", "start": 1699992800000, "end": 1699998200000, "state": "Running" },
+        { "lane": "Conveyor C", "start": 1699998200000, "end": 1700000000000, "state": "Idle" }
+      ]
+    },
+    "stateColors": {
+      "type": "object",
+      "description": "Map of state name to colour, e.g. { \"Running\": \"#91cc75\" }. Merged over the built-in defaults.",
+      "additionalProperties": { "type": "string" },
+      "default": {}
+    },
+    "title": {
+      "type": "string",
+      "description": "Chart title. Leave blank for the default title.",
+      "default": ""
+    },
+    "option": {
+      "type": "object",
+      "description": "Advanced override. If non-empty, this ECharts option is used verbatim and the domain props above are ignored.",
+      "default": {}
+    },
+    "theme": { "type": "string", "default": "" },
+    "renderer": { "type": "string", "enum": ["canvas", "svg"], "default": "canvas" },
+    "autoResize": { "type": "boolean", "default": true },
+    "resizeDebounceMs": { "type": "integer", "default": 150 },
+    "notMerge": { "type": "boolean", "default": false },
+    "lazyUpdate": { "type": "boolean", "default": true },
+    "showLoading": { "type": "boolean", "default": false },
+    "loadingOptions": { "type": "object", "default": {} },
+    "sanitizeTooltip": { "type": "boolean", "default": true },
+    "style": {
+      "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
+      "default": { "classes": "" }
+    }
+  }
+}

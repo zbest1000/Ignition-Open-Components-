@@ -77,7 +77,23 @@ public class ThemeRepository {
         }
     }
 
-    private static String sanitizeName(String name) {
+    /**
+     * Normalises a theme name to a safe filename stem. Any character outside
+     * {@code [a-zA-Z0-9_-]} (including path separators and {@code ..}) is
+     * replaced with an underscore, so the result can never traverse outside
+     * the themes directory.
+     */
+    public static String sanitizeName(String name) {
         return name.replaceAll("[^a-zA-Z0-9_-]", "_");
+    }
+
+    /**
+     * A name is valid only if it is non-blank and already equal to its
+     * sanitised form. Rejecting (rather than silently rewriting) prevents two
+     * distinct inputs (e.g. {@code "a/b"} and {@code "a-b"}) from colliding to
+     * the same file and overwriting one another.
+     */
+    public static boolean isValidName(String name) {
+        return name != null && !name.isBlank() && name.equals(sanitizeName(name));
     }
 }

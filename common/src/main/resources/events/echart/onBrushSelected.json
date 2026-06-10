@@ -1,0 +1,36 @@
+{
+  "name": "onBrushSelected",
+  "description": "Fired when a brush selection changes. Provides series/data point information for the selection.",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "componentType": {
+        "type": "string",
+        "description": "ECharts component type emitting the event (e.g. 'brush')."
+      },
+      "seriesType": {
+        "type": "string",
+        "description": "Series type, when applicable."
+      },
+      "seriesIndex": {
+        "type": "integer",
+        "description": "Index of the series, when applicable."
+      },
+      "seriesName": {
+        "type": "string",
+        "description": "Series name, when applicable."
+      },
+      "name": {
+        "type": "string",
+        "description": "Associated name, when applicable."
+      },
+      "dataIndex": {
+        "type": "integer",
+        "description": "Index of the data item, when applicable."
+      },
+      "value": {
+        "description": "Associated value, when applicable."
+      }
+    }
+  }
+}

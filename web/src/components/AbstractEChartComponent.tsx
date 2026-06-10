@@ -218,11 +218,13 @@ export abstract class AbstractEChartComponent<
                 </div>
             );
         }
+        // The root element carries emit() (Perspective styling/events/selection);
+        // ECharts mounts on an inner child div. Per the Perspective SDK, a ref
+        // must not be placed on the emit() root element.
         return (
-            <div
-                {...this.props.emit({ classes: [this.getCssClass()] })}
-                ref={this.chartRef}
-            />
+            <div {...this.props.emit({ classes: [this.getCssClass()] })}>
+                <div ref={this.chartRef} className="open-echarts-mount" />
+            </div>
         );
     }
 }

@@ -55,7 +55,7 @@ Copy the `.modl` file to your Ignition gateway → Config → Modules → Instal
 
 ## Components
 
-### 40 Components — Complete ECharts + ECharts-GL Suite
+### 48 Components — Complete ECharts + ECharts-GL Suite
 
 Every chart type from the [ECharts examples gallery](https://echarts.apache.org/examples/en/index.html) and [ECharts-GL](https://github.com/ecomfe/echarts-gl) has its own focused component. All share the same runtime but each provides its own default option, palette entry, and default size.
 
@@ -148,6 +148,19 @@ Every chart type from the [ECharts examples gallery](https://echarts.apache.org/
 | **Industrial Trend** | `open.industrial.Trend` | Time-series PV/SP with alarm limits |
 | **OEE Summary** | `open.industrial.OEE` | Multi-ring OEE gauge (A/P/Q) |
 | **Pareto Chart** | `open.industrial.Pareto` | Pareto bar + cumulative % line |
+| **SPC Chart** | `open.industrial.SPCChart` | Individuals & Moving Range with control limits + run rules |
+
+#### Industrial — Scheduling & Timelines (Open Components / Scheduling)
+
+| Component | ID | Purpose |
+|-----------|-----|---------|
+| **State Timeline** | `open.industrial.StateTimeline` | Equipment state/alarm bars on lanes |
+| **Gantt Chart** | `open.industrial.Gantt` | Task scheduling with milestones and progress |
+| **Schedule Calendar** | `open.industrial.ScheduleCalendar` | Annual calendar heatmap of shift schedules |
+| **Shift Calendar** | `open.industrial.ShiftCalendar` | Crew shift patterns and rotations |
+| **Downtime Tracker** | `open.industrial.DowntimeTracker` | Categorised downtime events with reason codes |
+| **Batch Timeline** | `open.industrial.BatchTimeline` | S88 batch phase durations on timeline lanes |
+| **Resource Heatmap** | `open.industrial.ResourceHeatmap` | Equipment utilisation (resource × time) |
 
 ### Shared Properties (all components)
 
@@ -187,6 +200,15 @@ Both include semantic alarm/warning/OK colour ranges in gauge defaults.
 
 This repository is **MIT**. Apache ECharts is **Apache-2.0** (bundled with attribution).
 
+## Air-Gapped Deployment
+
+All runtime assets (ECharts, ECharts-GL, component JS/CSS, themes, templates) are bundled in the
+`.modl` with no CDN or runtime network calls, so the module runs on fully isolated gateways. See
+[`docs/AIR_GAPPED_DEPLOYMENT.md`](docs/AIR_GAPPED_DEPLOYMENT.md) for offline install steps, the
+Map/GeoJSON caveat, and how to build on an offline host.
+
 ## Documentation
 
 See [`docs/PROJECT_PLAN.md`](docs/PROJECT_PLAN.md) for the full implementation plan, feature specification, and comprehensive component resource library.
+
+See [`docs/AIR_GAPPED_DEPLOYMENT.md`](docs/AIR_GAPPED_DEPLOYMENT.md) for air-gapped runtime and build guidance.

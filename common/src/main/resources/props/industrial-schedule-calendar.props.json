@@ -1,0 +1,60 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "year": {
+      "type": "string",
+      "description": "Calendar year to render (e.g. \"2025\"). Leave blank to use the current year.",
+      "default": ""
+    },
+    "entries": {
+      "type": "array",
+      "description": "Schedule entries: { date (YYYY-MM-DD), shift, crew?, value?, color? }. Bind to your shift schedule.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date":  { "type": "string" },
+          "shift": { "type": "string" },
+          "crew":  { "type": "string" },
+          "value": { "type": "number" },
+          "color": { "type": "string" }
+        }
+      },
+      "default": []
+    },
+    "shiftColors": {
+      "type": "object",
+      "description": "Map of shift name to colour. Merged over the built-in defaults.",
+      "additionalProperties": { "type": "string" },
+      "default": {}
+    },
+    "showLegend": {
+      "type": "boolean",
+      "description": "Show the shift colour legend.",
+      "default": true
+    },
+    "title": {
+      "type": "string",
+      "description": "Chart title. Leave blank for the default title.",
+      "default": ""
+    },
+    "option": {
+      "type": "object",
+      "description": "Advanced override. If non-empty, this ECharts option is used verbatim and the domain props above are ignored.",
+      "default": {}
+    },
+    "theme": { "type": "string", "default": "" },
+    "renderer": { "type": "string", "enum": ["canvas", "svg"], "default": "canvas" },
+    "autoResize": { "type": "boolean", "default": true },
+    "resizeDebounceMs": { "type": "integer", "default": 150 },
+    "notMerge": { "type": "boolean", "default": false },
+    "lazyUpdate": { "type": "boolean", "default": true },
+    "showLoading": { "type": "boolean", "default": false },
+    "loadingOptions": { "type": "object", "default": {} },
+    "sanitizeTooltip": { "type": "boolean", "default": true },
+    "style": {
+      "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
+      "default": { "classes": "" }
+    }
+  }
+}

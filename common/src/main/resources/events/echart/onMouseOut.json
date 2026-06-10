@@ -1,0 +1,36 @@
+{
+  "name": "onMouseOut",
+  "description": "Fired when the pointer leaves a chart element. Provides series/data point information.",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "componentType": {
+        "type": "string",
+        "description": "ECharts component type the pointer left (e.g. 'series')."
+      },
+      "seriesType": {
+        "type": "string",
+        "description": "Series type (e.g. 'bar', 'line', 'pie')."
+      },
+      "seriesIndex": {
+        "type": "integer",
+        "description": "Index of the series."
+      },
+      "seriesName": {
+        "type": "string",
+        "description": "Name of the series."
+      },
+      "name": {
+        "type": "string",
+        "description": "Data item name."
+      },
+      "dataIndex": {
+        "type": "integer",
+        "description": "Index of the data item within the series."
+      },
+      "value": {
+        "description": "Value of the data item."
+      }
+    }
+  }
+}

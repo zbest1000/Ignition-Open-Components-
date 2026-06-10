@@ -21,7 +21,17 @@ public class ComponentDefs {
         ComponentUtilities.getEventDescriptor("events/echart/onClick.json",
             "onClick", "Fired when the chart is clicked."),
         ComponentUtilities.getEventDescriptor("events/echart/onDoubleClick.json",
-            "onDoubleClick", "Fired when the chart is double-clicked.")
+            "onDoubleClick", "Fired when the chart is double-clicked."),
+        ComponentUtilities.getEventDescriptor("events/echart/onMouseOver.json",
+            "onMouseOver", "Fired when the pointer moves over a chart element."),
+        ComponentUtilities.getEventDescriptor("events/echart/onMouseOut.json",
+            "onMouseOut", "Fired when the pointer leaves a chart element."),
+        ComponentUtilities.getEventDescriptor("events/echart/onLegendSelectChanged.json",
+            "onLegendSelectChanged", "Fired when a legend item's selected state changes."),
+        ComponentUtilities.getEventDescriptor("events/echart/onDataZoom.json",
+            "onDataZoom", "Fired when the data zoom range changes."),
+        ComponentUtilities.getEventDescriptor("events/echart/onBrushSelected.json",
+            "onBrushSelected", "Fired when a brush selection changes.")
     );
 
     private static final String SCHEMA = "/props/echart.props.json";
@@ -213,9 +223,9 @@ public class ComponentDefs {
     public static final ComponentDescriptor PARETO = chartWithSchema(PARETO_ID,
         "Pareto Chart", "Pareto analysis with categories, counts, and cumulative percentage.",
         IND, "paretoChart", "/props/industrial-pareto.props.json");
-    public static final ComponentDescriptor SPC = chart(SPC_ID,
+    public static final ComponentDescriptor SPC = chartWithSchema(SPC_ID,
         "SPC Chart", "Statistical Process Control — Individuals and Moving Range with run rules.",
-        IND, "spcChart");
+        IND, "spcChart", "/props/industrial-spc.props.json");
 
     // ── Industrial — scheduling & timelines ─────────────────────────────
 
@@ -229,27 +239,27 @@ public class ComponentDefs {
     public static final String BATCH_TIMELINE_ID    = "open.industrial.BatchTimeline";
     public static final String RESOURCE_HEATMAP_ID  = "open.industrial.ResourceHeatmap";
 
-    public static final ComponentDescriptor STATE_TIMELINE = chart(STATE_TIMELINE_ID,
+    public static final ComponentDescriptor STATE_TIMELINE = chartWithSchema(STATE_TIMELINE_ID,
         "State Timeline", "Equipment state/alarm timeline with colour-coded event bars on lanes.",
-        SCHED, "stateTimeline");
-    public static final ComponentDescriptor GANTT = chart(GANTT_ID,
+        SCHED, "stateTimeline", "/props/industrial-state-timeline.props.json");
+    public static final ComponentDescriptor GANTT = chartWithSchema(GANTT_ID,
         "Gantt Chart", "Task scheduling with bars, dependencies, milestones, and progress.",
-        SCHED, "ganttChart");
-    public static final ComponentDescriptor SCHEDULE_CALENDAR = chart(SCHEDULE_CALENDAR_ID,
+        SCHED, "ganttChart", "/props/industrial-gantt.props.json");
+    public static final ComponentDescriptor SCHEDULE_CALENDAR = chartWithSchema(SCHEDULE_CALENDAR_ID,
         "Schedule Calendar", "Annual calendar heatmap for shift schedules and resource allocation.",
-        SCHED, "scheduleCalendar");
-    public static final ComponentDescriptor SHIFT_CALENDAR = chart(SHIFT_CALENDAR_ID,
+        SCHED, "scheduleCalendar", "/props/industrial-schedule-calendar.props.json");
+    public static final ComponentDescriptor SHIFT_CALENDAR = chartWithSchema(SHIFT_CALENDAR_ID,
         "Shift Calendar", "Crew shift patterns with rotating assignments and day/week views.",
-        SCHED, "shiftCalendar");
-    public static final ComponentDescriptor DOWNTIME_TRACKER = chart(DOWNTIME_TRACKER_ID,
+        SCHED, "shiftCalendar", "/props/industrial-shift-calendar.props.json");
+    public static final ComponentDescriptor DOWNTIME_TRACKER = chartWithSchema(DOWNTIME_TRACKER_ID,
         "Downtime Tracker", "Categorised downtime events on equipment timeline with reason codes.",
-        SCHED, "downtimeTracker");
-    public static final ComponentDescriptor BATCH_TIMELINE = chart(BATCH_TIMELINE_ID,
+        SCHED, "downtimeTracker", "/props/industrial-downtime-tracker.props.json");
+    public static final ComponentDescriptor BATCH_TIMELINE = chartWithSchema(BATCH_TIMELINE_ID,
         "Batch Timeline", "Batch recipe phase durations (S88 model) on timeline lanes.",
-        SCHED, "batchTimeline");
-    public static final ComponentDescriptor RESOURCE_HEATMAP = chart(RESOURCE_HEATMAP_ID,
+        SCHED, "batchTimeline", "/props/industrial-batch-timeline.props.json");
+    public static final ComponentDescriptor RESOURCE_HEATMAP = chartWithSchema(RESOURCE_HEATMAP_ID,
         "Resource Heatmap", "Equipment utilisation percentage as heatmap (resource x time).",
-        SCHED, "resourceHeatmap");
+        SCHED, "resourceHeatmap", "/props/industrial-resource-heatmap.props.json");
 
     // ── Master lists ────────────────────────────────────────────────────
 

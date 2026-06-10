@@ -1,0 +1,58 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "tasks": {
+      "type": "array",
+      "description": "Gantt tasks: { name, start (epoch ms), end (epoch ms), progress?, category?, color?, milestone? }. Bind to your schedule data.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name":      { "type": "string" },
+          "start":     { "type": "number" },
+          "end":       { "type": "number" },
+          "progress":  { "type": "number" },
+          "category":  { "type": "string" },
+          "color":     { "type": "string" },
+          "milestone": { "type": "boolean" }
+        }
+      },
+      "default": [
+        { "name": "Requirements",  "start": 1700000000000, "end": 1700259200000, "category": "Planning" },
+        { "name": "Design",        "start": 1700172800000, "end": 1700432000000, "category": "Planning" },
+        { "name": "Fabrication",   "start": 1700432000000, "end": 1701036800000, "category": "Execution" },
+        { "name": "Assembly",      "start": 1700864000000, "end": 1701296000000, "category": "Execution" },
+        { "name": "Testing",       "start": 1701296000000, "end": 1701555200000, "category": "Review" },
+        { "name": "Commissioning", "start": 1701555200000, "end": 1701555200000, "category": "Review", "milestone": true }
+      ]
+    },
+    "showProgress": {
+      "type": "boolean",
+      "description": "Show task progress overlays.",
+      "default": true
+    },
+    "title": {
+      "type": "string",
+      "description": "Chart title. Leave blank for the default title.",
+      "default": ""
+    },
+    "option": {
+      "type": "object",
+      "description": "Advanced override. If non-empty, this ECharts option is used verbatim and the domain props above are ignored.",
+      "default": {}
+    },
+    "theme": { "type": "string", "default": "" },
+    "renderer": { "type": "string", "enum": ["canvas", "svg"], "default": "canvas" },
+    "autoResize": { "type": "boolean", "default": true },
+    "resizeDebounceMs": { "type": "integer", "default": 150 },
+    "notMerge": { "type": "boolean", "default": false },
+    "lazyUpdate": { "type": "boolean", "default": true },
+    "showLoading": { "type": "boolean", "default": false },
+    "loadingOptions": { "type": "object", "default": {} },
+    "sanitizeTooltip": { "type": "boolean", "default": true },
+    "style": {
+      "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
+      "default": { "classes": "" }
+    }
+  }
+}
