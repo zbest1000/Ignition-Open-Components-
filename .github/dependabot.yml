@@ -1,5 +1,9 @@
 version: 2
 
+# Grouping strategy:
+#   - minor/patch updates are bundled into a single PR per ecosystem (low risk, review together)
+#   - major updates are intentionally left UNGROUPED so each lands in its own PR
+#     (a major bump can break the build; keeping it isolated makes the cause traceable)
 updates:
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -18,6 +22,9 @@ updates:
         patterns: ["com.inductiveautomation*"]
       gradle-plugins:
         patterns: ["io.ia.sdk*", "com.github.node-gradle*"]
+      gradle-minor-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
 
   - package-ecosystem: "npm"
     directory: "/web"
@@ -26,6 +33,11 @@ updates:
     groups:
       echarts:
         patterns: ["echarts*"]
+        update-types: ["minor", "patch"]
       dev-dependencies:
         dependency-type: "development"
         patterns: ["*"]
+        update-types: ["minor", "patch"]
+      npm-minor-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
