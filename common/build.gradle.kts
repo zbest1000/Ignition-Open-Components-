@@ -18,6 +18,8 @@ dependencies {
     compileOnly(libs.ignition.common)
     compileOnly(libs.ignition.perspective.common)
     compileOnly(libs.google.guava)
+    // javax.annotation (@Nonnull/@Nullable) — guava 30+ no longer exposes jsr305 transitively
+    compileOnly(libs.google.jsr305)
     compileOnly(libs.ia.gson)
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
