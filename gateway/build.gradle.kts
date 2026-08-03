@@ -24,7 +24,7 @@ dependencies {
     compileOnly(libs.ignition.perspective.common)
     compileOnly(libs.ia.gson)
 
-    testImplementation("org.junit.jupiter:junit-jupiter:6.0.3")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.1.2")
     testImplementation(libs.ignition.common)
     testImplementation(libs.ignition.gateway.api)
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
