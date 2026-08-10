@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Validate Gradle wrapper
         uses: gradle/actions/wrapper-validation@v6
@@ -40,7 +40,7 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
 
       - name: Cache Gradle packages
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: |
             ~/.gradle/caches
@@ -49,7 +49,7 @@ jobs:
           restore-keys: gradle-${{ runner.os }}-
 
       - name: Cache npm packages
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: web/node_modules
           key: npm-${{ runner.os }}-${{ hashFiles('web/package-lock.json') }}
