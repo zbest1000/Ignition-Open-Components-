@@ -1,3 +1,5 @@
+> **Note:** This is the original planning document. It is kept for history and may not match the implementation; see the README and the other files in `docs/` for current behaviour.
+
 # Ignition Open Components — ECharts Ignition Module (Perspective-first)
 
 ## Purpose

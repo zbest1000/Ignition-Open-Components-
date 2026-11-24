@@ -1,14 +1,14 @@
 # Ignition Open Components — Open ECharts Module
 
-An industrial-focused **Perspective component library** for **Ignition 8.3** built on [Apache ECharts](https://echarts.apache.org/). Provides a universal chart renderer, industrial builder components, built-in themes, and a comprehensive option templates library.
+An industrial-focused **Perspective component library** for **Ignition 8.3** built on [Apache ECharts](https://echarts.apache.org/). Provides a universal chart renderer, one component per ECharts / ECharts-GL chart type, industrial and scheduling charts, two built-in themes, and starter option templates.
 
 ## Quick Start
 
 ### Prerequisites
 
-- **Java 17** JDK (for compilation; runtime uses Ignition's JVM)
-- **Gradle 7.6+** (wrapper included)
-- **Node.js 18+** and npm (downloaded automatically by Gradle)
+- **JDK 17** (for compilation; the runtime uses Ignition's JVM)
+- Nothing else: the Gradle wrapper downloads **Gradle 9.5.1**, and the build downloads its own
+  **Node.js 22** for the web bundle.
 
 ### Build
 
@@ -16,48 +16,49 @@ An industrial-focused **Perspective component library** for **Ignition 8.3** bui
 ./gradlew build
 ```
 
-Output: `build/Open-ECharts.unsigned.modl`
+Runs everything — `npm ci`, webpack, eslint, jest, Java compile, checkstyle, JUnit — and writes
+`build/Open-ECharts.unsigned.modl`. The version comes from `gradle.properties`
+(`-PmoduleVersion=1.2.3` overrides it).
 
 ### Install
 
-Copy the `.modl` file to your Ignition gateway → Config → Modules → Install or Upgrade a Module.
+Gateway → Config → Modules → Install or Upgrade a Module, then select the `.modl`.
+Requires **Ignition 8.3.7 or newer** with the Perspective module.
 
-> For signed modules, configure `sign.props` and set `signModule=true` in `gradle.properties`.
+> An **unsigned** module only installs on a gateway started with
+> `-Dignition.allowunsignedmodules=true` (development gateways). To build a signed module, put
+> `signModule=true` and the `ignition.signing.*` properties in `~/.gradle/gradle.properties`
+> (see [`gradle.properties.template`](gradle.properties.template)); the result is
+> `build/Open-ECharts.modl`. Details: [`docs/INSTALL.md`](docs/INSTALL.md).
 
 ## Project Structure
 
 ```
-├── build.gradle.kts          Root build — io.ia.sdk.modl plugin, module metadata
-├── settings.gradle.kts       Subproject layout, IA Nexus + Node.js repos
-├── gradle/libs.versions.toml Ignition SDK 8.3.0 dependency catalog
-├── common/                   Shared Java: constants, component descriptors, utilities
-│   └── src/main/
-│       ├── java/             OpenEChartsConstants, EChart descriptor, schema loaders
-│       └── resources/        Property schemas (JSON), event schemas
-├── gateway/                  Gateway scope: GatewayHook, component registration
-│   └── src/main/java/        OpenEChartsGatewayHook
-├── designer/                 Designer scope: DesignerHook, palette entries
-│   └── src/main/
-│       ├── java/             OpenEChartsDesignerHook
-│       └── resources/        i18n bundle, SVG icons
-├── web/                      React/TypeScript: ECharts components, themes, templates
-│   ├── src/
-│   │   ├── components/       EChart.tsx — universal renderer
-│   │   ├── themes/           IgnitionIndustrialDark, IgnitionIndustrialLight
-│   │   ├── templates/        23 starter option templates
-│   │   ├── utils/            Option sanitiser, event serialiser
-│   │   └── css/              Component styles
-│   ├── package.json          ECharts 5.6.0, perspective-client, webpack
-│   └── webpack.config.js     Bundles to OpenECharts.js + OpenECharts.css
-└── docs/
-    └── PROJECT_PLAN.md       Full implementation plan & resource library
+├── build.gradle.kts          Root build — io.ia.sdk.modl plugin, module metadata, version check
+├── settings.gradle.kts       Subprojects, IA Nexus + Node.js repositories
+├── gradle.properties         Module version and build settings (no secrets)
+├── gradle/libs.versions.toml Ignition SDK 8.3.7 and Node.js versions
+├── common/                   Shared by gateway and Designer
+│   └── src/main/resources/
+│       ├── components.manifest.json   The one list of components (Java and web both read it)
+│       ├── props/                     Property schemas (JSON)
+│       └── events/                    Event payload schemas (JSON)
+├── gateway/                  Gateway hook: registers components, serves the web bundle
+├── designer/                 Designer hook: palette entries, icons
+├── web/                      React/TypeScript bundle
+│   ├── src/core/             Chart runtime shared by every component
+│   ├── src/industrial/       Option builders for the industrial / scheduling components
+│   ├── src/themes/           IgnitionIndustrialDark, IgnitionIndustrialLight
+│   ├── src/templates/        23 starter option templates
+│   └── src/utils/            Option sanitiser, event payloads
+└── docs/                     Guides (see Documentation below)
 ```
 
 ## Components
 
 ### 48 Components — Complete ECharts + ECharts-GL Suite
 
-Every chart type from the [ECharts examples gallery](https://echarts.apache.org/examples/en/index.html) and [ECharts-GL](https://github.com/ecomfe/echarts-gl) has its own focused component. All share the same runtime but each provides its own default option, palette entry, and default size.
+Every chart type from the [ECharts examples gallery](https://echarts.apache.org/examples/en/index.html) and [ECharts-GL](https://github.com/ecomfe/echarts-gl) has its own component. All share one runtime; each has its own palette entry, default size, and default option, so a component dropped from the palette starts as a working chart of that type. ECharts-GL is loaded on demand, only when one of the 11 3D / WebGL components is on screen.
 
 #### Basic Charts
 
@@ -165,13 +166,15 @@ Every chart type from the [ECharts examples gallery](https://echarts.apache.org/
 ### Shared Properties (all components)
 
 - `option` — ECharts option object
-- `theme` — Theme name (`IgnitionIndustrialDark`, `IgnitionIndustrialLight`, or custom)
+- `theme` — `IgnitionIndustrialDark`, `IgnitionIndustrialLight`, or empty for the ECharts default
 - `renderer` — `canvas` (default) or `svg`
-- `autoResize` — Automatic resize on container change
-- `showLoading` — Built-in loading animation
-- `sanitizeTooltip` — Strip unsafe content (default: true)
+- `autoResize`, `resizeDebounceMs` — resize with the container
+- `notMerge` — replace the whole option on update instead of merging
+- `showLoading`, `loadingOptions` — built-in loading animation
+- `sanitizeTooltip` — sanitise HTML and links in the option (default: true; see Security)
+- `ariaLabel` — accessible label for the chart
 
-**Events:** `onClick`, `onDoubleClick`, `onMouseOver`, `onMouseOut`, `onLegendSelectChanged`, `onDataZoom`, `onBrushSelected`
+**Events:** `onClick`, `onDoubleClick`, `onMouseOver`, `onMouseOut`, `onLegendSelectChanged`, `onDataZoom`, `onBrushSelected`. Payloads are listed in [`docs/COMPONENTS.md`](docs/COMPONENTS.md#shared-events).
 
 ## Built-in Themes
 
@@ -180,7 +183,8 @@ Every chart type from the [ECharts examples gallery](https://echarts.apache.org/
 | `IgnitionIndustrialDark` | Dark background, high contrast, glare-readable. Designed for control rooms. |
 | `IgnitionIndustrialLight` | White background, print-friendly. Designed for reports and well-lit environments. |
 
-Both include semantic alarm/warning/OK colour ranges in gauge defaults.
+Both include semantic alarm/warning/OK colour ranges in gauge defaults. Themes are part of the
+client bundle; there is no gateway-side theme storage.
 
 ## Option Templates
 
@@ -192,23 +196,37 @@ Both include semantic alarm/warning/OK colour ranges in gauge defaults.
 
 ## Security
 
-- **Function stripping:** By default, JavaScript function values in option JSON are stripped before reaching ECharts (prevents code injection).
-- **Event sanitisation:** Event payloads are serialised with circular-reference detection, array capping, and string truncation.
-- **No CDN dependency:** All assets are bundled locally in the module — works in air-gapped environments.
+- **Tooltip and link sanitising (`sanitizeTooltip`, default on):** HTML in tooltip formatter
+  strings is sanitised with DOMPurify, and link fields only keep `http`, `https` and relative
+  URLs. This reduces the risk of script injection through an `option` bound to untrusted data;
+  it is **not a sandbox**. Review any option whose content comes from tags, databases or user
+  input. See [`docs/SECURITY.md`](docs/SECURITY.md).
+- **Event payloads** contain only documented, JSON-safe fields.
+- **No CDN dependency:** all assets are bundled in the module — works in air-gapped environments.
+- **No gateway endpoints:** the module adds no REST/servlet routes; it only serves its static bundle.
 
 ## License
 
-This repository is **MIT**. Apache ECharts is **Apache-2.0** (bundled with attribution).
+This repository is **MIT**. Bundled third-party software (Apache ECharts, ZRender, ECharts-GL, ClayGL, DOMPurify) is listed with its licences in [`NOTICE`](NOTICE).
 
 ## Air-Gapped Deployment
 
 All runtime assets (ECharts, ECharts-GL, component JS/CSS, themes, templates) are bundled in the
 `.modl` with no CDN or runtime network calls, so the module runs on fully isolated gateways. See
 [`docs/AIR_GAPPED_DEPLOYMENT.md`](docs/AIR_GAPPED_DEPLOYMENT.md) for offline install steps, the
-Map/GeoJSON caveat, and how to build on an offline host.
+map-data limitation, and how to build on an offline host.
 
 ## Documentation
 
-See [`docs/PROJECT_PLAN.md`](docs/PROJECT_PLAN.md) for the full implementation plan, feature specification, and comprehensive component resource library.
-
-See [`docs/AIR_GAPPED_DEPLOYMENT.md`](docs/AIR_GAPPED_DEPLOYMENT.md) for air-gapped runtime and build guidance.
+| Document | Contents |
+|----------|----------|
+| [`docs/INSTALL.md`](docs/INSTALL.md) | Download, verify, install, signing, troubleshooting |
+| [`docs/COMPONENTS.md`](docs/COMPONENTS.md) | Component reference: shared props, events, per-component examples |
+| [`docs/THEMING.md`](docs/THEMING.md) | Built-in themes |
+| [`docs/TEMPLATES.md`](docs/TEMPLATES.md) | Starter option templates |
+| [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md) | Large datasets, renderers, 3D |
+| [`docs/SECURITY.md`](docs/SECURITY.md) | What `sanitizeTooltip` does and does not do |
+| [`docs/AIR_GAPPED_DEPLOYMENT.md`](docs/AIR_GAPPED_DEPLOYMENT.md) | Offline install and offline build |
+| [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md) | Build, add a component, CI, releases, signing |
+| [`CHANGELOG.md`](CHANGELOG.md) | Release history |
+| [`docs/PROJECT_PLAN.md`](docs/PROJECT_PLAN.md) | Original planning document (historical) |

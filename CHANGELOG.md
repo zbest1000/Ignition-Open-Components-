@@ -7,55 +7,72 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- 48 Perspective components covering the full ECharts + ECharts-GL suite
-  - 25 2D chart types matching every ECharts gallery category
-  - 8 3D chart types (Bar3D, Line3D, Scatter3D, Surface, Map3D, Globe, Lines3D, Polygons3D)
-  - 3 WebGL-accelerated types (ScatterGL, GraphGL, FlowGL)
-  - 11 industrial components (Trend, OEE, Pareto, SPC, State Timeline, Gantt, Schedule Calendar, Shift Calendar, Downtime Tracker, Batch Timeline, Resource Heatmap)
-  - 1 universal EChart renderer for advanced/custom usage
-- AbstractEChartComponent shared base: lifecycle, ResizeObserver, event bridging, option sanitisation
-- 2 built-in industrial themes (IgnitionIndustrialDark, IgnitionIndustrialLight)
-- 23 starter option templates for quick chart creation
-- Option sanitiser: strips JS functions, circular refs, caps array/string sizes
-- Event serialiser: safe payload extraction for click, dblclick, zoom, brush, legend events
-- Gateway-hosted module resources (no CDN — air-gap safe)
-- Enterprise CI/CD: build, PR validation, tag-triggered release with optional signing
-- Comprehensive PROJECT_PLAN.md with resource library
+Nothing has been released yet; this section describes the first release as it will ship.
+"Changed", "Fixed" and "Removed" are relative to earlier development builds.
 
-### Fixed
-- Industrial components (SPC, State Timeline, Gantt, Schedule Calendar, Shift Calendar,
-  Downtime Tracker, Batch Timeline, Resource Heatmap) now bind to dedicated property schemas
-  so their domain props (e.g. `tasks`, `phases`, `values`, `events`, `utilization`) are
-  settable/bindable in the Designer. Previously they shared the generic schema
-  (`additionalProperties: false`) and those props could not be configured.
-- All seven chart events are now declared on the component descriptors. Previously only
-  `onClick`/`onDoubleClick` were declared while `onMouseOver`, `onMouseOut`,
-  `onLegendSelectChanged`, `onDataZoom`, and `onBrushSelected` were fired but could not be
-  bound in Perspective.
+### Added
+- 48 Perspective components on one shared runtime:
+  - 26 in *Open Components / ECharts*: the universal `EChart` renderer plus 25 2D chart types
+  - 11 in *Open Components / ECharts 3D*: 8 3D types (Bar3D, Line3D, Scatter3D, Surface, Map3D,
+    Globe, Lines3D, Polygons3D) and 3 WebGL types (ScatterGL, GraphGL, FlowGL)
+  - 4 in *Open Components / Industrial*: Trend, OEE, Pareto, SPC
+  - 7 in *Open Components / Scheduling*: State Timeline, Gantt, Schedule Calendar, Shift Calendar,
+    Downtime Tracker, Batch Timeline, Resource Heatmap
+- `ariaLabel` prop on every component; ECharts' generated chart description (`aria`) is enabled
+  by default unless the option configures `aria` itself.
+- 2 built-in themes (`IgnitionIndustrialDark`, `IgnitionIndustrialLight`), part of the client bundle.
+- 23 starter option templates.
+- `common/src/main/resources/components.manifest.json`: the single definition of all components,
+  read by the Java descriptors and by the web bundle, so the two cannot drift apart.
+- Release pipeline: CI build with lint and tests, CodeQL, dependency review, `npm audit`,
+  tag-triggered releases with optional signing, `.sha256` checksum, CycloneDX SBOM and build
+  provenance attestation.
 
 ### Changed
-- Gateway build now declares the Perspective platform libraries as `compileOnly` (was
-  `implementation`), so platform classes are no longer bundled into the `.modl` (avoids
-  classloader conflicts at runtime).
-- ECharts now mounts on an inner child element; the `emit()` root element no longer carries a
-  `ref`, per the Perspective SDK guidance.
-- Webpack now fails the build (instead of warning) if the JS/CSS bundle is missing when copying
-  to the mounted-resources folder, preventing a silently empty resource bundle.
-- Removed unused `mobx`/`mobx-react` webpack externals.
+- Apache ECharts upgraded from 5.6.0 to 6.1.0.
+- ECharts-GL is loaded on demand as a separate chunk, only when one of the 11 3D / WebGL
+  components is used; views without them no longer download it.
+- Each chart type now drops from the palette with its own default option. Previously every
+  component started as the same bar chart.
+- Event payloads are now defined per event: click-type events (`onClick`, `onDoubleClick`,
+  `onMouseOver`, `onMouseOut`) carry the series and data fields (`seriesName`, `seriesIndex`,
+  `name`, `dataIndex`, `value`, `data`, ...); `onLegendSelectChanged` carries `name` and
+  `selected`; `onDataZoom` carries `start`, `end`, `startValue`, `endValue` and `batch`;
+  `onBrushSelected` carries `batch`.
+- With `notMerge=false`, series are replaced rather than merged on update, so a series removed
+  from the option disappears from the chart.
+- `sanitizeTooltip` no longer truncates arrays or strings in the option.
+- The module declares Perspective as a *required* dependency and `freeModule=true`, and requires
+  Ignition 8.3.7 (the SDK version it is built and tested against).
+- Build: Gradle 9.5.1 wrapper with a pinned distribution checksum, `io.ia.sdk.modl` 0.5.0,
+  Node.js 22 with `npm ci`; `./gradlew build` now also runs eslint and jest. The module version
+  lives in the committed `gradle.properties`, and the build fails on a version Ignition cannot
+  parse.
+- Platform libraries are `compileOnly`, so no Ignition classes are bundled into the `.modl`.
+
+### Fixed
+- Industrial and scheduling components bind to their own property schemas, so their domain props
+  (`tasks`, `phases`, `values`, `events`, `utilization`, ...) can be set and bound in the Designer.
+- All seven chart events are declared on the component descriptors and can be bound in
+  Perspective. Previously only `onClick` and `onDoubleClick` were.
+- A fresh clone no longer builds a module with `<version>unspecified</version>`, which gateways
+  reject; CI and prerelease versions now use forms Ignition accepts (`0.1.0.57`, `1.0.0-rc1`).
+- `module.xml` no longer declares `freeModule=false` while the gateway hook reports a free module.
+- The release workflow published the unsigned module even when signing succeeded, and wrote a
+  checksum file that `sha256sum -c` could not verify.
+
+### Removed
+- The gateway theme REST endpoints (`/system/data/open-echarts/themes`) and gateway-side theme
+  storage. They were unauthenticated and nothing used them; themes are client-side.
 
 ### Security
-- Theme REST API: `save` and `delete` are restricted to `POST`, and theme names are validated
-  (rejected with `400` unless already filesystem-safe) to prevent silent file collisions/
-  overwrites. Path traversal was already prevented by name sanitisation.
+- Apache ECharts 6.1.0 fixes advisory GHSA-fgmj-fm8m-jvvx.
+- `sanitizeTooltip` (default `true`) sanitises HTML in tooltip formatter strings with DOMPurify
+  and keeps only `http`, `https` and relative URLs in link fields. It is not a sandbox: options
+  bound to untrusted data should still be reviewed. See `docs/SECURITY.md`.
+- Removing the theme REST endpoints removes the module's only gateway-side network surface.
 
-### Documentation
-- Added `docs/AIR_GAPPED_DEPLOYMENT.md` (offline install, map GeoJSON caveat, offline build).
-
-### Technical Details
-- Ignition SDK 8.3.0
-- Java 17
-- Apache ECharts 5.6.0
-- ECharts-GL 2.0.9
-- Gradle 7.6.4 with io.ia.sdk.modl plugin 0.3.0
-- TypeScript + Webpack 5
+### Technical details
+- Ignition SDK 8.3.7, Java 17
+- Apache ECharts 6.1.0, ECharts-GL 2.1.0, DOMPurify 3
+- Gradle 9.5.1, `io.ia.sdk.modl` 0.5.0, Node.js 22, TypeScript, webpack 5

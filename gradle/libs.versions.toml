@@ -1,5 +1,8 @@
 [versions]
     ignition = "8.3.7"
+    # Node.js used by the web build (downloaded by Gradle) and by CI (actions/setup-node).
+    # Keep on a release that satisfies eslint 10 (^22.13.0).
+    node = "22.23.5"
 
 [libraries]
     ignition-common = { module = "com.inductiveautomation.ignitionsdk:ignition-common", version.ref = "ignition" }

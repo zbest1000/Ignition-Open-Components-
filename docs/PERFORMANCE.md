@@ -39,12 +39,14 @@ ECharts can handle 100K+ points. For large datasets:
 - Use the canvas renderer
 - Performance depends on GPU capability
 - Limit 3D chart count per view
+- ECharts-GL is a separate chunk, downloaded from the gateway the first time a 3D / WebGL
+  component is shown; views without those components never load it
 
 ## Resize Debounce
 
 - Default debounce: 150ms
 - Increase for complex charts to reduce resize overhead
-- Set via `resizeDebounce` property
+- Set via the `resizeDebounceMs` property
 
 ## Multiple Charts per View
 
@@ -54,12 +56,12 @@ ECharts can handle 100K+ points. For large datasets:
 
 ## Memory
 
-- `dispose` is called automatically on unmount by `AbstractEChartComponent`
+- The chart instance is disposed automatically when the component is removed
 - No manual cleanup is required for charts that are removed from the view
 
 ## Theme Switching
 
-- Theme changes trigger dispose + reinit
+- Changing `theme` or `renderer` disposes and re-creates the chart
 - This is by design; ECharts themes require full reinitialisation
 - Avoid frequent theme toggling in performance-critical views
 
@@ -68,5 +70,5 @@ ECharts can handle 100K+ points. For large datasets:
 1. **Use time axis for time data** – Avoids scaling issues and improves performance.
 2. **Prefer dataset over inline data** – Use `dataset` for shared data across series.
 3. **Use dataZoom for exploration** – Let users zoom/pan instead of loading all data at once.
-4. **Avoid deep nesting** – Keep option objects reasonably flat; deep nesting can slow down sanitisation and rendering.
+4. **Keep bound options small** – With `sanitizeTooltip` on, the whole option is scanned on every change; bind data, not megabytes of static configuration.
 5. **Use appropriate sampling** – For line charts with many points, `sampling: 'lttb'` preserves visual shape while reducing points.

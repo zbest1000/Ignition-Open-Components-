@@ -2,7 +2,7 @@ import com.github.gradle.node.npm.task.NpmTask
 
 plugins {
     java
-    id("com.github.node-gradle.node") version("3.2.1")
+    id("com.github.node-gradle.node") version "7.1.0"
 }
 
 java {
@@ -11,67 +11,115 @@ java {
     }
 }
 
-val projectOutput: String by extra("$buildDir/generated-resources/")
-
 node {
-    version.set("22.6.0")
-    npmVersion.set("10.8.2")
+    // Single source for the Node version: gradle/libs.versions.toml (CI reads the same entry).
+    version.set(libs.versions.node)
     download.set(true)
-    nodeProjectDir.set(file(project.projectDir))
+    // Node is resolved through the "Node.js" ivy repository declared in settings.gradle.kts.
+    distBaseUrl.set(null as String?)
+    nodeProjectDir.set(layout.projectDirectory)
+}
+
+// Everything webpack writes here is packaged into web.jar under mounted/ and served by the gateway.
+val generatedResources = layout.buildDirectory.dir("generated-resources")
+
+// The component manifest is shared with the Java side and imported by the web sources.
+val componentManifest = rootProject.layout.projectDirectory
+    .file("common/src/main/resources/components.manifest.json")
+
+// Sources plus every config file that can change the result of webpack / eslint / jest.
+val webSources = fileTree(layout.projectDirectory) {
+    exclude(
+        "node_modules/**", "build/**", "dist/**", "coverage/**", ".gradle/**", "build.gradle.kts",
+        "test-results/**", "**/*.log"
+    )
 }
 
 val installDependencies by tasks.registering(NpmTask::class) {
-    args.set(listOf("install"))
+    group = "Ignition Module"
+    description = "Installs the exact dependency tree from package-lock.json (npm ci)."
 
-    inputs.files(
-        fileTree(project.projectDir).matching {
-            include("package.json", "package-lock.json")
-        }
-    )
+    // `ci` never rewrites the lockfile and fails if package.json and the lockfile disagree.
+    args.set(listOf("ci", "--no-audit", "--no-fund"))
 
-    outputs.dirs(file("node_modules"))
+    inputs.file("package.json")
+    inputs.file("package-lock.json")
+    // Written by npm at the end of every install; cheaper to track than all of node_modules.
+    outputs.file("node_modules/.package-lock.json")
 }
 
 val webpack by tasks.registering(NpmTask::class) {
     group = "Ignition Module"
-    description = "Runs webpack to bundle the web components"
+    description = "Bundles the web components with webpack."
 
-    args.set(listOf("run", "build"))
     dependsOn(installDependencies)
+    args.set(listOf("run", "build"))
 
-    inputs.files(project.fileTree("src").matching {
-        exclude("**/node_modules/**", "**/dist/**", "**/.awcache/**")
-    }.toList())
+    inputs.files(webSources).withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.file(componentManifest).withPathSensitivity(PathSensitivity.NONE)
+    outputs.dir(generatedResources)
 
-    outputs.files(fileTree(projectOutput))
-}
-
-tasks {
-    processResources {
-        dependsOn(webpack)
-        from(projectOutput) { into("") }
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    }
-
-    jar {
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    }
-
-    clean {
-        delete("dist")
+    // Chunk file names are content-hashed; start empty so chunks from an earlier build never ship.
+    doFirst {
+        delete(generatedResources)
     }
 }
 
-val deepClean by tasks.registering {
+val lintWeb by tasks.registering(NpmTask::class) {
+    group = "verification"
+    description = "Runs eslint on the web sources."
+
+    dependsOn(installDependencies)
+    args.set(listOf("run", "lint"))
+
+    val marker = layout.buildDirectory.file("verification/lint.ok")
+    inputs.files(webSources).withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.file(componentManifest).withPathSensitivity(PathSensitivity.NONE)
+    outputs.file(marker)
     doLast {
-        delete(file(".gradle"))
-        delete(file("node_modules"))
+        marker.get().asFile.writeText("ok\n")
     }
-    dependsOn(project.tasks.named("clean"))
+}
+
+val testWeb by tasks.registering(NpmTask::class) {
+    group = "verification"
+    description = "Runs the jest suite for the web sources."
+
+    dependsOn(installDependencies)
+    // The bundle step deletes and rewrites build/; keep the two from interleaving.
+    mustRunAfter(webpack)
+    args.set(listOf("run", "test:ci"))
+
+    inputs.files(webSources).withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.file(componentManifest).withPathSensitivity(PathSensitivity.NONE)
+    outputs.dir("coverage")
+}
+
+lintWeb {
+    mustRunAfter(webpack)
 }
 
 sourceSets {
     main {
-        output.dir(projectOutput, "builtBy" to listOf(webpack))
+        // Registers the webpack output as a resource root; processResources then depends on webpack.
+        resources.srcDir(webpack)
+    }
+}
+
+tasks {
+    check {
+        dependsOn(lintWeb, testWeb)
+    }
+
+    clean {
+        delete("dist", "coverage")
+    }
+}
+
+val deepClean by tasks.registering {
+    dependsOn(tasks.named("clean"))
+    doLast {
+        delete(file(".gradle"))
+        delete(file("node_modules"))
     }
 }

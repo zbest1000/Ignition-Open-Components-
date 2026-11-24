@@ -1,52 +1,55 @@
 # Open ECharts — Component Reference
 
-Comprehensive component reference for the **Open ECharts** Ignition Perspective module, which provides 40 chart components built on Apache ECharts 5.6.0 and ECharts-GL 2.0.9.
+Component reference for the **Open ECharts** Ignition Perspective module: 48 chart components built on Apache ECharts 6.1.0 and ECharts-GL 2.1.0.
 
 ---
 
 ## Overview
 
-Open ECharts uses a shared architecture centered on an **AbstractEChartComponent** base class. All chart components extend this base and share the same props interface, ensuring consistent behavior and configuration across the library. Each component provides:
+All components share one runtime and the same base properties and events. They are defined in a single manifest (`common/src/main/resources/components.manifest.json`), which gives each one:
 
-- **Default option** — A preconfigured ECharts option object tailored to its chart type
-- **Palette category** — Determines where the component appears in the Perspective designer palette (e.g., "Open Components / ECharts", "Open Components / ECharts 3D", "Open Components / Industrial")
+- **Default option** — the chart a component shows when dropped from the palette, specific to its chart type
+- **Palette category** — *Open Components / ECharts*, *ECharts 3D*, *Industrial* or *Scheduling*
+- **Default size**
 
-Components accept any valid ECharts option via the `option` prop; the default option serves as a starting point and can be fully overridden or merged.
+The ECharts components take any valid ECharts option in `option`. The industrial and scheduling components build their option from domain properties (`tasks`, `events`, `values`, ...) instead; see [Industrial](#industrial) and [Scheduling](#scheduling). The option examples in this document are illustrative starting points, not a copy of each default.
+
+The 11 components in *ECharts 3D* need ECharts-GL, which the browser downloads from the gateway the first time one of them is shown.
 
 ---
 
 ## Shared Properties
 
-All components share the following properties (from the props schema):
+All components have the following properties:
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
-| `option` | object | Varies per component | ECharts option JSON. Fully configurable; default varies per component. |
-| `theme` | string | `""` | Theme name. Supported values: `""`, `"IgnitionIndustrialDark"`, `"IgnitionIndustrialLight"`, or any custom registered theme. |
+| `option` | object | Varies per component | ECharts option. On industrial / scheduling components it is an advanced override: when non-empty it replaces the generated chart. |
+| `theme` | string | `""` | `"IgnitionIndustrialDark"`, `"IgnitionIndustrialLight"`, or `""` for the ECharts default. Changing it re-creates the chart. |
 | `renderer` | string | `"canvas"` | Rendering backend: `"canvas"` or `"svg"`. |
-| `autoResize` | boolean | `true` | When true, automatically resizes the chart when the container changes via ResizeObserver. |
+| `autoResize` | boolean | `true` | Resize the chart when its container changes size. |
 | `resizeDebounceMs` | integer | `150` | Debounce delay (ms) for resize handling. |
-| `notMerge` | boolean | `false` | When true, replaces the option entirely on update instead of merging. |
+| `notMerge` | boolean | `false` | `true`: every update replaces the whole option. `false`: updates are merged into the current option, except `series`, which is replaced — a series removed from the option disappears from the chart. |
 | `lazyUpdate` | boolean | `true` | Defers updates for better performance. |
-| `showLoading` | boolean | `false` | Shows ECharts loading animation when true. |
-| `loadingOptions` | object | — | ECharts loading animation options (e.g., text, color, maskColor). |
-| `sanitizeTooltip` | boolean | `true` | Strips JavaScript functions from the option for security. |
+| `showLoading` | boolean | `false` | Shows the ECharts loading animation. |
+| `loadingOptions` | object | — | Loading animation options (text, color, maskColor, ...). |
+| `sanitizeTooltip` | boolean | `true` | Sanitises HTML in tooltip formatter strings and allows only `http`/`https`/relative URLs in link fields. Not a sandbox; see [SECURITY.md](SECURITY.md). |
+| `ariaLabel` | string | `""` | Accessible label announced by screen readers. |
+
+Accessibility: ECharts' generated chart description (`aria.enabled`) is on by default; set `aria` in the option to configure or disable it.
 
 ---
 
 ## Shared Events
 
-All components emit the following events with the indicated payload shapes:
+All components emit the following events. Payloads contain only these fields, as plain JSON values; a field is omitted when ECharts does not supply it.
 
-| Event | Payload |
-|-------|---------|
-| `onClick` | `{ componentType, seriesType, seriesIndex, seriesName, name, dataIndex, value }` |
-| `onDoubleClick` | Same shape as `onClick` |
-| `onMouseOver` | Same shape as `onClick` |
-| `onMouseOut` | Same shape as `onClick` |
-| `onLegendSelectChanged` | Legend selection change payload |
-| `onDataZoom` | Data zoom range payload |
-| `onBrushSelected` | Brush selection payload |
+| Event | Payload fields |
+|-------|----------------|
+| `onClick`, `onDoubleClick`, `onMouseOver`, `onMouseOut` | `componentType`, `seriesType`, `seriesIndex`, `seriesName`, `name`, `dataIndex`, `data`, `dataType`, `value`, `color`, `percent` |
+| `onLegendSelectChanged` | `name` (the legend item toggled), `selected` (map of series name to boolean) |
+| `onDataZoom` | `start`, `end` (percent), `startValue`, `endValue`, `dataZoomId`, and `batch`: a list of entries with the same fields when the zoom came from a mouse/touch action |
+| `onBrushSelected` | `batch`: a list of entries with `brushId`, `brushIndex`, `brushName`, `areas`, `selected` |
 
 ---
 
@@ -491,18 +494,10 @@ All components emit the following events with the indicated payload shapes:
 - **Palette category:** Open Components / ECharts
 - **Default size:** 600x400
 - **Description:** Custom series for user-defined rendering logic.
-- **Default option example:**
-```json
-{
-  "xAxis": {},
-  "yAxis": {},
-  "series": [{
-    "type": "custom",
-    "renderItem": "function (params, api) { return { type: 'rect', shape: api.coord([0, 0], [1, 1]) }; }",
-    "data": [[0, 0, 1, 1]]
-  }]
-}
-```
+- **Limitation:** a `custom` series needs a `renderItem` JavaScript function. Perspective
+  properties are JSON and cannot hold functions (a function written as a string is not
+  executed), so this component cannot currently draw custom series from the Designer. Use
+  `GraphicChart` for static shapes.
 
 #### 23. GraphicChart
 - **Component name:** GraphicChart
@@ -553,6 +548,8 @@ All components emit the following events with the indicated payload shapes:
 - **Palette category:** Open Components / ECharts
 - **Default size:** 700x500
 - **Description:** Geo maps with scatter, heatmap, and region series.
+- **Limitation:** ECharts ships no map geometry, and the module does not currently provide a
+  way to register GeoJSON for a map name, so `geo` / `map` series have no regions to draw.
 - **Default option example:**
 ```json
 {
@@ -677,6 +674,7 @@ Palette category: **Open Components / ECharts 3D**
 - **Palette category:** Open Components / ECharts 3D
 - **Default size:** 700x500
 - **Description:** 3D map visualization.
+- **Limitation:** needs registered map GeoJSON, which the module cannot currently be given (see MapChart).
 - **Default option example:**
 ```json
 {
@@ -814,63 +812,154 @@ Palette category: **Open Components / ECharts 3D**
 
 Palette category: **Open Components / Industrial**
 
-#### 38. IndustrialTrend
-- **Component name:** IndustrialTrend
+These components build their chart from the properties listed here (in addition to the [shared properties](#shared-properties)). Setting a non-empty `option` replaces the generated chart.
+
+#### 38. Industrial Trend
 - **Component ID:** `open.industrial.Trend`
-- **Palette category:** Open Components / Industrial
 - **Default size:** 800x350
-- **Description:** Time-series trend with PV/SP (process variable / setpoint) and alarm limits.
-- **Default option example:**
-```json
-{
-  "xAxis": { "type": "time" },
-  "yAxis": { "type": "value" },
-  "series": [
-    { "type": "line", "name": "PV", "data": [] },
-    { "type": "line", "name": "SP", "data": [] },
-    { "type": "line", "name": "High Limit", "lineStyle": { "type": "dashed" }, "data": [] },
-    { "type": "line", "name": "Low Limit", "lineStyle": { "type": "dashed" }, "data": [] }
-  ]
-}
-```
+- **Description:** Time-series PV/SP trend with alarm limits, data zoom, and quality.
 
-#### 39. IndustrialOEE
-- **Component name:** IndustrialOEE
+| Property | Type | Description |
+|----------|------|-------------|
+| `data` | object | Data configuration for the trend. |
+| `limits` | object | Alarm and warning limits displayed as horizontal markLines. |
+| `yAxisLabel` | string | Label for the Y axis (e.g. unit of measurement). |
+| `showSetpoint` | boolean | Whether to show the setpoint line. |
+| `showDataZoom` | boolean | Whether to show the data zoom slider. |
+
+#### 39. OEE Summary
 - **Component ID:** `open.industrial.OEE`
-- **Palette category:** Open Components / Industrial
 - **Default size:** 400x400
-- **Description:** Multi-ring OEE gauge (Availability, Performance, Quality).
-- **Default option example:**
-```json
-{
-  "series": [
-    { "type": "gauge", "radius": "90%", "detail": { "formatter": "{value}%", "offsetCenter": [0, "-30%"] }, "data": [{ "value": 85, "name": "Availability" }] },
-    { "type": "gauge", "radius": "70%", "detail": { "formatter": "{value}%", "offsetCenter": [0, "-20%"] }, "data": [{ "value": 92, "name": "Performance" }] },
-    { "type": "gauge", "radius": "50%", "detail": { "formatter": "{value}%", "offsetCenter": [0, "-10%"] }, "data": [{ "value": 98, "name": "Quality" }] }
-  ]
-}
-```
+- **Description:** Overall Equipment Effectiveness gauge with A/P/Q inputs.
 
-#### 40. IndustrialPareto
-- **Component name:** IndustrialPareto
+| Property | Type | Description |
+|----------|------|-------------|
+| `availability` | number | Availability in percent (0-100). |
+| `performance` | number | Performance in percent (0-100). |
+| `quality` | number | Quality in percent (0-100). |
+| `oeeOverride` | number / null | Overrides the calculated OEE, in percent; clamped to 0-100. When null, OEE is computed as A*P*Q/10000. |
+| `showLabels` | boolean | Show A/P/Q/OEE labels on the gauge. |
+
+#### 40. Pareto Chart
 - **Component ID:** `open.industrial.Pareto`
-- **Palette category:** Open Components / Industrial
 - **Default size:** 700x400
-- **Description:** Pareto chart: bar series with cumulative percentage line.
-- **Default option example:**
-```json
-{
-  "xAxis": { "type": "category", "data": ["Defect A", "Defect B", "Defect C", "Defect D"] },
-  "yAxis": [
-    { "type": "value", "name": "Count" },
-    { "type": "value", "name": "Cumulative %", "max": 100, "axisLabel": { "formatter": "{value}%" } }
-  ],
-  "series": [
-    { "type": "bar", "data": [50, 30, 15, 5] },
-    { "type": "line", "yAxisIndex": 1, "data": [50, 80, 95, 100] }
-  ]
-}
-```
+- **Description:** Pareto analysis with categories, counts, and cumulative percentage.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `categories` | array | Category labels. Bars are drawn sorted by count, largest first. |
+| `counts` | array | Count for each category, in the same order as categories. Negative or non-numeric counts count as 0. |
+| `showCumulativeLine` | boolean | Show the cumulative percentage line. |
+| `show80PercentLine` | boolean | Show the 80% threshold markLine. |
+| `barLabel` | string | Label for the bar series. |
+| `lineLabel` | string | Label for the cumulative line series. |
+
+#### 41. SPC Chart
+- **Component ID:** `open.industrial.SPCChart`
+- **Default size:** 800x500
+- **Description:** Statistical Process Control — Individuals and Moving Range with run rules.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `values` | array | Measurements in time order. Bind to your sample data. |
+| `subgroupSize` | integer | 1 = Individuals & Moving Range; 2–10 = X-bar & R on consecutive subgroups. |
+| `showUCL` | boolean | Show the Upper Control Limit (UCL) markline. |
+| `showLCL` | boolean | Show the Lower Control Limit (LCL) markline. |
+| `showCenterLine` | boolean | Show the Center Line (process mean) markline. |
+| `showMRChart` | boolean | Show the MR (or R) chart below the main chart. |
+| `showRunRules` | boolean | Highlight points that violate Western Electric rules 1 and 4. |
+| `title` | string | Chart title. Leave blank for the default title. |
+
+---
+
+### Scheduling
+
+Palette category: **Open Components / Scheduling**
+
+These components build their chart from the properties listed here (in addition to the [shared properties](#shared-properties)). Setting a non-empty `option` replaces the generated chart.
+
+#### 42. State Timeline
+- **Component ID:** `open.industrial.StateTimeline`
+- **Default size:** 900x300
+- **Description:** Equipment state/alarm timeline with colour-coded event bars on lanes.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `events` | array | State events as objects: { lane, start (epoch ms), end (epoch ms), state, color? }. Bind to your equipment-state history. |
+| `stateColors` | object | Map of state name to colour, e.g. { "Running": "#91cc75" }. Merged over the built-in defaults. |
+| `title` | string | Chart title. Leave blank for the default title. |
+
+#### 43. Gantt Chart
+- **Component ID:** `open.industrial.Gantt`
+- **Default size:** 900x400
+- **Description:** Task scheduling with bars, dependencies, milestones, and progress.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `tasks` | array | Gantt tasks: { name, start (epoch ms), end (epoch ms), progress?, category?, color?, milestone? }. Bind to your schedule data. |
+| `showProgress` | boolean | Overlay each task's progress (percent, 0-100) on its bar. |
+| `title` | string | Chart title. Leave blank for the default title. |
+
+#### 44. Schedule Calendar
+- **Component ID:** `open.industrial.ScheduleCalendar`
+- **Default size:** 900x250
+- **Description:** Annual calendar heatmap for shift schedules and resource allocation.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `year` | string | Period to render: a year ("2025") or a month ("2025-03"). Leave blank to use the current year. |
+| `entries` | array | Schedule entries: { date, shift, crew? } with date as a YYYY-MM-DD string. value and color are reserved and currently have no effect. Bind to your shift schedule. |
+| `shiftColors` | object | Map of shift name to colour. Merged over the built-in defaults. |
+| `showLegend` | boolean | Show the shift colour legend. |
+| `title` | string | Chart title. Leave blank for the default title. |
+
+#### 45. Shift Calendar
+- **Component ID:** `open.industrial.ShiftCalendar`
+- **Default size:** 900x300
+- **Description:** Crew shift patterns with rotating assignments and day/week views.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `patterns` | array | Shift patterns: { name, color, days } where days lists the weekdays worked (0 = Sunday .. 6 = Saturday). |
+| `crews` | array | Crew assignments: { crew, pattern } where pattern is the name of a shift pattern. startDate and rotationDays are reserved and currently unused. |
+| `dateRange` | array | Inclusive [startDate, endDate] as YYYY-MM-DD strings. |
+| `title` | string | Chart title. Leave blank for the default title. |
+
+#### 46. Downtime Tracker
+- **Component ID:** `open.industrial.DowntimeTracker`
+- **Default size:** 900x350
+- **Description:** Categorised downtime events on equipment timeline with reason codes.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `events` | array | Downtime events: { equipment, start (epoch ms), end (epoch ms), category, reason? }. reason is not charted. Bind to your downtime log. |
+| `categoryColors` | object | Map of downtime category to colour. Merged over the built-in defaults. |
+| `showSummary` | boolean | Show total downtime under the title. |
+| `title` | string | Chart title. Leave blank for the default title. |
+
+#### 47. Batch Timeline
+- **Component ID:** `open.industrial.BatchTimeline`
+- **Default size:** 900x350
+- **Description:** Batch recipe phase durations (S88 model) on timeline lanes.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `phases` | array | Batch phases (S88): { batch, phase, start (epoch ms), end (epoch ms), status? }. status is not charted. Bind to your batch records. |
+| `phaseColors` | object | Map of phase name to colour. Merged over the built-in defaults. |
+| `title` | string | Chart title. Leave blank for the default title. |
+
+#### 48. Resource Heatmap
+- **Component ID:** `open.industrial.ResourceHeatmap`
+- **Default size:** 800x400
+- **Description:** Equipment utilisation percentage as heatmap (resource x time).
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `resources` | array | Resource names (Y axis rows). |
+| `timeSlots` | array | Time-slot labels (X axis columns). |
+| `utilization` | array | Utilization matrix: one row of numbers per resource, one number per time slot (0 to maxValue). An empty matrix shows "No data". Bind to your data. |
+| `maxValue` | number | Maximum value for the colour scale (e.g. 100 for percent). |
+| `title` | string | Chart title. Leave blank for the default title. |
 
 ---
 
@@ -878,43 +967,51 @@ Palette category: **Open Components / Industrial**
 
 | # | Component | ID | Palette | Size |
 |---|-----------|-----|---------|------|
-| 1 | EChart | open.echarts.EChart | ECharts | 600x400 |
-| 2 | LineChart | open.echarts.LineChart | ECharts | 600x350 |
-| 3 | BarChart | open.echarts.BarChart | ECharts | 600x350 |
-| 4 | PieChart | open.echarts.PieChart | ECharts | 500x400 |
-| 5 | ScatterChart | open.echarts.ScatterChart | ECharts | 600x400 |
-| 6 | EffectScatterChart | open.echarts.EffectScatterChart | ECharts | 600x400 |
-| 7 | GaugeChart | open.echarts.GaugeChart | ECharts | 400x350 |
-| 8 | FunnelChart | open.echarts.FunnelChart | ECharts | 500x400 |
-| 9 | CandlestickChart | open.echarts.CandlestickChart | ECharts | 700x400 |
-| 10 | BoxplotChart | open.echarts.BoxplotChart | ECharts | 600x400 |
-| 11 | HeatmapChart | open.echarts.HeatmapChart | ECharts | 600x400 |
-| 12 | TreeChart | open.echarts.TreeChart | ECharts | 600x500 |
-| 13 | TreemapChart | open.echarts.TreemapChart | ECharts | 600x500 |
-| 14 | SunburstChart | open.echarts.SunburstChart | ECharts | 500x500 |
-| 15 | GraphChart | open.echarts.GraphChart | ECharts | 600x500 |
-| 16 | SankeyChart | open.echarts.SankeyChart | ECharts | 600x500 |
-| 17 | RadarChart | open.echarts.RadarChart | ECharts | 500x450 |
-| 18 | ParallelChart | open.echarts.ParallelChart | ECharts | 700x400 |
-| 19 | ThemeRiverChart | open.echarts.ThemeRiverChart | ECharts | 700x400 |
-| 20 | CalendarChart | open.echarts.CalendarChart | ECharts | 800x200 |
-| 21 | PictorialBarChart | open.echarts.PictorialBarChart | ECharts | 600x400 |
-| 22 | CustomChart | open.echarts.CustomChart | ECharts | 600x400 |
-| 23 | GraphicChart | open.echarts.GraphicChart | ECharts | 600x400 |
-| 24 | DatasetChart | open.echarts.DatasetChart | ECharts | 600x400 |
-| 25 | MapChart | open.echarts.MapChart | ECharts | 700x500 |
-| 26 | LinesChart | open.echarts.LinesChart | ECharts | 700x500 |
-| 27 | Bar3DChart | open.echarts.Bar3DChart | ECharts 3D | 700x500 |
-| 28 | Line3DChart | open.echarts.Line3DChart | ECharts 3D | 700x500 |
-| 29 | Scatter3DChart | open.echarts.Scatter3DChart | ECharts 3D | 700x500 |
-| 30 | SurfaceChart | open.echarts.SurfaceChart | ECharts 3D | 700x500 |
-| 31 | Map3DChart | open.echarts.Map3DChart | ECharts 3D | 700x500 |
-| 32 | GlobeChart | open.echarts.GlobeChart | ECharts 3D | 700x600 |
-| 33 | Lines3DChart | open.echarts.Lines3DChart | ECharts 3D | 700x500 |
-| 34 | Polygons3DChart | open.echarts.Polygons3DChart | ECharts 3D | 700x500 |
-| 35 | ScatterGLChart | open.echarts.ScatterGLChart | ECharts 3D | 600x400 |
-| 36 | GraphGLChart | open.echarts.GraphGLChart | ECharts 3D | 600x500 |
-| 37 | FlowGLChart | open.echarts.FlowGLChart | ECharts 3D | 700x500 |
-| 38 | IndustrialTrend | open.industrial.Trend | Industrial | 800x350 |
-| 39 | IndustrialOEE | open.industrial.OEE | Industrial | 400x400 |
-| 40 | IndustrialPareto | open.industrial.Pareto | Industrial | 700x400 |
+| 1 | ECharts Chart | open.echarts.EChart | ECharts | 600x400 |
+| 2 | Line Chart | open.echarts.LineChart | ECharts | 600x350 |
+| 3 | Bar Chart | open.echarts.BarChart | ECharts | 600x350 |
+| 4 | Pie Chart | open.echarts.PieChart | ECharts | 500x400 |
+| 5 | Scatter Chart | open.echarts.ScatterChart | ECharts | 600x400 |
+| 6 | Effect Scatter Chart | open.echarts.EffectScatterChart | ECharts | 600x400 |
+| 7 | Gauge Chart | open.echarts.GaugeChart | ECharts | 400x350 |
+| 8 | Funnel Chart | open.echarts.FunnelChart | ECharts | 500x400 |
+| 9 | Candlestick Chart | open.echarts.CandlestickChart | ECharts | 700x400 |
+| 10 | Boxplot Chart | open.echarts.BoxplotChart | ECharts | 600x400 |
+| 11 | Heatmap Chart | open.echarts.HeatmapChart | ECharts | 600x400 |
+| 12 | Tree Chart | open.echarts.TreeChart | ECharts | 600x500 |
+| 13 | Treemap Chart | open.echarts.TreemapChart | ECharts | 600x500 |
+| 14 | Sunburst Chart | open.echarts.SunburstChart | ECharts | 500x500 |
+| 15 | Graph Chart | open.echarts.GraphChart | ECharts | 600x500 |
+| 16 | Sankey Chart | open.echarts.SankeyChart | ECharts | 600x500 |
+| 17 | Radar Chart | open.echarts.RadarChart | ECharts | 500x450 |
+| 18 | Parallel Chart | open.echarts.ParallelChart | ECharts | 700x400 |
+| 19 | Theme River Chart | open.echarts.ThemeRiverChart | ECharts | 700x400 |
+| 20 | Calendar Chart | open.echarts.CalendarChart | ECharts | 800x200 |
+| 21 | Pictorial Bar Chart | open.echarts.PictorialBarChart | ECharts | 600x400 |
+| 22 | Custom Chart | open.echarts.CustomChart | ECharts | 600x400 |
+| 23 | Graphic Chart | open.echarts.GraphicChart | ECharts | 600x400 |
+| 24 | Dataset Chart | open.echarts.DatasetChart | ECharts | 600x400 |
+| 25 | Map Chart | open.echarts.MapChart | ECharts | 700x500 |
+| 26 | Lines Chart | open.echarts.LinesChart | ECharts | 700x500 |
+| 27 | Bar 3D Chart | open.echarts.Bar3DChart | ECharts 3D | 700x500 |
+| 28 | Line 3D Chart | open.echarts.Line3DChart | ECharts 3D | 700x500 |
+| 29 | Scatter 3D Chart | open.echarts.Scatter3DChart | ECharts 3D | 700x500 |
+| 30 | Surface Chart | open.echarts.SurfaceChart | ECharts 3D | 700x500 |
+| 31 | Map 3D Chart | open.echarts.Map3DChart | ECharts 3D | 700x500 |
+| 32 | Globe Chart | open.echarts.GlobeChart | ECharts 3D | 700x600 |
+| 33 | Lines 3D Chart | open.echarts.Lines3DChart | ECharts 3D | 700x500 |
+| 34 | Polygons 3D Chart | open.echarts.Polygons3DChart | ECharts 3D | 700x500 |
+| 35 | Scatter GL Chart | open.echarts.ScatterGLChart | ECharts 3D | 600x400 |
+| 36 | Graph GL Chart | open.echarts.GraphGLChart | ECharts 3D | 600x500 |
+| 37 | Flow GL Chart | open.echarts.FlowGLChart | ECharts 3D | 700x500 |
+| 38 | Industrial Trend | open.industrial.Trend | Industrial | 800x350 |
+| 39 | OEE Summary | open.industrial.OEE | Industrial | 400x400 |
+| 40 | Pareto Chart | open.industrial.Pareto | Industrial | 700x400 |
+| 41 | SPC Chart | open.industrial.SPCChart | Industrial | 800x500 |
+| 42 | State Timeline | open.industrial.StateTimeline | Scheduling | 900x300 |
+| 43 | Gantt Chart | open.industrial.Gantt | Scheduling | 900x400 |
+| 44 | Schedule Calendar | open.industrial.ScheduleCalendar | Scheduling | 900x250 |
+| 45 | Shift Calendar | open.industrial.ShiftCalendar | Scheduling | 900x300 |
+| 46 | Downtime Tracker | open.industrial.DowntimeTracker | Scheduling | 900x350 |
+| 47 | Batch Timeline | open.industrial.BatchTimeline | Scheduling | 900x350 |
+| 48 | Resource Heatmap | open.industrial.ResourceHeatmap | Scheduling | 800x400 |

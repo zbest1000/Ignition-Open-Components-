@@ -1,0 +1,26 @@
+# Normalise text to LF in the repository and in every checkout.
+# text=auto leaves files already committed with CRLF untouched (no rewrite on checkout or add).
+* text=auto eol=lf
+
+# Windows scripts need CRLF to run reliably under cmd.exe.
+*.bat text=auto eol=crlf
+*.cmd text=auto eol=crlf
+
+# Shell entry points must stay LF even on Windows checkouts.
+gradlew text eol=lf
+*.sh text eol=lf
+
+# Binary: never convert, never diff as text.
+*.jar binary
+*.modl binary
+*.jks binary
+*.p7b binary
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+
+# Generated; collapse in GitHub diffs.
+web/package-lock.json linguist-generated=true
