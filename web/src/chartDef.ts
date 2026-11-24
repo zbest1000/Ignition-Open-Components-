@@ -32,7 +32,6 @@ export interface ChartManifestEntry {
  * Behaviour for components that derive their ECharts option from domain props
  * (the industrial components) instead of taking a raw `option`.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface ChartBehavior<P extends object = any> {
     /**
      * Reads the component's domain props (everything except the shared chart

@@ -1,99 +1,117 @@
+/**
+ * Builds the browser bundle the gateway serves under /res/open-echarts/.
+ *
+ * Output:
+ *   OpenECharts.js / OpenECharts.css   the entry files; the Java descriptors reference these names
+ *   OpenECharts.<name>.<hash>.js       chunks loaded on demand (echarts-gl)
+ *
+ * Every emitted .js and .css file (and the extracted licence notices) is copied into build/generated-resources/mounted/,
+ * which Gradle packages into the module.
+ */
 const path = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const fs = require('fs');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const LibName = "OpenECharts";
+const LibName = 'OpenECharts';
+const distDir = path.resolve(__dirname, 'dist');
+const mountedDir = path.resolve(__dirname, 'build/generated-resources/mounted');
 
-function copyToResources(compilation, callback) {
-    const generatedResourcesDir = path.resolve(__dirname, 'build/generated-resources/mounted/');
-    const jsToCopy = path.resolve(__dirname, "dist", `${LibName}.js`);
-    const cssToCopy = path.resolve(__dirname, "dist", `${LibName}.css`);
-    const jsResourcePath = path.resolve(generatedResourcesDir, `${LibName}.js`);
-    const cssResourcePath = path.resolve(generatedResourcesDir, `${LibName}.css`);
+// Scripts, stylesheets, and the third-party licence notices the minified scripts refer to.
+const isServedFile = name => /\.(js|css)$|\.LICENSE\.txt$/.test(name);
 
-    const toCopy = [
-        { from: jsToCopy, to: jsResourcePath },
-        { from: cssToCopy, to: cssResourcePath }
-    ];
+/**
+ * Mirrors the emitted .js/.css files into the mounted resources folder, and
+ * removes files left there by an earlier build (chunk names carry a content
+ * hash, so stale ones would otherwise pile up). Fails the build rather than
+ * shipping a module whose scripts would 404.
+ */
+class CopyToMountedPlugin {
+    apply(compiler) {
+        compiler.hooks.afterEmit.tapAsync('CopyToMountedPlugin', (compilation, callback) => {
+            try {
+                const emitted = compilation.getAssets().map(asset => asset.name).filter(isServedFile);
+                for (const required of [`${LibName}.js`, `${LibName}.css`]) {
+                    if (!emitted.includes(required)) throw new Error(`expected bundle output not found: ${required}`);
+                }
 
-    if (!fs.existsSync(generatedResourcesDir)) {
-        fs.mkdirSync(generatedResourcesDir, { recursive: true });
+                fs.mkdirSync(mountedDir, { recursive: true });
+                for (const stale of fs.readdirSync(mountedDir)) {
+                    if (isServedFile(stale) && !emitted.includes(stale)) fs.rmSync(path.join(mountedDir, stale));
+                }
+                for (const name of emitted) {
+                    const target = path.join(mountedDir, name);
+                    fs.mkdirSync(path.dirname(target), { recursive: true });
+                    fs.copyFileSync(path.join(distDir, name), target);
+                }
+                callback();
+            } catch (err) {
+                callback(new Error(`CopyToMountedPlugin: ${err.message}`));
+            }
+        });
     }
-
-    const errors = [];
-    toCopy.forEach(file => {
-        if (!fs.existsSync(file.from)) {
-            errors.push(`expected bundle output not found: ${file.from}`);
-            return;
-        }
-        try {
-            fs.copyFileSync(file.from, file.to);
-        } catch (err) {
-            errors.push(`failed to copy ${file.from} -> ${file.to}: ${err.message}`);
-        }
-    });
-
-    // Fail the build rather than silently shipping an empty mounted/ folder,
-    // which would cause the gateway to serve 404s for the JS/CSS bundle.
-    if (errors.length > 0) {
-        callback(new Error(`CopyToResourcesPlugin: ${errors.join('; ')}`));
-        return;
-    }
-
-    callback();
 }
 
-module.exports = {
-    entry: './src/index.ts',
-    output: {
-        library: LibName,
-        path: path.join(__dirname, "dist"),
-        filename: `${LibName}.js`,
-        libraryTarget: "umd",
-        umdNamedDefine: true
-    },
-    devtool: "source-map",
-    resolve: {
-        extensions: [".jsx", ".js", ".ts", ".tsx", ".d.ts", ".css"],
-        modules: [
-            path.resolve(__dirname, "node_modules")
-        ]
-    },
-    module: {
-        rules: [
-            {
-                test: /\.tsx?$/,
-                use: 'ts-loader',
-                exclude: /node_modules/
-            },
-            {
-                test: /\.css$/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    {
-                        loader: 'css-loader',
-                        options: { url: false }
-                    }
-                ]
-            }
-        ]
-    },
-    plugins: [
-        new MiniCssExtractPlugin({
-            filename: `${LibName}.css`
-        }),
-        {
-            apply: (compiler) => {
-                compiler.hooks.afterEmit.tapAsync('CopyToResourcesPlugin', copyToResources);
-            }
-        }
-    ],
-    externals: {
-        "react": "React",
-        "react-dom": "ReactDOM",
-        "@inductiveautomation/perspective-client": "PerspectiveClient"
-    },
-    optimization: {
-        splitChunks: false
-    }
+module.exports = (_env, argv) => {
+    const production = argv.mode === 'production';
+
+    return {
+        entry: './src/index.ts',
+        output: {
+            library: LibName,
+            libraryTarget: 'umd',
+            umdNamedDefine: true,
+            path: distDir,
+            filename: `${LibName}.js`,
+            chunkFilename: `${LibName}.[name].[contenthash:8].js`,
+            // Chunks are fetched from wherever the gateway served the entry script.
+            publicPath: 'auto',
+            // Perspective and other modules are webpack bundles on the same page; keep the chunk registries apart.
+            uniqueName: LibName,
+            chunkLoadingGlobal: `webpackChunk${LibName}`,
+        },
+        // The map is written to dist/ for debugging but not shipped, so the bundle must not point at it.
+        devtool: production ? 'hidden-source-map' : 'source-map',
+        resolve: {
+            extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
+            modules: [path.resolve(__dirname, 'node_modules')],
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.tsx?$/,
+                    use: 'ts-loader',
+                    exclude: /node_modules/,
+                },
+                {
+                    test: /\.css$/,
+                    use: [
+                        MiniCssExtractPlugin.loader,
+                        { loader: 'css-loader', options: { url: false } },
+                    ],
+                },
+            ],
+        },
+        plugins: [
+            new MiniCssExtractPlugin({ filename: `${LibName}.css` }),
+            new CopyToMountedPlugin(),
+        ],
+        // Provided by Perspective as page globals. Bundling any of them would
+        // put a second copy on the page (two Reacts break hooks and context).
+        externals: {
+            'react': 'React',
+            'react-dom': 'ReactDOM',
+            'mobx': 'mobx',
+            'mobx-react': 'mobxReact',
+            '@inductiveautomation/perspective-client': 'PerspectiveClient',
+            '@inductiveautomation/perspective-common': 'PerspectiveCommon',
+        },
+        optimization: {
+            // Only the explicit import() of echarts-gl creates a chunk.
+            splitChunks: false,
+        },
+        performance: {
+            // ECharts is large by nature; the sizes are checked by the smoke test instead.
+            hints: false,
+        },
+    };
 };

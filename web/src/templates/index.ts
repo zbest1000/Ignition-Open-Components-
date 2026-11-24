@@ -348,21 +348,28 @@ export const industrialParetoDowntime = {
     ]
 };
 
+/**
+ * One thick line segment per alarm, from its start to its end. A custom
+ * series would need a renderItem function, which a JSON option cannot hold.
+ */
+const alarmSegment = (source: string, startAgoMs: number, endAgoMs: number, alarm: string, color: string) => ({
+    type: 'line',
+    name: alarm,
+    symbol: 'none',
+    lineStyle: { width: 14, color },
+    data: [[Date.now() - startAgoMs, source], [Date.now() - endAgoMs, source]],
+});
+
 export const industrialAlarmTimeline = {
     title: { text: 'Alarm Timeline', left: 'center' },
-    tooltip: {},
+    tooltip: { trigger: 'item' },
     xAxis: { type: 'time' },
     yAxis: { type: 'category', data: ['Reactor A', 'Pump B', 'Conveyor C'] },
-    series: [{
-        type: 'custom',
-        renderItem: undefined,
-        encode: { x: [1, 2], y: 0 },
-        data: [
-            ['Reactor A',  Date.now() - 7200000, Date.now() - 5400000, 'High Temp'],
-            ['Pump B',     Date.now() - 6000000, Date.now() - 4800000, 'Vibration'],
-            ['Conveyor C', Date.now() - 3600000, Date.now() - 1800000, 'Jam'],
-        ]
-    }]
+    series: [
+        alarmSegment('Reactor A', 7200000, 5400000, 'High Temp', '#cc3333'),
+        alarmSegment('Pump B', 6000000, 4800000, 'Vibration', '#d4a017'),
+        alarmSegment('Conveyor C', 3600000, 1800000, 'Jam', '#cc3333'),
+    ],
 };
 
 // ── Template Registry ───────────────────────────────────────────────────

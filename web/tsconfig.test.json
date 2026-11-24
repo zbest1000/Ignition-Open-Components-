@@ -1,11 +1,16 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "module": "commonjs",
     "types": ["jest", "node", "react", "react-dom"],
-    "noUnusedLocals": false
+    "noEmit": true
   },
   "include": [
     "./src/**/*.ts",
     "./src/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
   ]
 }

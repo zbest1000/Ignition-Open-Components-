@@ -1,54 +1,63 @@
 import { BUILT_IN_THEMES, registerBuiltInThemes } from '../themes';
 import { industrialDark } from '../themes/industrialDark';
 import { industrialLight } from '../themes/industrialLight';
+import { BAR, echarts } from './support/harness';
 
-jest.mock('echarts/core', () => ({
-    registerTheme: jest.fn(),
-    use: jest.fn(),
-}));
+function chartWithTheme(theme: string) {
+    const node = document.createElement('div');
+    const chart = echarts.init(node, theme, { renderer: 'svg', width: 400, height: 300 });
+    chart.setOption({ ...BAR, title: { text: 'T' }, animation: false });
+    return { chart, node };
+}
 
-const echarts = require('echarts/core');
+describe('built-in themes', () => {
+    beforeAll(() => { registerBuiltInThemes(); });
 
-describe('Built-in themes', () => {
     it('exports two themes', () => {
-        expect(Object.keys(BUILT_IN_THEMES)).toEqual([
-            'IgnitionIndustrialDark',
-            'IgnitionIndustrialLight'
-        ]);
+        expect(Object.keys(BUILT_IN_THEMES)).toEqual(['IgnitionIndustrialDark', 'IgnitionIndustrialLight']);
     });
 
-    it('IgnitionIndustrialDark has required structure', () => {
+    it('has the structure the components rely on', () => {
+        for (const theme of [industrialDark, industrialLight]) {
+            expect(theme.color.length).toBeGreaterThanOrEqual(6);
+            for (const key of ['textStyle', 'title', 'legend', 'tooltip', 'categoryAxis', 'valueAxis', 'gauge']) {
+                expect(theme).toHaveProperty(key);
+            }
+        }
         expect(industrialDark.darkMode).toBe(true);
-        expect(industrialDark.backgroundColor).toBe('#1a1a2e');
-        expect(Array.isArray(industrialDark.color)).toBe(true);
-        expect(industrialDark.color.length).toBeGreaterThanOrEqual(6);
-        expect(industrialDark.textStyle).toBeDefined();
-        expect(industrialDark.title).toBeDefined();
-        expect(industrialDark.legend).toBeDefined();
-        expect(industrialDark.tooltip).toBeDefined();
-        expect(industrialDark.categoryAxis).toBeDefined();
-        expect(industrialDark.valueAxis).toBeDefined();
-        expect(industrialDark.gauge).toBeDefined();
-    });
-
-    it('IgnitionIndustrialLight has required structure', () => {
         expect(industrialLight.darkMode).toBe(false);
-        expect(industrialLight.backgroundColor).toBe('#ffffff');
-        expect(Array.isArray(industrialLight.color)).toBe(true);
-        expect(industrialLight.color.length).toBeGreaterThanOrEqual(6);
-        expect(industrialLight.textStyle).toBeDefined();
+        expect(industrialDark.gauge.axisLine.lineStyle.color).toHaveLength(3);
     });
 
-    it('registerBuiltInThemes calls echarts.registerTheme for each theme', () => {
-        (echarts.registerTheme as jest.Mock).mockClear();
+    it('registers idempotently', () => {
+        const register = jest.spyOn(echarts, 'registerTheme');
         registerBuiltInThemes();
-        expect(echarts.registerTheme).toHaveBeenCalledWith('IgnitionIndustrialDark', industrialDark);
-        expect(echarts.registerTheme).toHaveBeenCalledWith('IgnitionIndustrialLight', industrialLight);
+        expect(register).not.toHaveBeenCalled();
+        register.mockRestore();
     });
 
-    it('dark theme gauge has alarm/warning/ok ranges', () => {
-        const gaugeColors = industrialDark.gauge.axisLine.lineStyle.color;
-        expect(Array.isArray(gaugeColors)).toBe(true);
-        expect(gaugeColors.length).toBe(3);
+    it.each([
+        ['IgnitionIndustrialDark', industrialDark],
+        ['IgnitionIndustrialLight', industrialLight],
+    ] as const)('%s is applied by ECharts', (name, theme) => {
+        const { chart, node } = chartWithTheme(name);
+        const option = chart.getOption();
+
+        expect(option.backgroundColor).toBe(theme.backgroundColor);
+        expect(option.color).toEqual(theme.color);
+        expect(option.title[0].textStyle.color).toBe(theme.title.textStyle.color);
+        expect(option.xAxis[0].axisLine.lineStyle.color).toBe(theme.categoryAxis.axisLine.lineStyle.color);
+        expect(option.yAxis[0].splitLine.lineStyle.color).toBe(theme.valueAxis.splitLine.lineStyle.color);
+
+        // The palette and background reach the rendered SVG, not just the option.
+        const markup = node.innerHTML.toLowerCase();
+        expect(markup).toContain(theme.color[0].toLowerCase());
+        chart.dispose();
+    });
+
+    it('differs from the ECharts default look', () => {
+        const { chart } = chartWithTheme('');
+        expect(chart.getOption().color).not.toEqual(industrialLight.color);
+        chart.dispose();
     });
 });
