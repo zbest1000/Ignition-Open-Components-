@@ -11,16 +11,19 @@ Nothing has been released yet; this section describes the first release as it wi
 "Changed", "Fixed" and "Removed" are relative to earlier development builds.
 
 ### Added
-- 56 Perspective components on one shared runtime:
+- 57 Perspective components on one shared runtime:
   - 26 in *Open Components / ECharts*: the universal `EChart` renderer plus 25 2D chart types
   - 11 in *Open Components / ECharts 3D*: 8 3D types (Bar3D, Line3D, Scatter3D, Surface, Map3D,
     Globe, Lines3D, Polygons3D) and 3 WebGL types (ScatterGL, GraphGL, FlowGL)
-  - 12 in *Open Components / Industrial*: Trend, OEE, Pareto, SPC, and eight KPI and analysis
+  - 13 in *Open Components / Industrial*: Trend, OEE, Pareto, SPC, and nine KPI and analysis
     charts built from plain row data:
     - Metric Rings: concentric progress rings for any metrics, with per-ring range, unit and
       target, value thresholds, and a centre summary (product, average, min, max, sum)
     - Bullet Chart: actual versus target on qualitative bands
     - KPI Tile: a big number with change versus previous or target and a sparkline
+    - Dial Gauge: one value on a dial in four looks (progress arc with scale, stage band with
+      needle, graded band with stage names, minimal arc), with value stages and a target marker;
+      text and arc scale with the component
     - Waterfall: bridge of increases, decreases, subtotals and totals; correct across zero
     - Capability Histogram: histogram with LSL / USL / target, fitted normal curve and
       Pp/Ppk (overall sigma) or Cp/Cpk (within sigma)
@@ -28,6 +31,8 @@ Nothing has been released yet; this section describes the first release as it wi
     - Event Heatmap: event counts by hour of day and day of week, from cells or raw timestamps
     - Radar Comparison: entities compared across metrics with different units, each axis
       normalised to its own range, real values in tooltips
+- Timeline options (`baseOption` + `options`) work as pasted, and ECharts 6's `matrix` coordinate
+  system is registered, so grids of sparklines can be drawn.
 - OEE Summary is customisable: `labels`, `colors`, `thresholds`, `target`, `decimals`, and a
   `metrics` list that replaces the three fixed factors. Existing props are unchanged.
   - 7 in *Open Components / Scheduling*: State Timeline, Gantt, Schedule Calendar, Shift Calendar,

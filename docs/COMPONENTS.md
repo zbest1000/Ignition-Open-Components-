@@ -1,6 +1,6 @@
 # Open ECharts — Component Reference
 
-Component reference for the **Open ECharts** Ignition Perspective module: 56 chart components built on Apache ECharts 6.1.0 and ECharts-GL 2.1.0.
+Component reference for the **Open ECharts** Ignition Perspective module: 57 chart components built on Apache ECharts 6.1.0 and ECharts-GL 2.1.0.
 
 ---
 
@@ -1333,6 +1333,50 @@ Example:
 }
 ```
 
+#### 57. Dial Gauge
+- **Component ID:** `open.industrial.DialGauge`
+- **Default size:** 360x300
+- **Description:** A dial for one value, to bind a tag to, in four looks: `progress` (a thick rounded arc filled up to the value, with the scale around it), `stages` (a wide band coloured by value stages, with a needle), `grade` (a thin coloured band with the stage names written along it, and a pointer) and `minimal` (an arc and the value only, for small tiles). The value is printed with its unit and a caption, and takes the colour of the stage it is in. Line widths and text sizes follow the size of the component, from about 160x140 upwards; on small dials the scale numbers and stage names are left out. A value outside the scale stops the arc or pointer at the end of the scale and is still printed as it is; a value that is not a number shows a dash.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `value` | number / null | The value shown. Anything that is not a number draws an empty dial with a dash. |
+| `min` | number | Start of the scale. |
+| `max` | number | End of the scale. If it is not greater than `min`, the scale is 0 to 100. |
+| `unit` | string | Unit written after the value. |
+| `decimals` | integer | Decimal places of the value. |
+| `title` | string | Caption below the value; cut with an ellipsis when it does not fit. |
+| `variant` | string | `progress` (default), `stages`, `grade` or `minimal`. |
+| `stages` | array | Value bands as objects `{ upTo, color, name }`, the convention of the Metric Rings `thresholds`: a value belongs to the first stage, in ascending order of `upTo`, whose `upTo` is greater than it; a stage without `upTo` takes everything above. They colour the band in `stages` and `grade`, and the arc and value in `progress` and `minimal`. `name` is written along the band in `grade` (shortened or left out when the band is too narrow) and shown in the tooltip. |
+| `color` | string | Colour of the arc, pointer and value when there are no stages or none takes the value. |
+| `target` | number / null | A marker across the scale, e.g. a setpoint or limit. Not drawn outside the scale. |
+| `showScale` | boolean | Draw the ticks and numbers of the scale. `minimal` has none; `grade` has ticks only. |
+| `showValue` | boolean | Write the value in the dial. |
+| `splitNumber` | integer | Number of labelled divisions. 0 chooses one that gives round steps (0-120 in steps of 20). Scales from 10,000 are labelled in k, M or G. |
+| `startAngle` | number / null | Angle where the scale starts (90 top, 180 left, 0 right); it runs clockwise. Null centres the opening at the bottom. |
+| `sweep` | number / null | Angle the scale covers (30-360). Null is 180 for `grade` and 270 for the others. A scale with numbers stops at 340 so that its first and last number do not coincide. |
+
+Example: a quality score as a grade dial.
+
+```json
+{
+  "variant": "grade",
+  "value": 68,
+  "min": 0,
+  "max": 100,
+  "unit": "%",
+  "decimals": 0,
+  "title": "Quality score",
+  "target": null,
+  "stages": [
+    { "upTo": 25, "color": "#e05252", "name": "Grade D" },
+    { "upTo": 50, "color": "#e6a23c", "name": "Grade C" },
+    { "upTo": 75, "color": "#91cc75", "name": "Grade B" },
+    { "color": "#3ba272", "name": "Grade A" }
+  ]
+}
+```
+
 ---
 
 ## Summary Table
@@ -1395,3 +1439,4 @@ Example:
 | 54 | Flow Diagram (Sankey) | open.industrial.FlowDiagram | Industrial | 800x450 |
 | 55 | Event Heatmap | open.industrial.EventHeatmap | Industrial | 760x380 |
 | 56 | Radar Comparison | open.industrial.RadarComparison | Industrial | 560x460 |
+| 57 | Dial Gauge | open.industrial.DialGauge | Industrial | 360x300 |

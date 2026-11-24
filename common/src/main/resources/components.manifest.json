@@ -3736,6 +3736,19 @@
       }
     },
     {
+      "id": "open.industrial.DialGauge",
+      "name": "Dial Gauge",
+      "description": "A dial for one value: progress arc, stage band with needle, graded band with names, or a minimal arc.",
+      "category": "Open Components / Industrial",
+      "metaName": "dialGauge",
+      "schema": "props/industrial-dial-gauge.props.json",
+      "cssClass": "open-industrial-dial-gauge",
+      "size": {
+        "width": 360,
+        "height": 300
+      }
+    },
+    {
       "id": "open.industrial.Waterfall",
       "name": "Waterfall Chart",
       "description": "Bridge chart: a starting total, increases and decreases, subtotals and an end total (OEE losses, energy balance, cost variance).",

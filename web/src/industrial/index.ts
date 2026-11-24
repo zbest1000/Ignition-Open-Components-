@@ -2,6 +2,7 @@ import type { ChartBehaviors } from '../chartDef';
 import { BATCH_TIMELINE_ID, batchTimelineBehavior } from './batchTimeline';
 import { BULLET_CHART_ID, bulletChartBehavior } from './bulletChart';
 import { CAPABILITY_HISTOGRAM_ID, capabilityHistogramBehavior } from './capabilityHistogram';
+import { DIAL_GAUGE_ID, dialGaugeBehavior } from './dialGauge';
 import { DOWNTIME_TRACKER_ID, downtimeTrackerBehavior } from './downtimeTracker';
 import { EVENT_HEATMAP_ID, eventHeatmapBehavior } from './eventHeatmap';
 import { FLOW_DIAGRAM_ID, flowDiagramBehavior } from './flowDiagram';
@@ -31,6 +32,7 @@ export const INDUSTRIAL_BEHAVIORS: ChartBehaviors = {
     [METRIC_RINGS_ID]: metricRingsBehavior,
     [BULLET_CHART_ID]: bulletChartBehavior,
     [KPI_TILE_ID]: kpiTileBehavior,
+    [DIAL_GAUGE_ID]: dialGaugeBehavior,
     [WATERFALL_ID]: waterfallBehavior,
     [CAPABILITY_HISTOGRAM_ID]: capabilityHistogramBehavior,
     [FLOW_DIAGRAM_ID]: flowDiagramBehavior,

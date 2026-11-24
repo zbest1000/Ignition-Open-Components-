@@ -50,10 +50,13 @@ interface SetOptionOpts {
     replaceMerge?: string[];
 }
 
-/** True for ECharts' compound form: `{ baseOption, options }` (timeline) or `{ baseOption, media }`. */
-function isCompoundOption(option: unknown): boolean {
-    return typeof option === 'object' && option !== null
-        && ('baseOption' in option || 'options' in option || 'media' in option);
+/**
+ * True for a timeline option: `{ baseOption, options: [...] }`. A media-only
+ * option (`{ baseOption, media }`) is not one; it merges like a flat option,
+ * which keeps value transitions smooth on live components.
+ */
+function isTimelineOption(option: unknown): boolean {
+    return typeof option === 'object' && option !== null && Array.isArray((option as { options?: unknown }).options);
 }
 
 const DEFAULT_RESIZE_DEBOUNCE_MS = 150;
@@ -378,10 +381,10 @@ export abstract class OpenEChartComponent extends Component<ComponentProps<Chart
         this.pending = null;
         if (!this.chart || !item) return;
 
-        // A timeline or media option (baseOption + options) is replaced as a
-        // whole: its steps carry partial series that ECharts matches against the
-        // base by position, which replaceMerge would treat as removed series.
-        const opts: SetOptionOpts = item.replace || isCompoundOption(item.option)
+        // A timeline option (baseOption + options) is replaced as a whole: its
+        // steps carry partial series that ECharts matches against the base by
+        // position, which replaceMerge would treat as removed series.
+        const opts: SetOptionOpts = item.replace || isTimelineOption(item.option)
             ? { notMerge: true, lazyUpdate: false }
             : { notMerge: false, lazyUpdate: false, replaceMerge: ['series'] };
         this.richTextOnly = item.richText && this.richTextOnly !== false;

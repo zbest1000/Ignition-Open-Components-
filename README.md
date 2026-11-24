@@ -58,7 +58,7 @@ Requires **Ignition 8.3.7 or newer** with the Perspective module.
 
 ## Components
 
-### 56 Components — Complete ECharts + ECharts-GL Suite
+### 57 Components — Complete ECharts + ECharts-GL Suite
 
 Every chart type from the [ECharts examples gallery](https://echarts.apache.org/examples/en/index.html) and [ECharts-GL](https://github.com/ecomfe/echarts-gl) has its own component. All share one runtime; each has its own palette entry, default size, and default option, so a component dropped from the palette starts as a working chart of that type (Map, Map 3D, Polygons 3D and Custom start empty: they need map data or a render function, see [`docs/COMPONENTS.md`](docs/COMPONENTS.md)). ECharts-GL is loaded on demand, only when one of the 11 3D / WebGL components is on screen.
 
@@ -157,6 +157,7 @@ Map geometry is not bundled: supply GeoJSON or SVG through the `maps` property.
 | **Metric Rings** | `open.industrial.MetricRings` | Concentric progress rings for any metrics, with targets, thresholds and a centre summary |
 | **Bullet Chart** | `open.industrial.BulletChart` | Actual vs target on qualitative bands |
 | **KPI Tile** | `open.industrial.KpiTile` | Big number, change vs previous or target, sparkline |
+| **Dial Gauge** | `open.industrial.DialGauge` | One value on a dial: progress arc, stage band with needle, graded band, or minimal arc |
 | **Waterfall Chart** | `open.industrial.Waterfall` | Bridge of increases, decreases, subtotals and totals |
 | **Capability Histogram** | `open.industrial.CapabilityHistogram` | Histogram with spec limits, normal curve, Pp/Ppk or Cp/Cpk |
 | **Flow Diagram** | `open.industrial.FlowDiagram` | Energy / material Sankey from source, target, value rows |

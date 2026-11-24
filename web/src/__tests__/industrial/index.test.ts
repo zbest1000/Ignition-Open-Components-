@@ -16,6 +16,7 @@ const IDS = [
     'open.industrial.MetricRings',
     'open.industrial.BulletChart',
     'open.industrial.KpiTile',
+    'open.industrial.DialGauge',
     'open.industrial.Waterfall',
     'open.industrial.CapabilityHistogram',
     'open.industrial.FlowDiagram',
