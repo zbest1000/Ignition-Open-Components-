@@ -572,7 +572,8 @@ function json(value, indent = '') {
     const members = Object.entries(value).map(([key, item]) => `${inner}${JSON.stringify(key)}: ${json(item, inner)}`);
     return `{\n${members.join(',\n')}\n${indent}}`;
 }
-const cell = text => String(text).replace(/\s*\n\s*/g, ' ').replace(/\|/g, '\\|');
+/** Text for a Markdown table cell: one line, with backslashes and pipes escaped. */
+const cell = text => String(text).replace(/\s*\n\s*/g, ' ').replace(/\\/g, '\\\\').replace(/\|/g, '\\|');
 /** The anchor GitHub gives a heading: lower case, punctuation dropped, each space a hyphen. */
 const anchor = text => text.trim().toLowerCase().replace(/[^\p{L}\p{N} _-]/gu, '').replace(/ /g, '-');
 

@@ -683,6 +683,7 @@ function placedSeries(design: Design, place: Placement): Row[] {
 /** Copies `source` into `target`, objects key by key; arrays and other values replace what is there. */
 function merge(target: Row, source: Row): Row {
     for (const key of Object.keys(source)) {
+        if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
         const value = source[key];
         const existing = target[key];
         if (isRecord(value) && isRecord(existing)) merge(existing, value);
