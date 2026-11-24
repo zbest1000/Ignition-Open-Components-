@@ -4,31 +4,20 @@
   "properties": {
     "option": {
       "type": "object",
-      "description": "ECharts option object. Accepts any valid ECharts configuration (series, axes, tooltip, legend, etc.).",
-      "default": {
-        "xAxis": {
-          "type": "category",
-          "data": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-        },
-        "yAxis": {
-          "type": "value"
-        },
-        "series": [
-          {
-            "type": "bar",
-            "data": [120, 200, 150, 80, 70, 110, 130]
-          }
-        ]
-      }
+      "description": "ECharts option object. Accepts any valid ECharts configuration (series, axes, tooltip, legend, etc.). A component dropped from the palette starts with a sample option for its chart type.",
+      "default": {}
     },
     "theme": {
       "type": "string",
-      "description": "Theme name (built-in or gateway-managed) or inline theme JSON object.",
+      "description": "Name of a registered ECharts theme. Built-in themes: IgnitionIndustrialDark, IgnitionIndustrialLight. Leave empty for the ECharts default theme.",
       "default": ""
     },
     "renderer": {
       "type": "string",
-      "enum": ["canvas", "svg"],
+      "enum": [
+        "canvas",
+        "svg"
+      ],
       "description": "Rendering engine: canvas (better perf) or svg (better quality/export).",
       "default": "canvas"
     },
@@ -64,8 +53,13 @@
     },
     "sanitizeTooltip": {
       "type": "boolean",
-      "description": "Strip unsafe HTML from tooltip content.",
+      "description": "Sanitises HTML in tooltip formatters and blocks non-http(s) links.",
       "default": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label announced by screen readers.",
+      "default": ""
     },
     "style": {
       "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",

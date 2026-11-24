@@ -1,20 +1,20 @@
 {
   "name": "onDoubleClick",
-  "description": "Fired when the chart is double-clicked. Provides series/data point information.",
+  "description": "Fired when a chart element is double-clicked. Fields that do not apply to the element are omitted.",
   "schema": {
     "type": "object",
     "properties": {
       "componentType": {
         "type": "string",
-        "description": "ECharts component type that was double-clicked."
+        "description": "ECharts component the pointer event belongs to, e.g. 'series', 'markPoint', 'xAxis'."
       },
       "seriesType": {
         "type": "string",
-        "description": "Series type (e.g. 'bar', 'line', 'pie')."
+        "description": "Series type, e.g. 'bar', 'line', 'pie'. Present when componentType is 'series'."
       },
       "seriesIndex": {
         "type": "integer",
-        "description": "Index of the series."
+        "description": "Index of the series in option.series."
       },
       "seriesName": {
         "type": "string",
@@ -22,14 +22,52 @@
       },
       "name": {
         "type": "string",
-        "description": "Data item name."
+        "description": "Name of the data item, or the category name."
       },
       "dataIndex": {
         "type": "integer",
         "description": "Index of the data item within the series."
       },
+      "data": {
+        "type": [
+          "string",
+          "number",
+          "boolean",
+          "object",
+          "array",
+          "null"
+        ],
+        "description": "The raw data item as given in the option."
+      },
+      "dataType": {
+        "type": "string",
+        "description": "For series with more than one kind of data, which one the item belongs to, e.g. 'node' or 'edge' in a graph."
+      },
       "value": {
-        "description": "Value of the data item."
+        "type": [
+          "string",
+          "number",
+          "boolean",
+          "object",
+          "array",
+          "null"
+        ],
+        "description": "Value of the data item: a number, or an array for multi-dimensional data."
+      },
+      "color": {
+        "type": [
+          "string",
+          "number",
+          "boolean",
+          "object",
+          "array",
+          "null"
+        ],
+        "description": "Colour of the data item: a CSS colour string, or a gradient/pattern object."
+      },
+      "percent": {
+        "type": "number",
+        "description": "Share of the total in percent. Pie, funnel and similar series only."
       }
     }
   }

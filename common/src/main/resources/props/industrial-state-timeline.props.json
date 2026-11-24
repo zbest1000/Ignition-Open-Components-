@@ -8,28 +8,80 @@
       "items": {
         "type": "object",
         "properties": {
-          "lane":  { "type": "string" },
-          "start": { "type": "number" },
-          "end":   { "type": "number" },
-          "state": { "type": "string" },
-          "color": { "type": "string" }
+          "lane": {
+            "type": "string"
+          },
+          "start": {
+            "type": "number"
+          },
+          "end": {
+            "type": "number"
+          },
+          "state": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          }
         }
       },
       "default": [
-        { "lane": "Reactor A",  "start": 1699992800000, "end": 1699994600000, "state": "Running" },
-        { "lane": "Reactor A",  "start": 1699994600000, "end": 1699996400000, "state": "Alarm" },
-        { "lane": "Reactor A",  "start": 1699996400000, "end": 1700000000000, "state": "Running" },
-        { "lane": "Pump B",     "start": 1699992800000, "end": 1699994000000, "state": "Running" },
-        { "lane": "Pump B",     "start": 1699994000000, "end": 1699995200000, "state": "Maintenance" },
-        { "lane": "Pump B",     "start": 1699995200000, "end": 1700000000000, "state": "Running" },
-        { "lane": "Conveyor C", "start": 1699992800000, "end": 1699998200000, "state": "Running" },
-        { "lane": "Conveyor C", "start": 1699998200000, "end": 1700000000000, "state": "Idle" }
+        {
+          "lane": "Reactor A",
+          "start": 1699992800000,
+          "end": 1699994600000,
+          "state": "Running"
+        },
+        {
+          "lane": "Reactor A",
+          "start": 1699994600000,
+          "end": 1699996400000,
+          "state": "Alarm"
+        },
+        {
+          "lane": "Reactor A",
+          "start": 1699996400000,
+          "end": 1700000000000,
+          "state": "Running"
+        },
+        {
+          "lane": "Pump B",
+          "start": 1699992800000,
+          "end": 1699994000000,
+          "state": "Running"
+        },
+        {
+          "lane": "Pump B",
+          "start": 1699994000000,
+          "end": 1699995200000,
+          "state": "Maintenance"
+        },
+        {
+          "lane": "Pump B",
+          "start": 1699995200000,
+          "end": 1700000000000,
+          "state": "Running"
+        },
+        {
+          "lane": "Conveyor C",
+          "start": 1699992800000,
+          "end": 1699998200000,
+          "state": "Running"
+        },
+        {
+          "lane": "Conveyor C",
+          "start": 1699998200000,
+          "end": 1700000000000,
+          "state": "Idle"
+        }
       ]
     },
     "stateColors": {
       "type": "object",
       "description": "Map of state name to colour, e.g. { \"Running\": \"#91cc75\" }. Merged over the built-in defaults.",
-      "additionalProperties": { "type": "string" },
+      "additionalProperties": {
+        "type": "string"
+      },
       "default": {}
     },
     "title": {
@@ -39,21 +91,68 @@
     },
     "option": {
       "type": "object",
-      "description": "Advanced override. If non-empty, this ECharts option is used verbatim and the domain props above are ignored.",
+      "description": "Advanced override. When non-empty, this ECharts option replaces the generated chart and the domain props are ignored.",
       "default": {}
     },
-    "theme": { "type": "string", "default": "" },
-    "renderer": { "type": "string", "enum": ["canvas", "svg"], "default": "canvas" },
-    "autoResize": { "type": "boolean", "default": true },
-    "resizeDebounceMs": { "type": "integer", "default": 150 },
-    "notMerge": { "type": "boolean", "default": false },
-    "lazyUpdate": { "type": "boolean", "default": true },
-    "showLoading": { "type": "boolean", "default": false },
-    "loadingOptions": { "type": "object", "default": {} },
-    "sanitizeTooltip": { "type": "boolean", "default": true },
+    "theme": {
+      "type": "string",
+      "description": "Name of a registered ECharts theme. Built-in themes: IgnitionIndustrialDark, IgnitionIndustrialLight. Leave empty for the ECharts default theme.",
+      "default": ""
+    },
+    "renderer": {
+      "type": "string",
+      "enum": [
+        "canvas",
+        "svg"
+      ],
+      "description": "Rendering engine: canvas (better perf) or svg (better quality/export).",
+      "default": "canvas"
+    },
+    "autoResize": {
+      "type": "boolean",
+      "description": "Automatically resize chart when container dimensions change.",
+      "default": true
+    },
+    "resizeDebounceMs": {
+      "type": "integer",
+      "description": "Debounce interval in milliseconds for resize events.",
+      "default": 150
+    },
+    "notMerge": {
+      "type": "boolean",
+      "description": "If true, setOption will not merge with previous option but replace entirely.",
+      "default": false
+    },
+    "lazyUpdate": {
+      "type": "boolean",
+      "description": "If true, chart update is deferred for better performance during rapid changes.",
+      "default": true
+    },
+    "showLoading": {
+      "type": "boolean",
+      "description": "Show the built-in ECharts loading animation.",
+      "default": false
+    },
+    "loadingOptions": {
+      "type": "object",
+      "description": "Options for the loading animation (text, color, etc.).",
+      "default": {}
+    },
+    "sanitizeTooltip": {
+      "type": "boolean",
+      "description": "Sanitises HTML in tooltip formatters and blocks non-http(s) links.",
+      "default": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label announced by screen readers.",
+      "default": ""
+    },
     "style": {
       "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
-      "default": { "classes": "" }
+      "default": {
+        "classes": ""
+      }
     }
   }
 }

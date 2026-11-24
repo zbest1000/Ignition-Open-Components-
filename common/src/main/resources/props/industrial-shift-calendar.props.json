@@ -4,36 +4,100 @@
   "properties": {
     "patterns": {
       "type": "array",
-      "description": "Shift patterns: { name, color, days (array of weekday indices 0=Sun..6=Sat) }. Empty uses built-in demo patterns.",
+      "description": "Shift patterns: { name, color, days } where days lists the weekdays worked (0 = Sunday .. 6 = Saturday).",
       "items": {
         "type": "object",
         "properties": {
-          "name":  { "type": "string" },
-          "color": { "type": "string" },
-          "days":  { "type": "array", "items": { "type": "integer" } }
+          "name": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "days": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
         }
       },
-      "default": []
+      "default": [
+        {
+          "name": "Day",
+          "color": "#5470c6",
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "name": "Night",
+          "color": "#3ba272",
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "name": "Off",
+          "color": "#e0e0e0",
+          "days": [
+            0,
+            6
+          ]
+        }
+      ]
     },
     "crews": {
       "type": "array",
-      "description": "Crew assignments: { crew, pattern, startDate (YYYY-MM-DD), rotationDays? }. Empty uses built-in demo crews.",
+      "description": "Crew assignments: { crew, pattern } where pattern is the name of a shift pattern. startDate and rotationDays are reserved and currently unused.",
       "items": {
         "type": "object",
         "properties": {
-          "crew":         { "type": "string" },
-          "pattern":      { "type": "string" },
-          "startDate":    { "type": "string" },
-          "rotationDays": { "type": "number" }
+          "crew": {
+            "type": "string"
+          },
+          "pattern": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Reserved, currently unused."
+          },
+          "rotationDays": {
+            "type": "number",
+            "description": "Reserved, currently unused."
+          }
         }
       },
-      "default": []
+      "default": [
+        {
+          "crew": "Crew A",
+          "pattern": "Day"
+        },
+        {
+          "crew": "Crew B",
+          "pattern": "Night"
+        }
+      ]
     },
     "dateRange": {
       "type": "array",
       "description": "Inclusive [startDate, endDate] as YYYY-MM-DD strings.",
-      "items": { "type": "string" },
-      "default": ["2025-01-01", "2025-01-31"]
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "2025-01-01",
+        "2025-01-31"
+      ]
     },
     "title": {
       "type": "string",
@@ -42,21 +106,68 @@
     },
     "option": {
       "type": "object",
-      "description": "Advanced override. If non-empty, this ECharts option is used verbatim and the domain props above are ignored.",
+      "description": "Advanced override. When non-empty, this ECharts option replaces the generated chart and the domain props are ignored.",
       "default": {}
     },
-    "theme": { "type": "string", "default": "" },
-    "renderer": { "type": "string", "enum": ["canvas", "svg"], "default": "canvas" },
-    "autoResize": { "type": "boolean", "default": true },
-    "resizeDebounceMs": { "type": "integer", "default": 150 },
-    "notMerge": { "type": "boolean", "default": false },
-    "lazyUpdate": { "type": "boolean", "default": true },
-    "showLoading": { "type": "boolean", "default": false },
-    "loadingOptions": { "type": "object", "default": {} },
-    "sanitizeTooltip": { "type": "boolean", "default": true },
+    "theme": {
+      "type": "string",
+      "description": "Name of a registered ECharts theme. Built-in themes: IgnitionIndustrialDark, IgnitionIndustrialLight. Leave empty for the ECharts default theme.",
+      "default": ""
+    },
+    "renderer": {
+      "type": "string",
+      "enum": [
+        "canvas",
+        "svg"
+      ],
+      "description": "Rendering engine: canvas (better perf) or svg (better quality/export).",
+      "default": "canvas"
+    },
+    "autoResize": {
+      "type": "boolean",
+      "description": "Automatically resize chart when container dimensions change.",
+      "default": true
+    },
+    "resizeDebounceMs": {
+      "type": "integer",
+      "description": "Debounce interval in milliseconds for resize events.",
+      "default": 150
+    },
+    "notMerge": {
+      "type": "boolean",
+      "description": "If true, setOption will not merge with previous option but replace entirely.",
+      "default": false
+    },
+    "lazyUpdate": {
+      "type": "boolean",
+      "description": "If true, chart update is deferred for better performance during rapid changes.",
+      "default": true
+    },
+    "showLoading": {
+      "type": "boolean",
+      "description": "Show the built-in ECharts loading animation.",
+      "default": false
+    },
+    "loadingOptions": {
+      "type": "object",
+      "description": "Options for the loading animation (text, color, etc.).",
+      "default": {}
+    },
+    "sanitizeTooltip": {
+      "type": "boolean",
+      "description": "Sanitises HTML in tooltip formatters and blocks non-http(s) links.",
+      "default": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label announced by screen readers.",
+      "default": ""
+    },
     "style": {
       "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
-      "default": { "classes": "" }
+      "default": {
+        "classes": ""
+      }
     }
   }
 }

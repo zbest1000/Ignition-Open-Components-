@@ -4,18 +4,30 @@
   "properties": {
     "option": {
       "type": "object",
-      "description": "ECharts option object. Pre-configured for Pareto analysis.",
+      "description": "Advanced override. When non-empty, this ECharts option replaces the generated chart and the domain props are ignored.",
       "default": {}
     },
     "categories": {
       "type": "array",
-      "description": "Category labels for the X axis.",
-      "default": ["Mechanical", "Electrical", "Operator", "Material", "Other"]
+      "description": "Category labels. Bars are drawn sorted by count, largest first.",
+      "default": [
+        "Mechanical",
+        "Electrical",
+        "Operator",
+        "Material",
+        "Other"
+      ]
     },
     "counts": {
       "type": "array",
-      "description": "Count values for each category (bars).",
-      "default": [42, 28, 18, 12, 5]
+      "description": "Count for each category, in the same order as categories. Negative or non-numeric counts count as 0.",
+      "default": [
+        42,
+        28,
+        18,
+        12,
+        5
+      ]
     },
     "showCumulativeLine": {
       "type": "boolean",
@@ -37,18 +49,65 @@
       "description": "Label for the cumulative line series.",
       "default": "Cumulative %"
     },
-    "theme": { "type": "string", "default": "" },
-    "renderer": { "type": "string", "enum": ["canvas", "svg"], "default": "canvas" },
-    "autoResize": { "type": "boolean", "default": true },
-    "resizeDebounceMs": { "type": "integer", "default": 150 },
-    "notMerge": { "type": "boolean", "default": false },
-    "lazyUpdate": { "type": "boolean", "default": true },
-    "showLoading": { "type": "boolean", "default": false },
-    "loadingOptions": { "type": "object", "default": {} },
-    "sanitizeTooltip": { "type": "boolean", "default": true },
+    "theme": {
+      "type": "string",
+      "description": "Name of a registered ECharts theme. Built-in themes: IgnitionIndustrialDark, IgnitionIndustrialLight. Leave empty for the ECharts default theme.",
+      "default": ""
+    },
+    "renderer": {
+      "type": "string",
+      "enum": [
+        "canvas",
+        "svg"
+      ],
+      "description": "Rendering engine: canvas (better perf) or svg (better quality/export).",
+      "default": "canvas"
+    },
+    "autoResize": {
+      "type": "boolean",
+      "description": "Automatically resize chart when container dimensions change.",
+      "default": true
+    },
+    "resizeDebounceMs": {
+      "type": "integer",
+      "description": "Debounce interval in milliseconds for resize events.",
+      "default": 150
+    },
+    "notMerge": {
+      "type": "boolean",
+      "description": "If true, setOption will not merge with previous option but replace entirely.",
+      "default": false
+    },
+    "lazyUpdate": {
+      "type": "boolean",
+      "description": "If true, chart update is deferred for better performance during rapid changes.",
+      "default": true
+    },
+    "showLoading": {
+      "type": "boolean",
+      "description": "Show the built-in ECharts loading animation.",
+      "default": false
+    },
+    "loadingOptions": {
+      "type": "object",
+      "description": "Options for the loading animation (text, color, etc.).",
+      "default": {}
+    },
+    "sanitizeTooltip": {
+      "type": "boolean",
+      "description": "Sanitises HTML in tooltip formatters and blocks non-http(s) links.",
+      "default": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label announced by screen readers.",
+      "default": ""
+    },
     "style": {
       "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
-      "default": { "classes": "" }
+      "default": {
+        "classes": ""
+      }
     }
   }
 }

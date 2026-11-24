@@ -4,7 +4,7 @@
   "properties": {
     "option": {
       "type": "object",
-      "description": "ECharts option object. Pre-configured for time-series trending.",
+      "description": "Advanced override. When non-empty, this ECharts option replaces the generated chart and the domain props are ignored.",
       "default": {}
     },
     "data": {
@@ -14,22 +14,22 @@
       "properties": {
         "pvData": {
           "type": "array",
-          "description": "Process variable data as [[timestamp, value], ...] or array of objects.",
+          "description": "Process variable data: array of [time, value] pairs or array of objects.",
           "default": []
         },
         "spData": {
           "type": "array",
-          "description": "Setpoint data as [[timestamp, value], ...].",
+          "description": "Setpoint data: array of [time, value] pairs or array of objects.",
           "default": []
         },
         "timeField": {
           "type": "string",
-          "description": "Field name for timestamp when using object arrays.",
+          "description": "Field holding the time when the data is an array of objects. Defaults to \"t\".",
           "default": "t"
         },
         "valueField": {
           "type": "string",
-          "description": "Field name for value when using object arrays.",
+          "description": "Field holding the value when the data is an array of objects. Defaults to \"v\".",
           "default": "v"
         }
       }
@@ -39,10 +39,34 @@
       "description": "Alarm and warning limits displayed as horizontal markLines.",
       "default": {},
       "properties": {
-        "hiAlarm":   { "type": "number", "description": "High alarm limit." },
-        "hiWarning": { "type": "number", "description": "High warning limit." },
-        "loWarning": { "type": "number", "description": "Low warning limit." },
-        "loAlarm":   { "type": "number", "description": "Low alarm limit." }
+        "hiAlarm": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "High alarm limit."
+        },
+        "hiWarning": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "High warning limit."
+        },
+        "loWarning": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Low warning limit."
+        },
+        "loAlarm": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Low alarm limit."
+        }
       }
     },
     "yAxisLabel": {
@@ -62,29 +86,63 @@
     },
     "theme": {
       "type": "string",
+      "description": "Name of a registered ECharts theme. Built-in themes: IgnitionIndustrialDark, IgnitionIndustrialLight. Leave empty for the ECharts default theme.",
       "default": ""
     },
     "renderer": {
       "type": "string",
-      "enum": ["canvas", "svg"],
+      "enum": [
+        "canvas",
+        "svg"
+      ],
+      "description": "Rendering engine: canvas (better perf) or svg (better quality/export).",
       "default": "canvas"
     },
     "autoResize": {
       "type": "boolean",
+      "description": "Automatically resize chart when container dimensions change.",
       "default": true
     },
     "resizeDebounceMs": {
       "type": "integer",
+      "description": "Debounce interval in milliseconds for resize events.",
       "default": 150
     },
-    "notMerge": { "type": "boolean", "default": false },
-    "lazyUpdate": { "type": "boolean", "default": true },
-    "showLoading": { "type": "boolean", "default": false },
-    "loadingOptions": { "type": "object", "default": {} },
-    "sanitizeTooltip": { "type": "boolean", "default": true },
+    "notMerge": {
+      "type": "boolean",
+      "description": "If true, setOption will not merge with previous option but replace entirely.",
+      "default": false
+    },
+    "lazyUpdate": {
+      "type": "boolean",
+      "description": "If true, chart update is deferred for better performance during rapid changes.",
+      "default": true
+    },
+    "showLoading": {
+      "type": "boolean",
+      "description": "Show the built-in ECharts loading animation.",
+      "default": false
+    },
+    "loadingOptions": {
+      "type": "object",
+      "description": "Options for the loading animation (text, color, etc.).",
+      "default": {}
+    },
+    "sanitizeTooltip": {
+      "type": "boolean",
+      "description": "Sanitises HTML in tooltip formatters and blocks non-http(s) links.",
+      "default": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label announced by screen readers.",
+      "default": ""
+    },
     "style": {
       "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
-      "default": { "classes": "" }
+      "default": {
+        "classes": ""
+      }
     }
   }
 }

@@ -4,13 +4,38 @@
   "properties": {
     "values": {
       "type": "array",
-      "description": "Individual measurement values plotted on the Individuals (I) chart. Bind to your sample data.",
-      "items": { "type": "number" },
-      "default": [72.1, 73.4, 71.8, 74.2, 72.9, 73.1, 71.5, 73.8, 74.5, 72.3, 73.7, 71.9, 74.1, 72.6, 73.3, 72.8, 74.0, 71.7, 73.5, 72.2]
+      "description": "Measurements in time order. Bind to your sample data.",
+      "items": {
+        "type": "number"
+      },
+      "default": [
+        72.1,
+        73.4,
+        71.8,
+        74.2,
+        72.9,
+        73.1,
+        71.5,
+        73.8,
+        74.5,
+        72.3,
+        73.7,
+        71.9,
+        74.1,
+        72.6,
+        73.3,
+        72.8,
+        74.0,
+        71.7,
+        73.5,
+        72.2
+      ]
     },
     "subgroupSize": {
       "type": "integer",
-      "description": "Subgroup size for the control chart (1 = Individuals & Moving Range).",
+      "description": "1 = Individuals & Moving Range; 2–10 = X-bar & R on consecutive subgroups.",
+      "minimum": 1,
+      "maximum": 10,
       "default": 1
     },
     "showUCL": {
@@ -30,12 +55,12 @@
     },
     "showMRChart": {
       "type": "boolean",
-      "description": "Show the Moving Range (MR) chart below the Individuals chart.",
+      "description": "Show the MR (or R) chart below the main chart.",
       "default": true
     },
     "showRunRules": {
       "type": "boolean",
-      "description": "Highlight points violating run rules (out of limits, or 8-in-a-row on one side of the mean).",
+      "description": "Highlight points that violate Western Electric rules 1 and 4.",
       "default": true
     },
     "title": {
@@ -45,21 +70,68 @@
     },
     "option": {
       "type": "object",
-      "description": "Advanced override. If non-empty, this ECharts option is used verbatim and the domain props above are ignored.",
+      "description": "Advanced override. When non-empty, this ECharts option replaces the generated chart and the domain props are ignored.",
       "default": {}
     },
-    "theme": { "type": "string", "default": "" },
-    "renderer": { "type": "string", "enum": ["canvas", "svg"], "default": "canvas" },
-    "autoResize": { "type": "boolean", "default": true },
-    "resizeDebounceMs": { "type": "integer", "default": 150 },
-    "notMerge": { "type": "boolean", "default": false },
-    "lazyUpdate": { "type": "boolean", "default": true },
-    "showLoading": { "type": "boolean", "default": false },
-    "loadingOptions": { "type": "object", "default": {} },
-    "sanitizeTooltip": { "type": "boolean", "default": true },
+    "theme": {
+      "type": "string",
+      "description": "Name of a registered ECharts theme. Built-in themes: IgnitionIndustrialDark, IgnitionIndustrialLight. Leave empty for the ECharts default theme.",
+      "default": ""
+    },
+    "renderer": {
+      "type": "string",
+      "enum": [
+        "canvas",
+        "svg"
+      ],
+      "description": "Rendering engine: canvas (better perf) or svg (better quality/export).",
+      "default": "canvas"
+    },
+    "autoResize": {
+      "type": "boolean",
+      "description": "Automatically resize chart when container dimensions change.",
+      "default": true
+    },
+    "resizeDebounceMs": {
+      "type": "integer",
+      "description": "Debounce interval in milliseconds for resize events.",
+      "default": 150
+    },
+    "notMerge": {
+      "type": "boolean",
+      "description": "If true, setOption will not merge with previous option but replace entirely.",
+      "default": false
+    },
+    "lazyUpdate": {
+      "type": "boolean",
+      "description": "If true, chart update is deferred for better performance during rapid changes.",
+      "default": true
+    },
+    "showLoading": {
+      "type": "boolean",
+      "description": "Show the built-in ECharts loading animation.",
+      "default": false
+    },
+    "loadingOptions": {
+      "type": "object",
+      "description": "Options for the loading animation (text, color, etc.).",
+      "default": {}
+    },
+    "sanitizeTooltip": {
+      "type": "boolean",
+      "description": "Sanitises HTML in tooltip formatters and blocks non-http(s) links.",
+      "default": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label announced by screen readers.",
+      "default": ""
+    },
     "style": {
       "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
-      "default": { "classes": "" }
+      "default": {
+        "classes": ""
+      }
     }
   }
 }

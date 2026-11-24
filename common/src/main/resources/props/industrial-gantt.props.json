@@ -8,27 +8,73 @@
       "items": {
         "type": "object",
         "properties": {
-          "name":      { "type": "string" },
-          "start":     { "type": "number" },
-          "end":       { "type": "number" },
-          "progress":  { "type": "number" },
-          "category":  { "type": "string" },
-          "color":     { "type": "string" },
-          "milestone": { "type": "boolean" }
+          "name": {
+            "type": "string"
+          },
+          "start": {
+            "type": "number"
+          },
+          "end": {
+            "type": "number"
+          },
+          "progress": {
+            "type": "number",
+            "description": "Progress in percent (0-100). Drawn when showProgress is true."
+          },
+          "category": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "milestone": {
+            "type": "boolean"
+          }
         }
       },
       "default": [
-        { "name": "Requirements",  "start": 1700000000000, "end": 1700259200000, "category": "Planning" },
-        { "name": "Design",        "start": 1700172800000, "end": 1700432000000, "category": "Planning" },
-        { "name": "Fabrication",   "start": 1700432000000, "end": 1701036800000, "category": "Execution" },
-        { "name": "Assembly",      "start": 1700864000000, "end": 1701296000000, "category": "Execution" },
-        { "name": "Testing",       "start": 1701296000000, "end": 1701555200000, "category": "Review" },
-        { "name": "Commissioning", "start": 1701555200000, "end": 1701555200000, "category": "Review", "milestone": true }
+        {
+          "name": "Requirements",
+          "start": 1700000000000,
+          "end": 1700259200000,
+          "category": "Planning"
+        },
+        {
+          "name": "Design",
+          "start": 1700172800000,
+          "end": 1700432000000,
+          "category": "Planning"
+        },
+        {
+          "name": "Fabrication",
+          "start": 1700432000000,
+          "end": 1701036800000,
+          "category": "Execution"
+        },
+        {
+          "name": "Assembly",
+          "start": 1700864000000,
+          "end": 1701296000000,
+          "category": "Execution"
+        },
+        {
+          "name": "Testing",
+          "start": 1701296000000,
+          "end": 1701555200000,
+          "category": "Review"
+        },
+        {
+          "name": "Commissioning",
+          "start": 1701555200000,
+          "end": 1701555200000,
+          "category": "Review",
+          "milestone": true
+        }
       ]
     },
     "showProgress": {
       "type": "boolean",
-      "description": "Show task progress overlays.",
+      "description": "Overlay each task's progress (percent, 0-100) on its bar.",
       "default": true
     },
     "title": {
@@ -38,21 +84,68 @@
     },
     "option": {
       "type": "object",
-      "description": "Advanced override. If non-empty, this ECharts option is used verbatim and the domain props above are ignored.",
+      "description": "Advanced override. When non-empty, this ECharts option replaces the generated chart and the domain props are ignored.",
       "default": {}
     },
-    "theme": { "type": "string", "default": "" },
-    "renderer": { "type": "string", "enum": ["canvas", "svg"], "default": "canvas" },
-    "autoResize": { "type": "boolean", "default": true },
-    "resizeDebounceMs": { "type": "integer", "default": 150 },
-    "notMerge": { "type": "boolean", "default": false },
-    "lazyUpdate": { "type": "boolean", "default": true },
-    "showLoading": { "type": "boolean", "default": false },
-    "loadingOptions": { "type": "object", "default": {} },
-    "sanitizeTooltip": { "type": "boolean", "default": true },
+    "theme": {
+      "type": "string",
+      "description": "Name of a registered ECharts theme. Built-in themes: IgnitionIndustrialDark, IgnitionIndustrialLight. Leave empty for the ECharts default theme.",
+      "default": ""
+    },
+    "renderer": {
+      "type": "string",
+      "enum": [
+        "canvas",
+        "svg"
+      ],
+      "description": "Rendering engine: canvas (better perf) or svg (better quality/export).",
+      "default": "canvas"
+    },
+    "autoResize": {
+      "type": "boolean",
+      "description": "Automatically resize chart when container dimensions change.",
+      "default": true
+    },
+    "resizeDebounceMs": {
+      "type": "integer",
+      "description": "Debounce interval in milliseconds for resize events.",
+      "default": 150
+    },
+    "notMerge": {
+      "type": "boolean",
+      "description": "If true, setOption will not merge with previous option but replace entirely.",
+      "default": false
+    },
+    "lazyUpdate": {
+      "type": "boolean",
+      "description": "If true, chart update is deferred for better performance during rapid changes.",
+      "default": true
+    },
+    "showLoading": {
+      "type": "boolean",
+      "description": "Show the built-in ECharts loading animation.",
+      "default": false
+    },
+    "loadingOptions": {
+      "type": "object",
+      "description": "Options for the loading animation (text, color, etc.).",
+      "default": {}
+    },
+    "sanitizeTooltip": {
+      "type": "boolean",
+      "description": "Sanitises HTML in tooltip formatters and blocks non-http(s) links.",
+      "default": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label announced by screen readers.",
+      "default": ""
+    },
     "style": {
       "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
-      "default": { "classes": "" }
+      "default": {
+        "classes": ""
+      }
     }
   }
 }
