@@ -11,7 +11,8 @@
     "lint": "eslint . --max-warnings 0",
     "test": "jest --passWithNoTests",
     "test:ci": "jest --ci --coverage --passWithNoTests",
-    "test:e2e": "node e2e/smoke.js"
+    "test:e2e": "node e2e/smoke.js",
+    "wiki": "node e2e/wiki.js"
   },
   "dependencies": {
     "dompurify": "3.5.0",

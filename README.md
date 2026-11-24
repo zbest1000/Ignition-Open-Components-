@@ -191,6 +191,14 @@ Map geometry is not bundled: supply GeoJSON or SVG through the `maps` property.
 
 **Events:** `onClick`, `onDoubleClick`, `onMouseOver`, `onMouseOut`, `onLegendSelectChanged`, `onDataZoom`, `onBrushSelected`. Payloads are listed in [`docs/COMPONENTS.md`](docs/COMPONENTS.md#shared-events).
 
+## Examples and how-tos
+
+The [project wiki](https://github.com/zbest1000/Ignition-Open-Components-/wiki) shows every component
+with a screenshot, worked examples with the option JSON to paste, and step-by-step instructions for
+building them in the Designer: which props to bind to tags, tag history or named queries, and the script
+transforms that shape the data. Its source is [`docs/wiki/`](docs/wiki/); the component pages are
+generated (see [CONTRIBUTING](.github/CONTRIBUTING.md#wiki)).
+
 ## Built-in Themes
 
 | Theme | Description |
@@ -237,6 +245,7 @@ data, and how to build on an offline host.
 | Document | Contents |
 |----------|----------|
 | [`docs/INSTALL.md`](docs/INSTALL.md) | Download, verify, install, signing, troubleshooting |
+| [Wiki](https://github.com/zbest1000/Ignition-Open-Components-/wiki) | Examples with screenshots and how to build them in the Designer; guides on binding data, events, themes |
 | [`docs/COMPONENTS.md`](docs/COMPONENTS.md) | Component reference: shared props, events, per-component examples |
 | [`docs/THEMING.md`](docs/THEMING.md) | Built-in themes |
 | [`docs/TEMPLATES.md`](docs/TEMPLATES.md) | Starter option templates |

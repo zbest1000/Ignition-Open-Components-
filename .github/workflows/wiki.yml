@@ -1,0 +1,93 @@
+# Publishes docs/wiki/ to the repository's GitHub wiki.
+#
+# The wiki is a separate git repository (<owner>/<repo>.wiki.git). This workflow mirrors
+# docs/wiki/ into it: pages (*.md, including the generated ones) and images/. The sources of the
+# generated pages, docs/wiki/examples/ and docs/wiki/notes/, are not published. docs/wiki/ is the
+# source of truth: a page changed or created in the wiki's web editor is overwritten or removed by
+# the next run, so edit the files in docs/wiki/ instead (see CONTRIBUTING, "Wiki").
+#
+# One-time setup, which cannot be automated:
+#   1. Settings > General > Features: enable "Wikis".
+#   2. Open the Wiki tab and save a first page (any content). GitHub only creates the wiki's git
+#      repository when the first page is saved; until then this workflow fails with a message
+#      saying so.
+#
+# Needs no secrets: it pushes with the workflow token, which may write to the wiki when the job
+# has `contents: write`.
+name: Wiki
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/wiki/**"
+      - ".github/workflows/wiki.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: wiki
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  publish:
+    name: Publish docs/wiki to the wiki
+    # A manual run from another branch would publish that branch's pages.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: docs/wiki
+
+      - name: Clone the wiki
+        env:
+          GH_TOKEN: ${{ github.token }}
+          WIKI_URL: ${{ github.server_url }}/${{ github.repository }}.wiki.git
+        run: |
+          if [ ! -f docs/wiki/Home.md ]; then
+            echo "::error::docs/wiki/Home.md is missing. Run 'npm run build && npm run wiki' in web/ and commit docs/wiki."
+            exit 1
+          fi
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          echo "::add-mask::$auth"
+          git config --global "http.${WIKI_URL}.extraheader" "Authorization: Basic $auth"
+          if ! git clone --depth 1 "$WIKI_URL" "$RUNNER_TEMP/wiki"; then
+            echo "::error::Could not clone $WIKI_URL. Enable Wikis under Settings > General > Features, then open the Wiki tab and save a first page: GitHub creates the wiki repository only when its first page is saved. Re-run this workflow afterwards."
+            exit 1
+          fi
+
+      - name: Mirror docs/wiki into the wiki
+        run: |
+          # examples/ and notes/ are inputs of the generator, not pages.
+          rsync --archive --delete \
+            --exclude '/.git' --exclude '/examples/' --exclude '/notes/' \
+            docs/wiki/ "$RUNNER_TEMP/wiki/"
+
+      - name: Commit and push
+        working-directory: ${{ runner.temp }}/wiki
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          git add --all
+          if git diff --cached --quiet; then
+            echo "::notice::The wiki is already up to date; nothing to publish."
+            exit 0
+          fi
+          git -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit --quiet -m "Sync from docs/wiki at ${SOURCE_SHA}"
+          git push origin HEAD
+          echo "::notice::Published $(git show --stat --format= HEAD | tail -n 1 | sed 's/^ *//')."
+
+      - name: Remove credentials
+        if: always()
+        env:
+          WIKI_URL: ${{ github.server_url }}/${{ github.repository }}.wiki.git
+        run: git config --global --unset-all "http.${WIKI_URL}.extraheader" || true
