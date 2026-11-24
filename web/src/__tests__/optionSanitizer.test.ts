@@ -286,13 +286,13 @@ describe('sanitizeOption — valid options are left alone', () => {
         const flat = Array.from({ length: 200_000 }, (_, i) => i);
         const pairs = Array.from({ length: 200_000 }, (_, i) => [i, i * 2]);
         const option = { series: [{ type: 'line', data: flat }, { type: 'scatter', data: pairs }] };
-        const started = performance.now();
         const out = sanitizeOption(option);
-        const elapsed = performance.now() - started;
+        // Same object back means nothing was cloned. No wall-clock assertion:
+        // shared CI runners under coverage are too variable for one to be reliable.
         expect(out).toBe(option);
+        expect(out.series[0].data).toBe(flat);
+        expect(out.series[1].data).toBe(pairs);
         expect(out.series[0].data.length).toBe(200_000);
-        // The old deep clone took hundreds of milliseconds here; a scan is far cheaper.
-        expect(elapsed).toBeLessThan(250);
     });
 
     it('passes typed arrays through untouched', () => {

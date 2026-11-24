@@ -20,9 +20,12 @@ jobs:
       contents: read
     uses: ./.github/workflows/build.yml
 
+  # Needs the repository's dependency graph (Settings > Advanced Security); without it the
+  # API answers 403. Enable the graph, then set the repository variable
+  # DEPENDENCY_REVIEW to "true" to turn this job on. The build job's npm audit gate runs regardless.
   dependency-review:
     name: Dependency review
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && vars.DEPENDENCY_REVIEW == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:

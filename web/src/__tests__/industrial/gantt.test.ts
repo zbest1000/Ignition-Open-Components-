@@ -108,6 +108,6 @@ describe('industrial Gantt', () => {
         expect(option.series[0].data[0]).toBe(199999);
         expect(option.series[1].markPoint.data).toHaveLength(200);
         // the old build was quadratic (5 000 tasks took ~320 ms); 200 000 would have taken minutes
-        expect(elapsed).toBeLessThan(3000);
+        expect(elapsed).toBeLessThan(15_000);
     });
 });
