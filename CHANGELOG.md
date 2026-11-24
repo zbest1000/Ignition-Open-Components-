@@ -18,27 +18,45 @@ Nothing has been released yet; this section describes the first release as it wi
   - 4 in *Open Components / Industrial*: Trend, OEE, Pareto, SPC
   - 7 in *Open Components / Scheduling*: State Timeline, Gantt, Schedule Calendar, Shift Calendar,
     Downtime Tracker, Batch Timeline, Resource Heatmap
+- `maps` prop on every component: GeoJSON or SVG maps keyed by map name, so `map`, `geo`, `map3D`
+  and `geo3D` series can draw regions. Map names are global to the page and must be unique.
 - `ariaLabel` prop on every component; ECharts' generated chart description (`aria`) is enabled
   by default unless the option configures `aria` itself.
 - 2 built-in themes (`IgnitionIndustrialDark`, `IgnitionIndustrialLight`), part of the client bundle.
 - 23 starter option templates.
 - `common/src/main/resources/components.manifest.json`: the single definition of all components,
   read by the Java descriptors and by the web bundle, so the two cannot drift apart.
-- Release pipeline: CI build with lint and tests, CodeQL, dependency review, `npm audit`,
+- A headless-Chromium smoke test of the built bundle (`npm run test:e2e` in `web/`; needs
+  Playwright, not part of `./gradlew build`).
+- Release pipeline: CI build with lint and tests, CodeQL, optional dependency review, `npm audit`,
   tag-triggered releases with optional signing, `.sha256` checksum, CycloneDX SBOM and build
   provenance attestation.
 
 ### Changed
 - Apache ECharts upgraded from 5.6.0 to 6.1.0.
 - ECharts-GL is loaded on demand as a separate chunk, only when one of the 11 3D / WebGL
-  components is used; views without them no longer download it.
-- Each chart type now drops from the palette with its own default option. Previously every
-  component started as the same bar chart.
+  components is used; views without them no longer download it. The entry bundle is about
+  1.2 MB plus a 0.6 MB ECharts-GL chunk (previously one 1.74 MB file).
+- Each chart type now drops from the palette with its own default option, populated with sample
+  data (Map, Map 3D, Polygons 3D and Custom start with a hint instead: they need map data or a
+  render function). Previously every component started as the same bar chart. A saved view with
+  an empty `option` on an ECharts component renders that default.
+- Industrial components: Pareto sorts categories by count, largest first; SPC draws X-bar & R
+  for `subgroupSize` 2–10 and scales both value axes to the data and control limits; OEE clamps
+  its factors to 0–100; Trend accepts rows of objects (`data.timeField` / `data.valueField`,
+  default `t` / `v`) and uses LTTB sampling; the timeline components count overlapping intervals
+  once; empty charts show "No data". Trend, Schedule Calendar, Shift Calendar and Resource Heatmap
+  drop with sample data.
+- With `lazyUpdate=true` the component itself defers `setOption` to the next animation frame and
+  applies only the latest option (after 500 ms in a tab that gets no frames).
+- Toggling `sanitizeTooltip` or changing a map re-applies the option in full, resetting zoom once.
 - Event payloads are now defined per event: click-type events (`onClick`, `onDoubleClick`,
   `onMouseOver`, `onMouseOut`) carry the series and data fields (`seriesName`, `seriesIndex`,
   `name`, `dataIndex`, `value`, `data`, ...); `onLegendSelectChanged` carries `name` and
   `selected`; `onDataZoom` carries `start`, `end`, `startValue`, `endValue` and `batch`;
-  `onBrushSelected` carries `batch`.
+  `onBrushSelected` carries `batch`. Mouse-event `data` omits a node's `children`;
+  `onBrushSelected` sends at most the first 1000 selected indices per series plus
+  `dataIndexCount`, and fires at most once per 100 ms.
 - With `notMerge=false`, series are replaced rather than merged on update, so a series removed
   from the option disappears from the chart.
 - `sanitizeTooltip` no longer truncates arrays or strings in the option.
@@ -53,6 +71,9 @@ Nothing has been released yet; this section describes the first release as it wi
 ### Fixed
 - Industrial and scheduling components bind to their own property schemas, so their domain props
   (`tasks`, `phases`, `values`, `events`, `utilization`, ...) can be set and bound in the Designer.
+- Gantt `showProgress` / `progress`, Downtime Tracker `showSummary` and the State Timeline event
+  `color` now have an effect.
+- A chart that failed on a bad option is drawn again once the option is corrected.
 - All seven chart events are declared on the component descriptors and can be bound in
   Perspective. Previously only `onClick` and `onDoubleClick` were.
 - A fresh clone no longer builds a module with `<version>unspecified</version>`, which gateways
@@ -67,9 +88,12 @@ Nothing has been released yet; this section describes the first release as it wi
 
 ### Security
 - Apache ECharts 6.1.0 fixes advisory GHSA-fgmj-fm8m-jvvx.
-- `sanitizeTooltip` (default `true`) sanitises HTML in tooltip formatter strings with DOMPurify
-  and keeps only `http`, `https` and relative URLs in link fields. It is not a sandbox: options
-  bound to untrusted data should still be reviewed. See `docs/SECURITY.md`.
+- `sanitizeTooltip` (default `true`) sanitises tooltip and toolbox data-view HTML with DOMPurify,
+  keeps only `http`, `https` and relative URLs in `link` / `sublink`, drops colour and tooltip
+  style strings that are not a single CSS value (ECharts 6.1 writes tooltip colours unescaped
+  into a `style` attribute), and sanitises SVG maps. Remote images in formatter HTML are still
+  allowed. It is not a sandbox: options bound to untrusted data should still be reviewed. See
+  `docs/SECURITY.md`.
 - Removing the theme REST endpoints removes the module's only gateway-side network surface.
 
 ### Technical details

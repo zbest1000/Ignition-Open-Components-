@@ -171,6 +171,32 @@ export function detectRunRuleViolations(points: number[], center: number, ucl: n
     return violations;
 }
 
+/**
+ * Value-axis range that keeps every given value in view, with about 10 % of
+ * headroom and rounded outwards to a round step. Without it ECharts starts
+ * the axis at zero and ignores mark lines, which flattens a process running
+ * far from zero and pushes control limits outside the plot. A range of
+ * non-negative values never starts below zero. Null when there is nothing
+ * finite to show.
+ */
+export function axisRange(values: number[]): { min: number; max: number } | null {
+    let lo = Infinity;
+    let hi = -Infinity;
+    for (const v of values) {
+        if (!Number.isFinite(v)) continue;
+        if (v < lo) lo = v;
+        if (v > hi) hi = v;
+    }
+    if (lo > hi) return null;
+    const span = hi - lo || Math.abs(hi) || 1;
+    const pad = span * 0.1;
+    const step = 10 ** Math.floor(Math.log10(span / 2));
+    const round = (n: number): number => Number(n.toPrecision(12));
+    const min = round(Math.floor((lo - pad) / step) * step);
+    const max = round(Math.ceil((hi + pad) / step) * step);
+    return { min: lo >= 0 ? Math.max(0, min) : min, max };
+}
+
 function limitLine(value: number, label: string, color: string, type: string): Row {
     return { yAxis: value, lineStyle: { color, type }, label: { formatter: label } };
 }
@@ -228,7 +254,10 @@ function buildOption(props: SPCProps): object {
 
     const grid: Row[] = [{ top: 60, bottom: showLower ? '55%' : 50 }];
     const xAxis: Row[] = [{ type: 'category', data: indices(1, spc.points.length), gridIndex: 0 }];
-    const yAxis: Row[] = [{ type: 'value', gridIndex: 0, name: individuals ? 'Value' : 'X-bar' }];
+    const yAxis: Row[] = [{
+        type: 'value', gridIndex: 0, name: individuals ? 'Value' : 'X-bar',
+        ...axisRange(spc.points.concat(markLines.map(line => line.yAxis as number))),
+    }];
     const series: Row[] = [main];
 
     if (showLower && spc.dispersion.length > 0) {
@@ -242,7 +271,10 @@ function buildOption(props: SPCProps): object {
         grid.push({ top: '55%', bottom: 40 });
         // The first moving range belongs to the second individual value.
         xAxis.push({ type: 'category', data: indices(individuals ? 2 : 1, spc.dispersion.length), gridIndex: 1 });
-        yAxis.push({ type: 'value', gridIndex: 1, name: individuals ? 'MR' : 'R' });
+        yAxis.push({
+            type: 'value', gridIndex: 1, name: individuals ? 'MR' : 'R',
+            ...axisRange(spc.dispersion.concat(0, lowerLines.map(line => line.yAxis as number))),
+        });
         series.push({
             type: 'line', data: spc.dispersion, xAxisIndex: 1, yAxisIndex: 1,
             symbol: 'circle', symbolSize: 4,

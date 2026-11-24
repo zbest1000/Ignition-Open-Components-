@@ -22,6 +22,10 @@ describe('industrial Trend', () => {
         expect(option.legend.data).toEqual(['PV', 'SP']);
         expect(option.series[0].data).toEqual([[1000, 1], [2000, 2]]);
         expect(option.dataZoom).toHaveLength(2);
+        // The slider sits between the axis labels and the legend, inside the bottom margin.
+        expect(option.dataZoom[1]).toMatchObject({ type: 'slider', bottom: 30, height: 24 });
+        expect(option.grid.bottom).toBe(90);
+        expect(build({ showDataZoom: false }).grid.bottom).toBe(50);
         expect(option.title.text).toBe('');
     });
 

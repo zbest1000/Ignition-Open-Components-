@@ -5,7 +5,7 @@
     "year": {
       "type": "string",
       "description": "Period to render: a year (\"2025\") or a month (\"2025-03\"). Leave blank to use the current year.",
-      "default": ""
+      "default": "2025"
     },
     "entries": {
       "type": "array",
@@ -33,7 +33,240 @@
           }
         }
       },
-      "default": []
+      "default": [
+        {
+          "date": "2025-01-06",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-07",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-08",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-09",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-10",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-11",
+          "shift": "Off"
+        },
+        {
+          "date": "2025-01-13",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-01-14",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-01-15",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-01-16",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-01-17",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-01-18",
+          "shift": "Off"
+        },
+        {
+          "date": "2025-01-20",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-21",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-22",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-23",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-24",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-25",
+          "shift": "Off"
+        },
+        {
+          "date": "2025-01-27",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-01-28",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-01-29",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-01-30",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-01-31",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-01",
+          "shift": "Off"
+        },
+        {
+          "date": "2025-02-03",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-04",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-05",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-06",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-07",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-08",
+          "shift": "Off"
+        },
+        {
+          "date": "2025-02-10",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-11",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-12",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-13",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-14",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-15",
+          "shift": "Off"
+        },
+        {
+          "date": "2025-02-17",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-18",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-19",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-20",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-21",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-22",
+          "shift": "Off"
+        },
+        {
+          "date": "2025-02-24",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-25",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-26",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-27",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-28",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-03-01",
+          "shift": "Off"
+        }
+      ]
     },
     "shiftColors": {
       "type": "object",

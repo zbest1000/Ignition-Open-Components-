@@ -24,6 +24,15 @@ writes `build/Open-ECharts.unsigned.modl`. Useful parts on their own:
 | `./gradlew test` | JUnit |
 | `./gradlew :web:webpack` | web bundle only |
 
+A browser smoke test of the built bundle (canvas and WebGL rendering, on-demand loading of the
+ECharts-GL chunk, tooltip sanitising in a real DOM) is separate and not part of
+`./gradlew build` or CI. It needs Playwright with Chromium available to Node, which is not a
+dependency of this package:
+
+```bash
+cd web && npm run build && npm run test:e2e
+```
+
 `npm ci` installs exactly what `web/package-lock.json` says. To change dependencies, run
 `npm install <pkg>` in `web/` and commit both `package.json` and the lockfile.
 
@@ -74,7 +83,7 @@ component cannot exist on one side only.
 
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
-| **CI** (`ci.yml`) | Push to `main`, PRs to `main` | Calls *Build and verify*; dependency review on PRs |
+| **CI** (`ci.yml`) | Push to `main`, PRs to `main` | Calls *Build and verify*; dependency review on PRs when the repository variable `DEPENDENCY_REVIEW` is `true` |
 | **Build and verify** (`build.yml`) | Called by CI and Release | `npm audit`, `./gradlew build`, module checks, SBOM, artifact upload |
 | **CodeQL** (`codeql.yml`) | Push/PR to `main`, weekly | Static analysis of Java and TypeScript |
 | **Release** (`release.yml`) | Tag `vX.Y.Z` or `vX.Y.Z-rcN` | Verify, sign, attest, publish a GitHub Release |
@@ -131,4 +140,5 @@ unsigned and says so; with only some of them set it fails.
 - Environment **`release`** with required reviewers, restricted to `v*` tags
 - Tag protection / ruleset so only maintainers can push `v*` tags
 - Branch protection on `main` requiring the **CI / Build** check
-- Code scanning (CodeQL), the dependency graph and private vulnerability reporting enabled
+- Code scanning (CodeQL), the dependency graph (then set the repository variable
+  `DEPENDENCY_REVIEW` to `true`) and private vulnerability reporting enabled

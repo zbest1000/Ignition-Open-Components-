@@ -61,14 +61,15 @@ function buildOption(props: ResourceHeatmapProps): object {
     return {
         title: titles(asString(props.title, '') || 'Resource Utilization', data.length === 0),
         tooltip: { position: 'top' },
-        grid: { top: 60, bottom: 60, left: 100, right: 80 },
+        grid: { top: 60, bottom: 60, left: 100, right: 100 },
         xAxis: { type: 'category', data: timeSlots, splitArea: { show: true } },
         yAxis: { type: 'category', data: resources, splitArea: { show: true } },
         visualMap: {
             min: 0, max: maxValue, calculable: true,
             orient: 'vertical', right: 10, top: 'center',
             inRange: { color: ['#91cc75', '#fac858', '#ee6666'] },
-            text: [`${maxValue}%`, '0%'],
+            // The handles are labelled with their value; end texts would repeat them.
+            formatter: '{value}%',
         },
         series: [{
             type: 'heatmap',

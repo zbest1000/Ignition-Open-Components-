@@ -79,7 +79,10 @@ Templates are starter ECharts option objects you can copy into the `option` prop
 
 ## How to Use
 
-1. Copy the template object for your chart type into the component's `option` property.
+1. Copy the template object for your chart type into the component's `option` property. The
+   objects are defined in `web/src/templates/index.ts`; in a browser with a Perspective session
+   open they are also available as `OpenECharts.TEMPLATES`, e.g.
+   `JSON.stringify(OpenECharts.TEMPLATES['line.basic'])` in the console.
 2. Modify the `data` arrays and other series/config to match your data.
 3. Adjust labels, colors, and axis settings as needed.
 

@@ -67,6 +67,13 @@ describe('industrial ScheduleCalendar', () => {
             { value: 1, label: 'Night', color: '#000000' },
         ]);
         expect(option.visualMap.show).toBe(true);
+        // At the default 250 px height the seven rows must end above the legend:
+        // 60 + 7 x 18 = 186, and the legend occupies roughly the last 40 px.
+        const { top, cellSize } = option.calendar[0];
+        expect(top + 7 * cellSize[1]).toBeLessThanOrEqual(250 - 40);
+        expect(option.visualMap).toMatchObject({ orient: 'horizontal', bottom: 10 });
+        // Empty days are not painted, so a dark theme does not get white cells.
+        expect(option.calendar[0].itemStyle.color).toBe('transparent');
         expect(build({ entries: ENTRIES, showLegend: false }).visualMap.show).toBe(false);
         expect(build({ entries: ENTRIES, title: 'Rota', year: '2025-01' })).toMatchObject({
             title: [{ text: 'Rota' }, {}], calendar: [{ range: '2025-01' }],

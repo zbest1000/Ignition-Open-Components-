@@ -8,7 +8,7 @@ Component reference for the **Open ECharts** Ignition Perspective module: 48 cha
 
 All components share one runtime and the same base properties and events. They are defined in a single manifest (`common/src/main/resources/components.manifest.json`), which gives each one:
 
-- **Default option** — the chart a component shows when dropped from the palette, specific to its chart type
+- **Default option** — the chart a component shows when dropped from the palette, specific to its chart type. A saved view whose `option` is empty shows it too.
 - **Palette category** — *Open Components / ECharts*, *ECharts 3D*, *Industrial* or *Scheduling*
 - **Default size**
 
@@ -24,17 +24,55 @@ All components have the following properties:
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
-| `option` | object | Varies per component | ECharts option. On industrial / scheduling components it is an advanced override: when non-empty it replaces the generated chart. |
+| `option` | object | Varies per component | ECharts option. Left empty (`{}`), an ECharts component draws its default option. On industrial / scheduling components it is an advanced override: when non-empty it replaces the generated chart. |
 | `theme` | string | `""` | `"IgnitionIndustrialDark"`, `"IgnitionIndustrialLight"`, or `""` for the ECharts default. Changing it re-creates the chart. |
 | `renderer` | string | `"canvas"` | Rendering backend: `"canvas"` or `"svg"`. |
 | `autoResize` | boolean | `true` | Resize the chart when its container changes size. |
 | `resizeDebounceMs` | integer | `150` | Debounce delay (ms) for resize handling. |
 | `notMerge` | boolean | `false` | `true`: every update replaces the whole option. `false`: updates are merged into the current option, except `series`, which is replaced — a series removed from the option disappears from the chart. |
-| `lazyUpdate` | boolean | `true` | Defers updates for better performance. |
+| `lazyUpdate` | boolean | `true` | Applies an update on the next animation frame; of several changes within a frame only the latest is applied (after 500 ms if the tab gets no frame). `false` applies each change immediately. |
 | `showLoading` | boolean | `false` | Shows the ECharts loading animation. |
-| `loadingOptions` | object | — | Loading animation options (text, color, maskColor, ...). |
-| `sanitizeTooltip` | boolean | `true` | Sanitises HTML in tooltip formatter strings and allows only `http`/`https`/relative URLs in link fields. Not a sandbox; see [SECURITY.md](SECURITY.md). |
+| `loadingOptions` | object | `{}` | Loading animation options (text, color, maskColor, ...). |
+| `sanitizeTooltip` | boolean | `true` | Sanitises tooltip and data-view HTML, link URLs, colour and tooltip style strings, and SVG maps. Not a sandbox; see [SECURITY.md](SECURITY.md). Toggling it re-applies the whole option, which resets zoom once. |
 | `ariaLabel` | string | `""` | Accessible label announced by screen readers. |
+| `maps` | object | `{}` | Maps for `map`, `geo`, `map3D` and `geo3D`, keyed by map name. See [Maps](#maps). |
+
+### Maps
+
+ECharts ships no map geometry. Put each map in `maps` under a name and refer to that name in the
+option (`series.map`, `geo.map`, `geo3D.map`). A value is one of:
+
+- a GeoJSON FeatureCollection (regions are matched to data by `properties.name`)
+- `{ "geoJSON": <FeatureCollection>, "specialAreas": { ... } }`
+- `{ "svg": "<svg ...>...</svg>" }` (for `map` / `geo`; sanitised while `sanitizeTooltip` is `true`)
+
+```json
+{
+  "maps": {
+    "plant": {
+      "type": "FeatureCollection",
+      "features": [
+        { "type": "Feature", "properties": { "name": "North" },
+          "geometry": { "type": "Polygon", "coordinates": [[[0, 2], [3, 2], [3, 3], [0, 3], [0, 2]]] } },
+        { "type": "Feature", "properties": { "name": "South" },
+          "geometry": { "type": "Polygon", "coordinates": [[[0, 0], [3, 0], [3, 1], [0, 1], [0, 0]]] } }
+      ]
+    }
+  },
+  "option": {
+    "visualMap": { "min": 0, "max": 100 },
+    "series": [{ "type": "map", "map": "plant", "data": [{ "name": "North", "value": 80 }, { "name": "South", "value": 35 }] }]
+  }
+}
+```
+
+Map names are global to the browser page, not to a component: two components that register
+different maps under the same name overwrite each other, so give each map a unique name.
+Malformed entries are ignored. Changing a map re-applies the option in full, which resets zoom once.
+
+A chart whose option cannot be drawn shows the ECharts error message in place of the chart and
+redraws when the option is corrected. The 3D / WebGL components show "Loading chart…" while
+ECharts-GL downloads.
 
 Accessibility: ECharts' generated chart description (`aria.enabled`) is on by default; set `aria` in the option to configure or disable it.
 
@@ -50,6 +88,11 @@ All components emit the following events. Payloads contain only these fields, as
 | `onLegendSelectChanged` | `name` (the legend item toggled), `selected` (map of series name to boolean) |
 | `onDataZoom` | `start`, `end` (percent), `startValue`, `endValue`, `dataZoomId`, and `batch`: a list of entries with the same fields when the zoom came from a mouse/touch action |
 | `onBrushSelected` | `batch`: a list of entries with `brushId`, `brushIndex`, `brushName`, `areas`, `selected` |
+
+Two parts are bounded because payloads travel to the gateway. In mouse events, `data` is the data
+item without its `children` (for tree, treemap and sunburst nodes). In `onBrushSelected`, each
+`selected[]` entry's `dataIndex` holds at most the first 1000 selected indices and `dataIndexCount`
+the total; the event fires at most once per 100 ms while the brush moves, with the latest selection.
 
 ---
 
@@ -548,16 +591,16 @@ All components emit the following events. Payloads contain only these fields, as
 - **Palette category:** Open Components / ECharts
 - **Default size:** 700x500
 - **Description:** Geo maps with scatter, heatmap, and region series.
-- **Limitation:** ECharts ships no map geometry, and the module does not currently provide a
-  way to register GeoJSON for a map name, so `geo` / `map` series have no regions to draw.
-- **Default option example:**
+- **Needs map data:** supply it in the [`maps`](#maps) property; the component drops with a
+  placeholder title until then.
+- **Default option example** (with a map named `plant` in `maps`):
 ```json
 {
-  "geo": { "map": "china", "roam": true },
+  "geo": { "map": "plant", "roam": true },
   "series": [{
     "type": "scatter",
     "coordinateSystem": "geo",
-    "data": [[116.4, 39.9, 100], [121.5, 31.2, 80]]
+    "data": [[1.5, 2.5, 100], [1.5, 0.5, 80]]
   }]
 }
 ```
@@ -567,16 +610,17 @@ All components emit the following events. Payloads contain only these fields, as
 - **Component ID:** `open.echarts.LinesChart`
 - **Palette category:** Open Components / ECharts
 - **Default size:** 700x500
-- **Description:** Lines on geo (flight paths, migration, etc.).
-- **Default option example:**
+- **Description:** Lines on geo (flight paths, migration, etc.). The default draws routes on a
+  cartesian grid, which needs no map.
+- **Default option example** (on a map named `plant` in [`maps`](#maps)):
 ```json
 {
-  "geo": { "map": "china" },
+  "geo": { "map": "plant" },
   "series": [{
     "type": "lines",
     "coordinateSystem": "geo",
     "data": [
-      { "coords": [[116.4, 39.9], [121.5, 31.2]], "lineStyle": {} }
+      { "coords": [[0.5, 0.5], [2.5, 2.5]] }
     ]
   }]
 }
@@ -663,7 +707,7 @@ Palette category: **Open Components / ECharts 3D**
   "grid3D": {},
   "series": [{
     "type": "surface",
-    "data": []
+    "data": [[0, 0, 0], [1, 0, 1], [2, 0, 0], [0, 1, 1], [1, 1, 2], [2, 1, 1], [0, 2, 0], [1, 2, 1], [2, 2, 0]]
   }]
 }
 ```
@@ -674,16 +718,12 @@ Palette category: **Open Components / ECharts 3D**
 - **Palette category:** Open Components / ECharts 3D
 - **Default size:** 700x500
 - **Description:** 3D map visualization.
-- **Limitation:** needs registered map GeoJSON, which the module cannot currently be given (see MapChart).
-- **Default option example:**
+- **Needs map data:** supply it in the [`maps`](#maps) property; the component drops with a
+  placeholder title until then.
+- **Default option example** (with a map named `plant` in `maps`):
 ```json
 {
-  "geo3D": { "map": "china", "boxHeight": 10 },
-  "series": [{
-    "type": "scatter3D",
-    "coordinateSystem": "geo3D",
-    "data": [[116.4, 39.9, 100]]
-  }]
+  "series": [{ "type": "map3D", "map": "plant", "regionHeight": 3 }]
 }
 ```
 
@@ -696,12 +736,12 @@ Palette category: **Open Components / ECharts 3D**
 - **Default option example:**
 ```json
 {
-  "globe": {
-    "baseTexture": "",
-    "heightTexture": "",
-    "displacementScale": 0.1
-  },
-  "series": []
+  "globe": { "baseColor": "#3b6cb5", "shading": "color" },
+  "series": [{
+    "type": "scatter3D",
+    "coordinateSystem": "globe",
+    "data": [[-0.13, 51.5, 0], [139.7, 35.7, 0]]
+  }]
 }
 ```
 
@@ -714,11 +754,11 @@ Palette category: **Open Components / ECharts 3D**
 - **Default option example:**
 ```json
 {
-  "globe": {},
+  "globe": { "baseColor": "#3b6cb5", "shading": "color" },
   "series": [{
     "type": "lines3D",
     "coordinateSystem": "globe",
-    "data": []
+    "data": [[[-0.13, 51.5], [55.3, 25.2]]]
   }]
 }
 ```
@@ -728,17 +768,17 @@ Palette category: **Open Components / ECharts 3D**
 - **Component ID:** `open.echarts.Polygons3DChart`
 - **Palette category:** Open Components / ECharts 3D
 - **Default size:** 700x500
-- **Description:** 3D polygon visualization.
-- **Default option example:**
+- **Description:** 3D polygon visualization on `geo3D`.
+- **Needs map data:** `geo3D` needs a map from the [`maps`](#maps) property; the component drops
+  with a placeholder title until then. Give each polygon a `height`.
+- **Default option example** (with a map named `plant` in `maps`):
 ```json
 {
-  "xAxis3D": {},
-  "yAxis3D": {},
-  "zAxis3D": {},
-  "grid3D": {},
+  "geo3D": { "map": "plant" },
   "series": [{
     "type": "polygons3D",
-    "data": []
+    "coordinateSystem": "geo3D",
+    "data": [{ "name": "Zone", "height": 5, "coords": [[[1, 1.2], [2, 1.2], [2, 1.8], [1, 1.8], [1, 1.2]]] }]
   }]
 }
 ```
@@ -761,10 +801,9 @@ Palette category: **Open Components / ECharts 3D**
   "xAxis": {},
   "yAxis": {},
   "series": [{
-    "type": "scatter",
-    "large": true,
-    "largeThreshold": 500,
-    "data": []
+    "type": "scatterGL",
+    "symbolSize": 4,
+    "data": [[1, 2], [3, 4], [5, 6]]
   }]
 }
 ```
@@ -779,11 +818,12 @@ Palette category: **Open Components / ECharts 3D**
 ```json
 {
   "series": [{
-    "type": "graph",
-    "layout": "none",
-    "data": [],
-    "links": [],
-    "emphasis": { "focus": "adjacency" }
+    "type": "graphGL",
+    "symbolSize": 20,
+    "itemStyle": { "color": "#5470c6", "opacity": 1 },
+    "nodes": [{ "name": "A", "x": 0, "y": 0 }, { "name": "B", "x": 100, "y": 0 }, { "name": "C", "x": 50, "y": 80 }],
+    "edges": [{ "source": 0, "target": 1 }, { "source": 1, "target": 2 }],
+    "forceAtlas2": { "steps": 1, "maxSteps": 1 }
   }]
 }
 ```
@@ -793,15 +833,15 @@ Palette category: **Open Components / ECharts 3D**
 - **Component ID:** `open.echarts.FlowGLChart`
 - **Palette category:** Open Components / ECharts 3D
 - **Default size:** 700x500
-- **Description:** WebGL flow visualization (e.g., wind, particle flow).
+- **Description:** WebGL flow visualization (e.g., wind, particle flow). `data` is a regular grid of `[x, y, vx, vy]` rows.
 - **Default option example:**
 ```json
 {
-  "geo": { "map": "china" },
+  "xAxis": { "type": "value" },
+  "yAxis": { "type": "value" },
   "series": [{
     "type": "flowGL",
-    "coordinateSystem": "geo",
-    "data": []
+    "data": [[0, 0, 1, 0], [1, 0, 1, 1], [0, 1, 0, 1], [1, 1, -1, 1]]
   }]
 }
 ```
@@ -812,17 +852,17 @@ Palette category: **Open Components / ECharts 3D**
 
 Palette category: **Open Components / Industrial**
 
-These components build their chart from the properties listed here (in addition to the [shared properties](#shared-properties)). Setting a non-empty `option` replaces the generated chart.
+These components build their chart from the properties listed here (in addition to the [shared properties](#shared-properties)). Setting a non-empty `option` replaces the generated chart. A chart with nothing to draw shows "No data".
 
 #### 38. Industrial Trend
 - **Component ID:** `open.industrial.Trend`
 - **Default size:** 800x350
-- **Description:** Time-series PV/SP trend with alarm limits, data zoom, and quality.
+- **Description:** Time-series PV/SP trend with alarm limits and data zoom.
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `data` | object | Data configuration for the trend. |
-| `limits` | object | Alarm and warning limits displayed as horizontal markLines. |
+| `data` | object | `{ pvData, spData, timeField, valueField }`. `pvData` / `spData` are arrays of `[time, value]` pairs or of objects read through `timeField` / `valueField` (defaults `"t"` / `"v"`). Drops with sample data. |
+| `limits` | object | `{ hiAlarm, hiWarning, loWarning, loAlarm }`: numbers (or null) drawn as horizontal markLines. |
 | `yAxisLabel` | string | Label for the Y axis (e.g. unit of measurement). |
 | `showSetpoint` | boolean | Whether to show the setpoint line. |
 | `showDataZoom` | boolean | Whether to show the data zoom slider. |
@@ -892,7 +932,7 @@ These components build their chart from the properties listed here (in addition 
 #### 43. Gantt Chart
 - **Component ID:** `open.industrial.Gantt`
 - **Default size:** 900x400
-- **Description:** Task scheduling with bars, dependencies, milestones, and progress.
+- **Description:** Task scheduling with bars, milestones, and progress.
 
 | Property | Type | Description |
 |----------|------|-------------|
@@ -916,7 +956,7 @@ These components build their chart from the properties listed here (in addition 
 #### 45. Shift Calendar
 - **Component ID:** `open.industrial.ShiftCalendar`
 - **Default size:** 900x300
-- **Description:** Crew shift patterns with rotating assignments and day/week views.
+- **Description:** Crew shift patterns by weekday across a date range.
 
 | Property | Type | Description |
 |----------|------|-------------|

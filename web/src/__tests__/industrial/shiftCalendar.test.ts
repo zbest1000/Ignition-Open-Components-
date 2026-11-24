@@ -97,6 +97,9 @@ describe('industrial ShiftCalendar', () => {
             { value: 1, label: 'Weekend', color: '#ee6666' },
         ]);
         expect(option.tooltip.formatter).toBe('{b}');
+        // Room below the plot for the rotated date labels and, under them, the legend.
+        expect(option.grid.bottom).toBeGreaterThanOrEqual(100);
+        expect(option.visualMap).toMatchObject({ orient: 'horizontal', bottom: 10 });
         expect(option.title[0].text).toBe('Shift Calendar');
         expect(option.title[1].text).toBe('');
     });

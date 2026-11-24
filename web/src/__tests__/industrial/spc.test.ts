@@ -1,5 +1,5 @@
 import {
-    SPC_CONSTANTS, computeControlChart, detectRunRuleViolations, normaliseSubgroupSize, spcBehavior,
+    SPC_CONSTANTS, axisRange, computeControlChart, detectRunRuleViolations, normaliseSubgroupSize, spcBehavior,
 } from '../../industrial/spc';
 import { Opt, fakeTree } from './helpers';
 
@@ -137,6 +137,29 @@ describe('industrial SPC option', () => {
         expect(option.xAxis[1].data).toHaveLength(19);
         expect(option.yAxis.map((a: Opt) => a.name)).toEqual(['Value', 'MR']);
         expect(option.series[0].markPoint).toBeUndefined();
+    });
+
+    it('keeps the control limits inside both value axes', () => {
+        // Defaults: points 71.5..74.5 with LCL 69.0 and UCL 76.9; MR up to 2.4 with UCL 4.87.
+        // An axis starting at zero flattened the points and put the MR UCL outside the plot.
+        const option = build({});
+        expect(option.yAxis[0]).toMatchObject({ min: 68, max: 78 });
+        expect(option.yAxis[1]).toMatchObject({ min: 0, max: 6 });
+        // Limits that are switched off do not widen the axis.
+        expect(build({ showUCL: false, showLCL: false }).yAxis[0]).toMatchObject({ min: 71, max: 75 });
+        // Nothing to plot: the axis is left to ECharts.
+        expect(build({ values: [] }).yAxis[0].min).toBeUndefined();
+    });
+
+    it('axisRange pads and rounds outwards, and never goes below zero for non-negative values', () => {
+        expect(axisRange([69.01, 76.93, 72])).toEqual({ min: 68, max: 78 });
+        expect(axisRange([0, 2.4, 4.87])).toEqual({ min: 0, max: 6 });
+        expect(axisRange([-3, 3])).toEqual({ min: -4, max: 4 });
+        expect(axisRange([0.001, 0.0034])).toEqual({ min: 0, max: 0.004 });
+        expect(axisRange([5, 5])).toEqual({ min: 4, max: 6 });
+        expect(axisRange([0])).toEqual({ min: 0, max: 0.1 });
+        expect(axisRange([NaN, Infinity])).toBeNull();
+        expect(axisRange([])).toBeNull();
     });
 
     it('switches to X-bar & R when subgroupSize > 1 (bug 6)', () => {

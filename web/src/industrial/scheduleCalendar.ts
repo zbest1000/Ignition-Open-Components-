@@ -106,11 +106,15 @@ function buildOption(props: ScheduleCalendarProps): object {
             pieces,
             show: props.showLegend !== false && pieces.length > 0,
         },
+        // Title, month labels, seven rows of cells and the legend fit the default 250 px height.
         calendar: [{
-            top: 80,
+            top: 60,
             left: 50,
             right: 30,
-            cellSize: ['auto', 20],
+            cellSize: ['auto', 18],
+            // Empty days stay see-through and the grid mid-grey, so the calendar also works on a dark background.
+            itemStyle: { color: 'transparent', borderColor: 'rgba(128,128,128,0.4)' },
+            splitLine: { lineStyle: { color: '#888888' } },
             range,
             yearLabel: { show: true },
             dayLabel: { firstDay: 1 },

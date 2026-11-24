@@ -18,9 +18,10 @@ If you discover a security vulnerability in this module, please report it respon
 ### Option sanitising
 `sanitizeTooltip` is on by default. It sanitises the parts of an ECharts option that ECharts
 treats as HTML, CSS or URLs:
-- HTML in tooltip formatter strings is sanitised with DOMPurify
+- HTML in tooltip formatters and the toolbox data view is sanitised with DOMPurify
 - link fields keep only `http`, `https` and relative URLs
-- unsafe CSS and colour strings in tooltip styling are dropped
+- colour, font and tooltip style strings that carry markup or CSS syntax are dropped
+- SVG maps supplied through the `maps` property are sanitised
 
 It is **not a sandbox** and does not validate the rest of the option. If an `option` is bound to
 data an attacker could influence (tags, database rows, user input), review what that data can

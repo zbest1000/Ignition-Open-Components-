@@ -118,14 +118,16 @@ function buildOption(props: TrendProps): object {
         series.push(lineSeries('SP', spData, { width: 1, type: 'dashed' }));
     }
 
+    const showDataZoom = props.showDataZoom !== false;
     return {
         title: noDataTitle(pvData.length === 0 && !showSetpoint),
         tooltip: { trigger: 'axis' },
         legend: { data: series.map(s => s.name), bottom: 0 },
-        grid: { top: 40, bottom: 50 },
+        // With the zoom slider, the bottom margin holds axis labels, slider and legend.
+        grid: { top: 40, bottom: showDataZoom ? 90 : 50 },
         xAxis: { type: 'time' },
         yAxis: { type: 'value', name: asString(props.yAxisLabel, '') },
-        dataZoom: props.showDataZoom !== false ? [{ type: 'inside' }, { type: 'slider' }] : [],
+        dataZoom: showDataZoom ? [{ type: 'inside' }, { type: 'slider', bottom: 30, height: 24 }] : [],
         series,
     };
 }

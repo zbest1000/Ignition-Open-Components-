@@ -48,6 +48,13 @@ ECharts can handle 100K+ points. For large datasets:
 - Increase for complex charts to reduce resize overhead
 - Set via the `resizeDebounceMs` property
 
+## Update Batching
+
+With `lazyUpdate` on (the default) the component applies an option on the next animation frame.
+If the option changes several times within a frame only the latest is applied; in a background
+tab, where browsers pause animation frames, it is applied after 500 ms. Set `lazyUpdate` to
+`false` to apply every change immediately.
+
 ## Multiple Charts per View
 
 - Each chart creates a canvas element
@@ -70,5 +77,5 @@ ECharts can handle 100K+ points. For large datasets:
 1. **Use time axis for time data** – Avoids scaling issues and improves performance.
 2. **Prefer dataset over inline data** – Use `dataset` for shared data across series.
 3. **Use dataZoom for exploration** – Let users zoom/pan instead of loading all data at once.
-4. **Keep bound options small** – With `sanitizeTooltip` on, the whole option is scanned on every change; bind data, not megabytes of static configuration.
+4. **Keep bound options small** – With `sanitizeTooltip` on, the option is scanned on every change (`dataset.source` and rows of plain values such as `[x, y]` are skipped); bind data, not megabytes of static configuration.
 5. **Use appropriate sampling** – For line charts with many points, `sampling: 'lttb'` preserves visual shape while reducing points.

@@ -16,8 +16,10 @@ its toolchain and dependencies).
 ### What is bundled
 - `OpenECharts.js` / `OpenECharts.css` (served from `/res/open-echarts/…`): the compiled
   components, **Apache ECharts 6.1.0** and DOMPurify.
-- **ECharts-GL 2.1.0** as a separate chunk in the same module, fetched from the gateway (not the
-  internet) the first time a 3D / WebGL component is shown.
+- **ECharts-GL 2.1.0** as a separate chunk (`OpenECharts.echarts-gl.<hash>.js`) in the same
+  module, fetched from the gateway (not the internet) the first time a 3D / WebGL component is
+  shown.
+- `OpenECharts.js.LICENSE.txt`: the licence notices of the bundled libraries.
 - The two built-in themes and all option templates.
 - React, React-DOM, and `@inductiveautomation/perspective-client` are **not** bundled — they are
   provided by the Perspective module already present on the gateway.
@@ -39,11 +41,13 @@ image symbol; that is under your control.)
      `-Dignition.allowunsignedmodules=true` to `ignition.conf` (`wrapper.java.additional.N`) and
      restarting the gateway.
 
-### Map data limitation
-ECharts ships no map geometry. The `Map` and `Map 3D` components need GeoJSON registered under a
-map name, and the module does not currently provide a way to register it, so region maps cannot
-be drawn yet (online or offline). `Globe` needs no map data; a surface texture, if you want
-one, is an image you supply. All other components need no external data.
+### Map data
+ECharts ships no map geometry and the module bundles none. Map, geo and geo3D series draw the
+maps you put in the component's `maps` property (GeoJSON or SVG, keyed by map name; see
+[COMPONENTS.md](COMPONENTS.md#maps)). The data travels as a normal Perspective property, for
+example from a project script or a named query, so nothing is fetched from outside. `Globe`
+needs no map data; a surface texture, if you want one, is an image you supply. All other
+components need no external data.
 
 ---
 

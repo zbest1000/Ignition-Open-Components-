@@ -67,6 +67,9 @@ function buildOption(props: OEEProps): object {
     const detail = props.showLabels !== false
         ? { width: 40, height: 14, fontSize: 14, color: 'inherit', formatter: '{value}%' }
         : { show: false };
+    // Four name/value rows share the hole of the ring (inner radius 80 % of
+    // the gauge radius), so they are packed between -47 % and +56 % of it.
+    const title = { fontSize: 12 };
 
     return {
         series: [{
@@ -74,14 +77,16 @@ function buildOption(props: OEEProps): object {
             min: 0, max: 100,
             pointer: { show: false },
             progress: { show: true, overlap: false, roundCap: true, clip: false },
-            axisLine: { lineStyle: { width: 30 } },
+            // A neutral track: themes may colour the gauge axis in bands, which would read as data here.
+            axisLine: { lineStyle: { width: 30, color: [[1, 'rgba(128,128,128,0.2)']] } },
             axisTick: { show: false }, splitLine: { show: false }, axisLabel: { show: false },
+            title,
             detail,
             data: [
-                ring(v.oee, 'OEE', '-35%', '-20%'),
-                ring(v.availability, 'Availability', '0%', '15%'),
-                ring(v.performance, 'Performance', '35%', '50%'),
-                ring(v.quality, 'Quality', '70%', '85%'),
+                ring(v.oee, 'OEE', '-47%', '-34%'),
+                ring(v.availability, 'Availability', '-17%', '-4%'),
+                ring(v.performance, 'Performance', '13%', '26%'),
+                ring(v.quality, 'Quality', '43%', '56%'),
             ],
         }],
     };

@@ -17,7 +17,8 @@ An industrial-focused **Perspective component library** for **Ignition 8.3** bui
 ```
 
 Runs everything — `npm ci`, webpack, eslint, jest, Java compile, checkstyle, JUnit — and writes
-`build/Open-ECharts.unsigned.modl`. The version comes from `gradle.properties`
+`build/Open-ECharts.unsigned.modl`. (A browser smoke test, `npm run test:e2e` in `web/`, is
+separate; see [CONTRIBUTING](.github/CONTRIBUTING.md#build-and-verify).) The version comes from `gradle.properties`
 (`-PmoduleVersion=1.2.3` overrides it).
 
 ### Install
@@ -50,7 +51,8 @@ Requires **Ignition 8.3.7 or newer** with the Perspective module.
 │   ├── src/industrial/       Option builders for the industrial / scheduling components
 │   ├── src/themes/           IgnitionIndustrialDark, IgnitionIndustrialLight
 │   ├── src/templates/        23 starter option templates
-│   └── src/utils/            Option sanitiser, event payloads
+│   ├── src/utils/            Option sanitiser, event payloads
+│   └── e2e/                  Browser smoke test of the built bundle
 └── docs/                     Guides (see Documentation below)
 ```
 
@@ -58,7 +60,7 @@ Requires **Ignition 8.3.7 or newer** with the Perspective module.
 
 ### 48 Components — Complete ECharts + ECharts-GL Suite
 
-Every chart type from the [ECharts examples gallery](https://echarts.apache.org/examples/en/index.html) and [ECharts-GL](https://github.com/ecomfe/echarts-gl) has its own component. All share one runtime; each has its own palette entry, default size, and default option, so a component dropped from the palette starts as a working chart of that type. ECharts-GL is loaded on demand, only when one of the 11 3D / WebGL components is on screen.
+Every chart type from the [ECharts examples gallery](https://echarts.apache.org/examples/en/index.html) and [ECharts-GL](https://github.com/ecomfe/echarts-gl) has its own component. All share one runtime; each has its own palette entry, default size, and default option, so a component dropped from the palette starts as a working chart of that type (Map, Map 3D, Polygons 3D and Custom start empty: they need map data or a render function, see [`docs/COMPONENTS.md`](docs/COMPONENTS.md)). ECharts-GL is loaded on demand, only when one of the 11 3D / WebGL components is on screen.
 
 #### Basic Charts
 
@@ -110,7 +112,7 @@ Every chart type from the [ECharts examples gallery](https://echarts.apache.org/
 | **Theme River Chart** | `open.echarts.ThemeRiverChart` | Time-stream river |
 | **Calendar Chart** | `open.echarts.CalendarChart` | Calendar heatmap/scatter |
 | **Pictorial Bar Chart** | `open.echarts.PictorialBarChart` | Symbol-based pictorial bars |
-| **Custom Chart** | `open.echarts.CustomChart` | Custom renderItem series |
+| **Custom Chart** | `open.echarts.CustomChart` | Custom series (limited: `renderItem` cannot be set from props) |
 | **Graphic Chart** | `open.echarts.GraphicChart` | Shape/text/image overlays |
 | **Dataset Chart** | `open.echarts.DatasetChart` | Dataset-driven with encode/transform |
 
@@ -120,6 +122,8 @@ Every chart type from the [ECharts examples gallery](https://echarts.apache.org/
 |-----------|-----|--------|
 | **Map Chart** | `open.echarts.MapChart` | Choropleth, SVG maps, geo scatter |
 | **Lines Chart** | `open.echarts.LinesChart` | Flight routes, bus lines, migration flows |
+
+Map geometry is not bundled: supply GeoJSON or SVG through the `maps` property.
 
 #### 3D Charts (ECharts-GL)
 
@@ -149,7 +153,7 @@ Every chart type from the [ECharts examples gallery](https://echarts.apache.org/
 | **Industrial Trend** | `open.industrial.Trend` | Time-series PV/SP with alarm limits |
 | **OEE Summary** | `open.industrial.OEE` | Multi-ring OEE gauge (A/P/Q) |
 | **Pareto Chart** | `open.industrial.Pareto` | Pareto bar + cumulative % line |
-| **SPC Chart** | `open.industrial.SPCChart` | Individuals & Moving Range with control limits + run rules |
+| **SPC Chart** | `open.industrial.SPCChart` | Individuals & Moving Range or X-bar & R, with control limits + run rules |
 
 #### Industrial — Scheduling & Timelines (Open Components / Scheduling)
 
@@ -158,7 +162,7 @@ Every chart type from the [ECharts examples gallery](https://echarts.apache.org/
 | **State Timeline** | `open.industrial.StateTimeline` | Equipment state/alarm bars on lanes |
 | **Gantt Chart** | `open.industrial.Gantt` | Task scheduling with milestones and progress |
 | **Schedule Calendar** | `open.industrial.ScheduleCalendar` | Annual calendar heatmap of shift schedules |
-| **Shift Calendar** | `open.industrial.ShiftCalendar` | Crew shift patterns and rotations |
+| **Shift Calendar** | `open.industrial.ShiftCalendar` | Crew shift patterns by weekday over a date range |
 | **Downtime Tracker** | `open.industrial.DowntimeTracker` | Categorised downtime events with reason codes |
 | **Batch Timeline** | `open.industrial.BatchTimeline` | S88 batch phase durations on timeline lanes |
 | **Resource Heatmap** | `open.industrial.ResourceHeatmap` | Equipment utilisation (resource × time) |
@@ -170,9 +174,11 @@ Every chart type from the [ECharts examples gallery](https://echarts.apache.org/
 - `renderer` — `canvas` (default) or `svg`
 - `autoResize`, `resizeDebounceMs` — resize with the container
 - `notMerge` — replace the whole option on update instead of merging
+- `lazyUpdate` — apply updates on the next animation frame (default: true)
 - `showLoading`, `loadingOptions` — built-in loading animation
-- `sanitizeTooltip` — sanitise HTML and links in the option (default: true; see Security)
+- `sanitizeTooltip` — sanitise HTML, CSS and links in the option (default: true; see Security)
 - `ariaLabel` — accessible label for the chart
+- `maps` — GeoJSON or SVG maps for map / geo series, keyed by map name
 
 **Events:** `onClick`, `onDoubleClick`, `onMouseOver`, `onMouseOut`, `onLegendSelectChanged`, `onDataZoom`, `onBrushSelected`. Payloads are listed in [`docs/COMPONENTS.md`](docs/COMPONENTS.md#shared-events).
 
@@ -196,10 +202,11 @@ client bundle; there is no gateway-side theme storage.
 
 ## Security
 
-- **Tooltip and link sanitising (`sanitizeTooltip`, default on):** HTML in tooltip formatter
-  strings is sanitised with DOMPurify, and link fields only keep `http`, `https` and relative
-  URLs. This reduces the risk of script injection through an `option` bound to untrusted data;
-  it is **not a sandbox**. Review any option whose content comes from tags, databases or user
+- **Option sanitising (`sanitizeTooltip`, default on):** HTML in tooltip formatters and the
+  toolbox data view is sanitised with DOMPurify, link fields only keep `http`, `https` and
+  relative URLs, colour and tooltip style strings that carry markup or CSS syntax are dropped,
+  and SVG maps are sanitised. This reduces the risk of script injection through an `option`
+  bound to untrusted data; it is **not a sandbox**. Review any option whose content comes from tags, databases or user
   input. See [`docs/SECURITY.md`](docs/SECURITY.md).
 - **Event payloads** contain only documented, JSON-safe fields.
 - **No CDN dependency:** all assets are bundled in the module — works in air-gapped environments.
@@ -213,8 +220,8 @@ This repository is **MIT**. Bundled third-party software (Apache ECharts, ZRende
 
 All runtime assets (ECharts, ECharts-GL, component JS/CSS, themes, templates) are bundled in the
 `.modl` with no CDN or runtime network calls, so the module runs on fully isolated gateways. See
-[`docs/AIR_GAPPED_DEPLOYMENT.md`](docs/AIR_GAPPED_DEPLOYMENT.md) for offline install steps, the
-map-data limitation, and how to build on an offline host.
+[`docs/AIR_GAPPED_DEPLOYMENT.md`](docs/AIR_GAPPED_DEPLOYMENT.md) for offline install steps, map
+data, and how to build on an offline host.
 
 ## Documentation
 

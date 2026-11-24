@@ -22,6 +22,9 @@ describe('industrial Pareto', () => {
         expect(option.series[1].data).toEqual([40, 66.7, 83.8, 95.2, 100]);
         expect(option.series[1].yAxisIndex).toBe(1);
         expect(option.series[1].markLine.data[0].yAxis).toBe(80);
+        // Labelled inside the plot, without end symbols, so the "80%" axis label stays readable.
+        expect(option.series[1].markLine.symbol).toBe('none');
+        expect(option.series[1].markLine.data[0].label).toEqual({ formatter: '80%', position: 'insideEndTop' });
         expect(option.yAxis[1].max).toBe(100);
     });
 

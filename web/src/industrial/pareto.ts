@@ -85,7 +85,11 @@ function buildOption(props: ParetoProps): object {
     if (showLine) {
         const line: Row = { name: lineLabel, type: 'line', yAxisIndex: 1, data: pareto.cumulative };
         if (props.show80PercentLine !== false) {
-            line.markLine = { data: [{ yAxis: 80, label: { formatter: '80%' } }] };
+            // The label sits inside the plot: at the end of the line it would cover the axis label.
+            line.markLine = {
+                silent: true, symbol: 'none',
+                data: [{ yAxis: 80, label: { formatter: '80%', position: 'insideEndTop' } }],
+            };
         }
         series.push(line);
         yAxis.push({ type: 'value', name: '%', min: 0, max: 100, axisLabel: { formatter: '{value}%' } });

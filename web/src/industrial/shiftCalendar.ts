@@ -114,7 +114,8 @@ function buildOption(props: ShiftCalendarProps): object {
     return {
         title: titles(asString(props.title, '') || 'Shift Calendar', data.length === 0),
         tooltip: { trigger: 'item', formatter: '{b}' },
-        grid: { top: 60, bottom: 60, left: 100, right: 40 },
+        // The bottom margin holds the rotated date labels and, below them, the legend.
+        grid: { top: 60, bottom: 100, left: 100, right: 40 },
         xAxis: { type: 'category', data: dates, axisLabel: { rotate: 45, fontSize: 9 } },
         yAxis: { type: 'category', data: crewNames },
         visualMap: {

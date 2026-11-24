@@ -26,7 +26,19 @@ describe('industrial OEE', () => {
         expect(option.series[0].min).toBe(0);
         expect(option.series[0].max).toBe(100);
         expect(option.series[0].detail.formatter).toBe('{value}%');
+        // One neutral band for the unfilled part of the rings, whatever the theme's gauge colours.
+        expect(option.series[0].axisLine.lineStyle.color).toEqual([[1, 'rgba(128,128,128,0.2)']]);
         expect(build({ showLabels: false }).series[0].detail).toEqual({ show: false });
+    });
+
+    it('keeps all four name/value rows inside the hole of the ring', () => {
+        // The ring is 30 px of a 150 px radius at the default 400 x 400 size, so text must stay
+        // well within 80 % of the radius; the Quality value used to sit at 85 % and was cut off.
+        const offsets = build({}).series[0].data.flatMap((d: Opt) => [d.title.offsetCenter[1], d.detail.offsetCenter[1]]);
+        const percents = offsets.map((o: string) => parseFloat(o));
+        expect(percents).toEqual([...percents].sort((a, b) => a - b));
+        for (const p of percents) expect(Math.abs(p)).toBeLessThanOrEqual(60);
+        for (let i = 1; i < percents.length; i++) expect(percents[i] - percents[i - 1]).toBeGreaterThanOrEqual(13);
     });
 
     it('clamps factors to 0-100 before multiplying', () => {

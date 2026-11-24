@@ -124,7 +124,7 @@ Upgrading uses the same process as installation:
 
 ## 8. Air-Gapped / Offline Environments
 
-All assets (ECharts library, themes, templates) are bundled inside the `.modl` file. No internet connection is required at runtime. The module works in fully air-gapped environments.
+All assets (ECharts library, themes, templates) are bundled inside the `.modl` file. No internet connection is required at runtime. The module works in fully air-gapped environments; see [AIR_GAPPED_DEPLOYMENT.md](AIR_GAPPED_DEPLOYMENT.md), including how to supply map data.
 
 ---
 
@@ -155,7 +155,8 @@ signing secrets.
 | Module faulted | Perspective missing | Perspective is a required dependency: install and license the Perspective module |
 | Components not in palette | Designer not restarted | Close and reopen Designer after installing the module |
 | Blank charts in view | JavaScript error | Open browser DevTools (F12) → Console; check for errors |
-| Blank charts in view | Invalid option JSON | Verify the `option` property has valid ECharts JSON; check for syntax errors |
+| Red message in place of the chart | ECharts rejected the option | The message is the ECharts error; correct the `option` (for example a series without the axes it needs) and the chart redraws |
+| Empty map chart | No map data | Put GeoJSON or SVG in the `maps` property and set `series.map` / `geo.map` to its key |
 | 3D charts not rendering | WebGL disabled | Enable WebGL in the browser; try a different browser |
 | Install rejected: module is unsigned | Gateway does not allow unsigned modules | Use a signed release, sign locally, or (development only) allow unsigned modules; see [Module Signing](#9-module-signing) |
 | Install rejected: invalid version | Module built with a version Ignition cannot parse | Rebuild with a version such as `1.2.3` or `1.2.3-rc1` |

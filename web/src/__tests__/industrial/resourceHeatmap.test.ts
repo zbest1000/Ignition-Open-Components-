@@ -42,7 +42,9 @@ describe('industrial ResourceHeatmap', () => {
             utilization: [[10, 20, 30], [40, '50', 60]], title: 'Lines', maxValue: 120,
         });
         expect(option.series[0].data).toEqual([[0, 0, 10], [1, 0, 20], [2, 0, 30], [0, 1, 40], [1, 1, 50], [2, 1, 60]]);
-        expect(option.visualMap).toMatchObject({ min: 0, max: 120, text: ['120%', '0%'] });
+        // The handles carry the percentages; end texts would print them a second time.
+        expect(option.visualMap).toMatchObject({ min: 0, max: 120, calculable: true, formatter: '{value}%' });
+        expect(option.visualMap.text).toBeUndefined();
         expect(option.title[0].text).toBe('Lines');
         expect(option.title[1].text).toBe('');
     });

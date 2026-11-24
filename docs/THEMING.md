@@ -27,6 +27,10 @@ Both themes include:
 - `line`, `bar`, `gauge` defaults
 - Semantic alarm/warning/ok colors in gauge ranges
 
+They do not style `radar`, `calendar` or the ECharts-GL 3D axes: on the dark theme, set those
+colours in the `option` (for example `radar.splitArea`, `calendar.itemStyle`,
+`xAxis3D.axisLabel.textStyle.color`).
+
 ## Using a Theme
 
 Set the `theme` property on your chart component to the theme name string:
