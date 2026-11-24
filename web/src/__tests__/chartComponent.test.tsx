@@ -253,6 +253,27 @@ describe('option updates', () => {
         expect(m.chart().getOption().series).toHaveLength(1);
     });
 
+    it('replaces a timeline option as a whole so its steps keep their series', () => {
+        const m = mount(Chart, chartProps());
+        const setOption = jest.spyOn(m.chart(), 'setOption');
+        m.update({
+            option: {
+                baseOption: {
+                    timeline: { data: ['2024', '2025'] },
+                    xAxis: { type: 'category', data: ['A', 'B'] },
+                    yAxis: {},
+                    series: [{ type: 'bar' }],
+                },
+                options: [{ series: [{ data: [1, 2] }] }, { series: [{ data: [3, 4] }] }],
+            },
+        });
+        expect(setOption).toHaveBeenLastCalledWith(expect.anything(), { notMerge: true, lazyUpdate: false });
+        const series = m.chart().getOption().series as Array<{ type: string; data: number[] }>;
+        expect(series).toHaveLength(1);
+        expect(series[0].type).toBe('bar');
+        expect(series[0].data).toEqual([1, 2]);
+    });
+
     it('defers the update to the next frame when lazyUpdate is on', () => {
         const m = mount(Chart, chartProps({ lazyUpdate: true }));
         flush();

@@ -13,6 +13,7 @@ import {
     VisualMapComponent, TimelineComponent, CalendarComponent, DatasetComponent, TransformComponent,
     GraphicComponent, PolarComponent, RadarComponent, GeoComponent, SingleAxisComponent, ParallelComponent,
     BrushComponent, AriaComponent, MarkPointComponent, MarkLineComponent, MarkAreaComponent, AxisPointerComponent,
+    MatrixComponent,
 } from 'echarts/components';
 import { LabelLayout } from 'echarts/features';
 import { CanvasRenderer, SVGRenderer } from 'echarts/renderers';
@@ -25,7 +26,7 @@ echarts.use([
     VisualMapComponent, TimelineComponent, CalendarComponent, DatasetComponent, TransformComponent,
     GraphicComponent, PolarComponent, RadarComponent, GeoComponent, SingleAxisComponent, ParallelComponent,
     BrushComponent, AriaComponent, MarkPointComponent, MarkLineComponent, MarkAreaComponent, AxisPointerComponent,
-    LabelLayout, CanvasRenderer, SVGRenderer,
+    MatrixComponent, LabelLayout, CanvasRenderer, SVGRenderer,
 ]);
 
 export { echarts };
