@@ -79,7 +79,7 @@ class ComponentCatalogTest {
         for (ComponentDescriptor descriptor : catalog.descriptors()) {
             assertNotNull(descriptor.schema(), descriptor.id());
             Set<String> declared = descriptor.schema().getSchemasForProperties().keySet();
-            assertTrue(declared.containsAll(Set.of("option", "theme", "ariaLabel", "style")),
+            assertTrue(declared.containsAll(Set.of("option", "theme", "ariaLabel", "maps", "style")),
                 descriptor.id() + " schema declares " + declared);
         }
     }

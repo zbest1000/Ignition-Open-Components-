@@ -18,7 +18,7 @@ class PackagedResourcesTest {
     /** Props every component has; their definitions must be the same in every schema file. */
     private static final List<String> BASE_PROPS = List.of(
         "theme", "renderer", "autoResize", "resizeDebounceMs", "notMerge", "lazyUpdate",
-        "showLoading", "loadingOptions", "sanitizeTooltip", "ariaLabel", "style");
+        "showLoading", "loadingOptions", "sanitizeTooltip", "ariaLabel", "maps", "style");
 
     private static Set<String> referencedPropSchemas() {
         Set<String> referenced = new TreeSet<>();

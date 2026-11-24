@@ -1233,7 +1233,7 @@
     {
       "id": "open.echarts.CustomChart",
       "name": "Custom Chart",
-      "description": "Custom series with renderItem logic.",
+      "description": "Custom series (limited: renderItem functions cannot be supplied through props).",
       "category": "Open Components / ECharts",
       "metaName": "customChart",
       "schema": "props/echart.props.json",
@@ -1245,7 +1245,7 @@
       "defaultOption": {
         "title": {
           "text": "Custom Chart",
-          "subtext": "Set sanitizeTooltip=false to use renderItem functions",
+          "subtext": "Custom series need a renderItem function, which JSON props cannot carry",
           "left": "center"
         },
         "tooltip": {},
@@ -1382,7 +1382,7 @@
       "defaultOption": {
         "title": {
           "text": "Map Chart",
-          "subtext": "Register GeoJSON via echarts.registerMap() before use",
+          "subtext": "Supply GeoJSON in the maps prop, then set series.map to its name",
           "left": "center"
         },
         "tooltip": {
@@ -1686,7 +1686,7 @@
       "defaultOption": {
         "title": {
           "text": "Map 3D",
-          "subtext": "Register GeoJSON via echarts.registerMap() before use",
+          "subtext": "Supply GeoJSON in the maps prop, then set series.map to its name",
           "left": "center"
         },
         "series": []
