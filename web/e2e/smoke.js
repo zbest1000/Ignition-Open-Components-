@@ -183,6 +183,8 @@ async function main() {
         if (res.status() >= 400) problems.push(`HTTP ${res.status()}: ${res.url()}`);
     });
     const glRequests = () => requests.filter(p => p.includes('echarts-gl'));
+    const leaks = [];
+    page.on('request', req => { if (req.url().includes('evil.invalid')) leaks.push(req.url()); });
 
     /** Pixels of the element that differ from the white page, from a real screenshot. */
     const inkOf = async selector => {
@@ -324,15 +326,21 @@ async function main() {
                 return tip ? tip.innerHTML : null;
             }, key);
         };
-        const tooltipCase = async (name, option, sanitizeTooltip) => {
+        const tooltipCase = async (name, option, sanitizeTooltip, click) => {
+            leaks.length = 0;
             await page.evaluate(([opt, sanitize]) => window.harness.render('tip', 'open.echarts.BarChart',
                 { option: opt, sanitizeTooltip: sanitize }), [option, sanitizeTooltip]);
             await page.waitForSelector('#tip .open-echarts-mount canvas');
             await frames();
             const html = await hover('tip');
+            if (click) {
+                const box = await page.locator('#tip').boundingBox();
+                await page.mouse.click(box.x + box.width / 2 + 30, box.y + box.height / 2);
+                await page.waitForTimeout(300);
+            }
             const fired = await page.evaluate(n => window[n] === 1, name);
             await page.evaluate(n => { delete window[n]; window.harness.remove('tip'); }, name);
-            return { html, fired };
+            return { html, fired, leaked: leaks.length > 0 };
         };
 
         const formatterOption = { ...BAR, tooltip: { trigger: 'axis', formatter: `<b>{b}</b> ${marker('__xssFormatter')}` } };
@@ -364,6 +372,44 @@ async function main() {
         check('tooltip: a colour carrying markup is dropped', r.html && !r.fired && !/onerror/i.test(r.html), r.html);
         r = await tooltipCase('__xssColour', hostileColour, false);
         check('tooltip: the same colour does run script with sanitizeTooltip off (ECharts does not escape it)', r.fired);
+
+        // --- bypasses found in review: each must be inert with sanitising on,
+        //     and is shown to be live with it off so the check means something.
+        const bypass = async (label, name, option, { click = false, leak = false } = {}) => {
+            const safe = await tooltipCase(name, option, true, click);
+            check(`${label}: inert when sanitised`, !safe.fired && !safe.leaked);
+            const raw = await tooltipCase(name, option, false, click);
+            check(`${label}: live with sanitizeTooltip off`, leak ? raw.leaked : raw.fired);
+        };
+        const axes = { xAxis: { type: 'category', data: ['a'] }, yAxis: {}, animation: false };
+
+        await bypass('string-valued series tooltip', '__xssTipString',
+            { ...axes, tooltip: {}, series: [{ type: 'bar', tooltip: marker('__xssTipString'), data: [1] }] });
+        await bypass('string-valued data item tooltip', '__xssItemTip',
+            { ...axes, tooltip: {}, series: [{ type: 'bar', data: [{ value: 1, tooltip: marker('__xssItemTip') }] }] });
+        await bypass('sunburst series-level link', '__xssLink', {
+            series: [{
+                type: 'sunburst', nodeClick: 'link', link: 'javascript:window.__xssLink=1', target: '_self',
+                radius: [0, '95%'], data: [{ name: 'a', value: 1, target: '_self' }],
+            }],
+        }, { click: true });
+        await bypass('sunburst level link', '__xssLevelLink', {
+            series: [{
+                type: 'sunburst', nodeClick: 'link', levels: [{}, { link: 'javascript:window.__xssLevelLink=1' }],
+                radius: [0, '95%'], data: [{ name: 'a', value: 1, target: '_self' }],
+            }],
+        }, { click: true });
+        await bypass('candlestick itemStyle.color0', '__xssColor0', {
+            ...axes, tooltip: { position: 'top' },
+            series: [{
+                type: 'candlestick', data: [[20, 10, 5, 25]],
+                itemStyle: { color0: `red"></div>${marker('__xssColor0')}<div style="` },
+            }],
+        });
+        await bypass('CSS in tooltip.textStyle.fontFamily', '__none', {
+            ...axes, tooltip: { textStyle: { fontFamily: 'x;background-image:url(http://evil.invalid/leak)' } },
+            series: [{ type: 'bar', data: [1] }],
+        }, { leak: true });
 
         check('no page errors during the tooltip checks',
             problems.filter(p => p.startsWith('pageerror')).length === 0, problems.join(' | '));

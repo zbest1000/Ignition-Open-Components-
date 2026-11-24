@@ -5,7 +5,7 @@ import type { EChartsType } from 'echarts/core';
 import type { ChartBehavior } from '../chartDef';
 import { deepEqual } from '../utils/deepEqual';
 import { CHART_EVENTS, ChartEventName, serializeEventParams } from '../utils/eventPayload';
-import { sanitizeOption } from '../utils/optionSanitizer';
+import { declaresRichTextTooltip, sanitizeOption } from '../utils/optionSanitizer';
 import { echarts } from './echarts';
 import { loadGL } from './glLoader';
 import { registerMaps } from './maps';
@@ -51,6 +51,10 @@ interface SetOptionOpts {
 }
 
 const DEFAULT_RESIZE_DEBOUNCE_MS = 150;
+/** How long a deferred option waits for an animation frame before it is applied anyway (hidden tabs get no frames). */
+const LAZY_UPDATE_FALLBACK_MS = 500;
+/** Brush selections fire continuously while dragging; at most one is delivered per interval, the last one always. */
+const BRUSH_EVENT_INTERVAL_MS = 100;
 
 function isNonEmptyObject(value: unknown): value is object {
     return typeof value === 'object' && value !== null && Object.keys(value).length > 0;
@@ -104,9 +108,23 @@ export abstract class OpenEChartComponent extends Component<ComponentProps<Chart
 
     /** The option last handed to the chart (or queued for it), before sanitising. */
     private applied: { option: unknown; sanitize: boolean } | null = null;
-    /** Options waiting for the next frame when `lazyUpdate` is on. */
-    private queue: Array<{ option: Record<string, any>; opts: SetOptionOpts }> = [];
+    /**
+     * The option waiting for the next frame when `lazyUpdate` is on. Only the
+     * latest is kept: `replace` records that it, or one it superseded, has to
+     * replace the chart's option instead of merging into it.
+     */
+    private pending: { option: Record<string, any>; replace: boolean; richText: boolean } | null = null;
     private frame: number | null = null;
+    private frameFallback: ReturnType<typeof setTimeout> | null = null;
+    /**
+     * Whether every option given to this chart instance declared a rich text
+     * tooltip; null before the first one. ECharts fixes the tooltip's render
+     * mode when it creates the tooltip, so only then is it certain that
+     * formatters are drawn as text and need no HTML sanitising.
+     */
+    private richTextOnly: boolean | null = null;
+    private brushTimer: ReturnType<typeof setTimeout> | null = null;
+    private brushParams: unknown = null;
     /** The option last built by the behaviour, and the domain props it was built from. */
     private built: { domain: object; option: object } | null = null;
     /** The props at the time the chart last failed; it is not retried until they change. */
@@ -206,15 +224,18 @@ export abstract class OpenEChartComponent extends Component<ComponentProps<Chart
     }
 
     private disposeChart(): void {
-        if (this.frame !== null) {
-            cancelAnimationFrame(this.frame);
-            this.frame = null;
-        }
+        this.cancelFrame();
         if (this.resizeTimer !== null) {
             clearTimeout(this.resizeTimer);
             this.resizeTimer = null;
         }
-        this.queue = [];
+        if (this.brushTimer !== null) {
+            clearTimeout(this.brushTimer);
+            this.brushTimer = null;
+        }
+        this.brushParams = null;
+        this.pending = null;
+        this.richTextOnly = null;
         this.applied = null;
         this.loadingShown = null;
         if (this.chart) {
@@ -265,6 +286,7 @@ export abstract class OpenEChartComponent extends Component<ComponentProps<Chart
         const props = this.props.props;
         const sanitize = props.sanitizeTooltip !== false;
         let option: Record<string, any>;
+        let richText = false;
         let sanitizeChanged = replace;
 
         try {
@@ -277,10 +299,23 @@ export abstract class OpenEChartComponent extends Component<ComponentProps<Chart
             this.applied = { option: resolved, sanitize };
 
             if (typeof resolved !== 'object' || resolved === null) {
+                this.pending = null;
+                this.cancelFrame();
                 this.clearError();
                 return;
             }
-            option = withDefaultAria(sanitize ? sanitizeOption(resolved) : resolved);
+            richText = declaresRichTextTooltip(resolved);
+            if (sanitize && richText && this.richTextOnly === false) {
+                // This instance has rendered HTML tooltips, and would write the
+                // formatter into the DOM whatever the option now says. Start over
+                // with an instance that has only ever seen rich text.
+                this.disposeChart();
+                if (!this.createChart()) return;
+                this.applied = { option: resolved, sanitize };
+                sanitizeChanged = false;
+            }
+            option = withDefaultAria(
+                sanitize ? sanitizeOption(resolved, { richTextTooltip: richText }) : resolved);
         } catch (err) {
             this.fail(err, 'Failed to build the chart option');
             return;
@@ -292,38 +327,57 @@ export abstract class OpenEChartComponent extends Component<ComponentProps<Chart
         // Turning sanitising on has to replace everything: a merge would keep
         // the unsanitised values that the new option no longer contains. A
         // newly registered map is likewise only picked up by a full replace.
-        const opts: SetOptionOpts = props.notMerge || sanitizeChanged
-            ? { notMerge: true, lazyUpdate: false }
-            : { notMerge: false, lazyUpdate: false, replaceMerge: ['series'] };
-        this.queue.push({ option, opts });
+        //
+        // Only the latest option is kept. If the one it supersedes had to
+        // replace the chart's option, so does this one: the chart has not
+        // seen the superseded option, so there is nothing valid to merge into.
+        const superseded = this.pending;
+        this.pending = {
+            option,
+            richText,
+            replace: props.notMerge === true || sanitizeChanged || (superseded !== null && superseded.replace),
+        };
 
         if (props.lazyUpdate === false) {
-            this.flushQueue();
+            this.flushPending();
         } else if (this.frame === null) {
-            this.frame = requestAnimationFrame(this.flushQueue);
+            this.frame = requestAnimationFrame(this.flushPending);
+            // Browsers stop animation frames in hidden tabs; do not let the update wait for the tab to return.
+            this.frameFallback = setTimeout(this.flushPending, LAZY_UPDATE_FALLBACK_MS);
         }
     }
 
-    /**
-     * Hands the queued options to ECharts. ECharts' own lazy update runs in
-     * its render loop, where an error cannot be caught and would leave the
-     * chart broken with no message. So the deferral is done here instead: all
-     * but the last option are merged without rendering, and the last one
-     * renders synchronously inside the try block.
-     */
-    private readonly flushQueue = (): void => {
+    private cancelFrame(): void {
         if (this.frame !== null) {
             cancelAnimationFrame(this.frame);
             this.frame = null;
         }
-        const queue = this.queue;
-        this.queue = [];
-        if (!this.chart || queue.length === 0) return;
+        if (this.frameFallback !== null) {
+            clearTimeout(this.frameFallback);
+            this.frameFallback = null;
+        }
+    }
 
+    /**
+     * Hands the pending option to ECharts. ECharts' own lazy update runs in
+     * its render loop, where an error cannot be caught and would leave the
+     * chart broken with no message. So the deferral is done here instead and
+     * ECharts renders synchronously inside the try block. Because only the
+     * latest option is ever applied, the error state always describes the
+     * current props.
+     */
+    private readonly flushPending = (): void => {
+        this.cancelFrame();
+        const item = this.pending;
+        this.pending = null;
+        if (!this.chart || !item) return;
+
+        const opts: SetOptionOpts = item.replace
+            ? { notMerge: true, lazyUpdate: false }
+            : { notMerge: false, lazyUpdate: false, replaceMerge: ['series'] };
+        this.richTextOnly = item.richText && this.richTextOnly !== false;
         try {
-            queue.forEach((item, i) => {
-                this.chart!.setOption(item.option, { ...item.opts, lazyUpdate: i < queue.length - 1 });
-            });
+            this.chart.setOption(item.option, opts);
         } catch (err) {
             this.fail(err, 'setOption failed');
             return;
@@ -350,16 +404,33 @@ export abstract class OpenEChartComponent extends Component<ComponentProps<Chart
     private bindEvents(chart: EChartsType): void {
         (Object.keys(CHART_EVENTS) as ChartEventName[]).forEach(name => {
             chart.on(name, (...args: unknown[]) => {
-                const params = args[0];
-                const events = this.props.componentEvents;
-                if (!events) return;
-                try {
-                    events.fireComponentEvent(CHART_EVENTS[name], serializeEventParams(name, params));
-                } catch {
-                    // A payload that cannot be delivered must not break chart interaction.
+                if (name !== 'brushselected') {
+                    this.fireEvent(name, args[0]);
+                    return;
+                }
+                // Trailing-edge throttle: the latest selection is kept and sent
+                // when the interval ends, so the final selection always arrives.
+                this.brushParams = args[0];
+                if (this.brushTimer === null) {
+                    this.brushTimer = setTimeout(() => {
+                        this.brushTimer = null;
+                        const latest = this.brushParams;
+                        this.brushParams = null;
+                        this.fireEvent('brushselected', latest);
+                    }, BRUSH_EVENT_INTERVAL_MS);
                 }
             });
         });
+    }
+
+    private fireEvent(name: ChartEventName, params: unknown): void {
+        const events = this.props.componentEvents;
+        if (!events) return;
+        try {
+            events.fireComponentEvent(CHART_EVENTS[name], serializeEventParams(name, params));
+        } catch {
+            // A payload that cannot be delivered must not break chart interaction.
+        }
     }
 
     private readonly onResize = (): void => {

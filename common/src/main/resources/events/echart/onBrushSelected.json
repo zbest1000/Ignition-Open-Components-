@@ -45,10 +45,14 @@
                   },
                   "dataIndex": {
                     "type": "array",
-                    "description": "Indices of the selected data items.",
+                    "description": "Indices of the selected data items; at most the first 1000.",
                     "items": {
                       "type": "integer"
                     }
+                  },
+                  "dataIndexCount": {
+                    "type": "integer",
+                    "description": "Total number of selected data items. Greater than the length of dataIndex when the list was cut."
                   }
                 }
               }

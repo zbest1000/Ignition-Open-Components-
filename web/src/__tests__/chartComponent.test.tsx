@@ -264,15 +264,66 @@ describe('option updates', () => {
         expect(m.chart().getOption().series).toHaveLength(2);
     });
 
-    it('applies every queued option in order when several arrive within a frame', () => {
+    it('applies only the latest option when several arrive within a frame', () => {
         const m = mount(Chart, chartProps({ lazyUpdate: true }));
         flush();
-        m.update({ option: { ...BAR, title: { text: 'kept by merge' } } });
-        m.update({ option: TWO_SERIES });
+        const setOption = jest.spyOn(m.chart(), 'setOption');
+        for (let i = 1; i <= 2000; i++) {
+            m.update({ option: { ...BAR, series: [{ type: 'bar', name: 'A', data: [i, 2] }] } });
+        }
         flush();
-        const option = m.chart().getOption();
-        expect(option.title[0].text).toBe('kept by merge');
-        expect(option.series).toHaveLength(2);
+        expect(setOption).toHaveBeenCalledTimes(1);
+        expect(m.chart().getOption().series[0].data).toEqual([2000, 2]);
+    });
+
+    it('replaces rather than merges when a skipped update asked for a full replace', () => {
+        const m = mount(Chart, chartProps({ lazyUpdate: true, option: { ...BAR, title: { text: 'old' } } }));
+        flush();
+        const setOption = jest.spyOn(m.chart(), 'setOption');
+        m.update({ option: BAR, notMerge: true });
+        m.update({ option: TWO_SERIES, notMerge: false });
+        flush();
+        expect(setOption).toHaveBeenCalledTimes(1);
+        expect(setOption.mock.calls[0][1]).toMatchObject({ notMerge: true });
+        expect(m.chart().getOption().title || []).toEqual([]);
+        expect(m.chart().getOption().series).toHaveLength(2);
+    });
+
+    it('applies a pending option even when no animation frame arrives (hidden tab)', () => {
+        const m = mount(Chart, chartProps({ lazyUpdate: true }));
+        flush();
+        const raf = jest.spyOn(window, 'requestAnimationFrame').mockImplementation(() => 1);
+        m.update({ option: TWO_SERIES });
+        expect(raf).toHaveBeenCalled();
+        flush(1500);
+        expect(m.chart().getOption().series).toHaveLength(2);
+    });
+
+    it.each([
+        ['no axes', BROKEN],
+        ['unknown series type', { xAxis: {}, yAxis: {}, series: [{ type: 'nope', data: [1] }] }],
+        ['missing axis index', { xAxis: {}, yAxis: {}, series: [{ type: 'line', xAxisIndex: 3, data: [1] }] }],
+    ])('shows no error when a bad option (%s) is replaced by a good one within the same frame', (_name, bad) => {
+        const m = mount(Chart, chartProps({ lazyUpdate: true }));
+        flush();
+        m.update({ option: bad });
+        m.update({ option: { ...BAR, series: [{ type: 'bar', name: 'A', data: [5, 2] }] } });
+        flush();
+        expect(alertOf(m)).toBeNull();
+        expect(m.chart().getOption().series[0].data).toEqual([5, 2]);
+    });
+
+    it('clears an error as soon as the latest props are good, also with lazyUpdate', () => {
+        const m = mount(Chart, chartProps({ lazyUpdate: true }));
+        flush();
+        m.update({ option: BROKEN, notMerge: true });
+        flush();
+        expect(alertOf(m)).not.toBeNull();
+        m.update({ option: BROKEN, notMerge: true, showLoading: true });
+        m.update({ option: BAR });
+        flush();
+        expect(alertOf(m)).toBeNull();
+        expect(m.chart().getOption().series[0].type).toBe('bar');
     });
 
     it('skips setOption when the option is an equal copy and only another prop changed', () => {
@@ -438,7 +489,7 @@ describe('events', () => {
             type: 'brush',
             areas: [{ brushType: 'lineX', xAxisIndex: 0, coordRange: [0, 1] }],
         });
-        flush();
+        flush(300);
         const brushed = m.events.filter(e => e[0] === 'onBrushSelected');
         expect(brushed.length).toBeGreaterThan(0);
         const batch = brushed[brushed.length - 1][1].batch;
@@ -451,6 +502,59 @@ describe('events', () => {
     it('does not fail when the component has no event bridge', () => {
         const m = mount(Chart, chartProps());
         expect(() => m.chart().trigger('click', { name: 'a' })).not.toThrow();
+    });
+});
+
+describe('rich text tooltips', () => {
+    const rich = (formatter: string) => ({ ...BAR, tooltip: { renderMode: 'richText', formatter } });
+
+    it('leaves the formatter as written when the chart has only ever had a rich text tooltip', () => {
+        const m = mount(Chart, chartProps({ option: rich('T < 5 & P > 2: {c}') }));
+        expect(m.chart().getOption().tooltip[0].formatter).toBe('T < 5 & P > 2: {c}');
+        m.update({ option: rich('a <b> c') });
+        expect(m.chart().getOption().tooltip[0].formatter).toBe('a <b> c');
+    });
+
+    it('starts a new chart before trusting rich text on one that has rendered HTML tooltips', () => {
+        // The tooltip view keeps the mode it was created with, so an option
+        // that merely says richText must not get unsanitised markup into it.
+        const m = mount(Chart, chartProps({ option: { ...BAR, tooltip: {} } }));
+        const first = m.chart();
+        m.update({ option: rich('<img src=x onerror="x()">') });
+        expect(m.chart()).not.toBe(first);
+        expect(first.isDisposed()).toBe(true);
+        expect(m.chart().getOption().tooltip[0].renderMode).toBe('richText');
+    });
+});
+
+describe('event volume', () => {
+    const brushable = { ...BAR, brush: { toolbox: ['lineX'], xAxisIndex: 0, throttleType: 'fixRate', throttleDelay: 0 } };
+    const brush = (m: Mounted, to: number) => m.chart().dispatchAction({
+        type: 'brush', areas: [{ brushType: 'lineX', xAxisIndex: 0, coordRange: [0, to] }],
+    });
+    const brushed = (m: Mounted) => m.events.filter(e => e[0] === 'onBrushSelected');
+
+    it('delivers a burst of brush selections once, with the final selection', () => {
+        const m = mount(Chart, chartProps({ option: brushable }));
+        flush(500);
+        m.events.length = 0;
+        for (let i = 0; i < 20; i++) brush(m, i % 2);
+        brush(m, 1);
+        expect(brushed(m).length).toBeLessThanOrEqual(1);
+        flush(500);
+        expect(brushed(m).length).toBeLessThanOrEqual(2);
+        const last = brushed(m)[brushed(m).length - 1][1];
+        expect(last.batch[0].selected[0]).toMatchObject({ dataIndex: [0, 1], dataIndexCount: 2 });
+    });
+
+    it('drops a pending brush selection on unmount', () => {
+        const m = mount(Chart, chartProps({ option: brushable }));
+        flush(500);
+        brush(m, 1);
+        const before = m.events.length;
+        m.unmount();
+        expect(() => flush(500)).not.toThrow();
+        expect(m.events.length).toBe(before);
     });
 });
 

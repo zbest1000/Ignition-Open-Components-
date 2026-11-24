@@ -1,4 +1,4 @@
-import { sanitizeOption } from '../utils/optionSanitizer';
+import { declaresRichTextTooltip, sanitizeOption } from '../utils/optionSanitizer';
 
 const XSS = '<img src=x onerror="window.__pwned = 1">';
 
@@ -182,13 +182,6 @@ describe('sanitizeOption — URLs', () => {
     });
 });
 
-describe('sanitizeOption — link scope', () => {
-    it('does not treat a `link` column of a dataset as a URL', () => {
-        const option = { dataset: { source: [{ link: 'pump:1', flow: 3 }] }, series: [{ type: 'bar' }] };
-        expect(sanitizeOption(option)).toBe(option);
-    });
-});
-
 describe('sanitizeOption — functions', () => {
     it('drops function values and keeps their siblings', () => {
         const option = {
@@ -305,5 +298,185 @@ describe('sanitizeOption — valid options are left alone', () => {
         expect(sanitizeOption(null)).toBeNull();
         expect(sanitizeOption(undefined)).toBeUndefined();
         expect(sanitizeOption('x')).toBe('x');
+    });
+});
+
+describe('sanitizeOption — rules follow the key, wherever it appears (review regressions)', () => {
+    const BREAKOUT = 'red"></div>' + XSS + '<div style="';
+
+    it.each([
+        ['a series', { series: [{ type: 'bar', tooltip: XSS, data: [1] }] }, (o: any) => o.series[0].tooltip],
+        ['a data item', { series: [{ type: 'bar', data: [{ value: 1, tooltip: XSS }] }] }, (o: any) => o.series[0].data[0].tooltip],
+        ['a mark point', { series: [{ type: 'bar', markPoint: { data: [{ coord: [0, 1], tooltip: XSS }] } }] },
+            (o: any) => o.series[0].markPoint.data[0].tooltip],
+        ['a graphic element', { graphic: { elements: [{ type: 'rect', tooltip: XSS }] } }, (o: any) => o.graphic.elements[0].tooltip],
+        ['the option root', { tooltip: XSS }, (o: any) => o.tooltip],
+    ])('sanitises a string-valued tooltip on %s', (_name, option, pick) => {
+        const html = pick(sanitizeOption(option));
+        expect(typeof html).toBe('string');
+        expect(html).not.toMatch(/onerror/i);
+        expect(isInert(html)).toBe(true);
+    });
+
+    it.each([
+        ['series level', { series: [{ type: 'sunburst', nodeClick: 'link', link: 'javascript:alert(1)', data: [] }] },
+            (o: any) => o.series[0]],
+        ['a level', { series: [{ type: 'sunburst', levels: [{}, { link: 'javascript:alert(1)' }], data: [] }] },
+            (o: any) => o.series[0].levels[1]],
+        ['an unknown holder', { anything: { deep: [{ sublink: 'vbscript:x' }] } }, (o: any) => o.anything.deep[0]],
+    ])('drops an unsafe link at %s', (_name, option, pick) => {
+        const holder = pick(sanitizeOption(option));
+        expect(holder.link).toBeUndefined();
+        expect(holder.sublink).toBeUndefined();
+    });
+
+    it.each([
+        ' \tJaVa\nScRiPt:alert(1)', '\u0001javascript:alert(1)', 'java\u0000script:alert(1)', 'data :text/html,x'.replace(' ', '\t'),
+        'vb\rscript:x', 'ms-msdt:/id', 'Line: 4',
+    ])('drops the link %j: only http, https and relative URLs are opened', (url) => {
+        expect(sanitizeOption({ series: [{ data: [{ link: url }] }] }).series[0].data[0].link).toBeUndefined();
+    });
+
+    it.each(['color0', 'borderColor0', 'borderColorDoji', 'textShadowColor', 'textBorderColor', 'areaColor',
+        'inactiveColor', 'textareaColor', 'fill', 'stroke'])('drops markup in the colour key %s', (key) => {
+        const out = sanitizeOption({ series: [{ type: 'candlestick', itemStyle: { [key]: BREAKOUT, opacity: 1 } }] });
+        expect(out.series[0].itemStyle).toEqual({ opacity: 1 });
+    });
+
+    it('keeps modern CSS colour syntax', () => {
+        const option = {
+            color: ['var(--a)', 'transparent', 'inherit', 'hsl(120deg 75% 25% / 60%)', 'color-mix(in srgb, red 50%, blue)', 'rgb(1 2 3)'],
+            backgroundColor: 'var(--neutral-10, #fff)',
+            series: [{ type: 'candlestick', itemStyle: { color0: '#0a0', borderColor0: 'rgb(0, 128, 0)' } }],
+        };
+        expect(sanitizeOption(option)).toBe(option);
+    });
+
+    it.each([
+        ['textStyle.fontFamily', { tooltip: { textStyle: { fontFamily: 'x;background-image:url(http://evil.invalid/leak)' } } },
+            (o: any) => o.tooltip.textStyle.fontFamily],
+        ['global textStyle.fontFamily', { textStyle: { fontFamily: 'x;background:url(//evil.invalid)' } }, (o: any) => o.textStyle.fontFamily],
+        ['textStyle.decoration', { tooltip: { textStyle: { decoration: 'none;background:url(//evil.invalid)' } } },
+            (o: any) => o.tooltip.textStyle.decoration],
+        ['textStyle.align', { tooltip: { textStyle: { align: 'left;background:url(//evil.invalid)' } } }, (o: any) => o.tooltip.textStyle.align],
+        ['textStyle.fontWeight', { tooltip: { textStyle: { fontWeight: 'bold;background:url(//evil.invalid)' } } },
+            (o: any) => o.tooltip.textStyle.fontWeight],
+        ['padding', { tooltip: { padding: '5px;background:url(//evil.invalid)' } }, (o: any) => o.tooltip.padding],
+        ['padding array', { tooltip: { padding: [5, '5px;background:url(//evil.invalid)'] } }, (o: any) => o.tooltip.padding[1]],
+        ['borderRadius', { tooltip: { borderRadius: '4;background:url(//evil.invalid)' } }, (o: any) => o.tooltip.borderRadius],
+        ['shadowBlur', { tooltip: { shadowBlur: '4px red;background:url(//evil.invalid)' } }, (o: any) => o.tooltip.shadowBlur],
+        ['shadowOffsetX', { series: [{ tooltip: { shadowOffsetX: '1;background:url(//evil.invalid)' } }] },
+            (o: any) => o.series[0].tooltip.shadowOffsetX],
+        ['transitionDuration', { tooltip: { transitionDuration: '1;background:url(//evil.invalid)' } },
+            (o: any) => o.tooltip.transitionDuration],
+        ['an unlisted tooltip field', { tooltip: { somethingNew: 'x;background:url(//evil.invalid)' } }, (o: any) => o.tooltip.somethingNew],
+        ['extraCssText outside a tooltip', { legend: { extraCssText: 'background:url(//evil.invalid)' } }, (o: any) => o.legend.extraCssText],
+    ])('drops CSS injected through %s', (_name, option, pick) => {
+        expect(pick(sanitizeOption(option))).toBeUndefined();
+    });
+
+    it('keeps ordinary tooltip styling, including quoted font families', () => {
+        const option = {
+            textStyle: { fontFamily: '"Inter", "Segoe UI", sans-serif' },
+            tooltip: {
+                trigger: 'axis', position: 'top', className: 'my tip', appendTo: 'body > .host',
+                padding: [5, 10], borderRadius: 4, shadowBlur: 10,
+                textStyle: { fontFamily: "'Arial', sans-serif", fontWeight: 'bold', fontSize: 12, align: 'left' },
+                axisPointer: { type: 'cross', label: { formatter: 'T < 5; P > 2: {value}' } },
+                extraCssText: 'box-shadow: 0 0 3px rgba(0,0,0,.3); font-family: "Segoe UI", sans-serif; width: calc(100% - 4px)',
+            },
+        };
+        expect(sanitizeOption(option)).toBe(option);
+    });
+
+    it('treats every template variable, including {f}, {g} and {@dimension}, as untrusted in URL attributes', () => {
+        const out = sanitizeOption({
+            tooltip: { formatter: '<a href="{f}">x</a><a href="{g0}">y</a><a href="{@url}">z</a><a href="{@[2]}">w</a>' },
+        });
+        expect(out.tooltip.formatter).not.toMatch(/href/i);
+    });
+
+    it('keeps a template variable in a URL whose scheme and host are fixed', () => {
+        const formatter = '<img src="/icons/{b}.png"><a href="/detail/{b}">f</a><a href="https://example.com/q?id={c}">g</a>' +
+            '<a href="../p/{b}">h</a>';
+        const out = sanitizeOption({ tooltip: { formatter } });
+        const box = document.createElement('div');
+        box.innerHTML = out.tooltip.formatter;
+        expect(Array.from(box.querySelectorAll('a')).map(a => a.getAttribute('href')))
+            .toEqual(['/detail/{b}', 'https://example.com/q?id={c}', '../p/{b}']);
+        expect(box.querySelector('img')!.getAttribute('src')).toBe('/icons/{b}.png');
+
+        const unsafe = sanitizeOption({ tooltip: { formatter: '<a href="//{b}/x">a</a><a href="https://{b}/x">b</a><a href="{b}/x">c</a>' } });
+        expect(unsafe.tooltip.formatter).not.toMatch(/href/i);
+    });
+
+    it('leaves dataset values alone: a column named color or link is data', () => {
+        const option = {
+            dataset: [
+                { source: [{ product: 'A', color: 'Red; metallic', link: 'Line: 4', tooltip: '<b>x</b>' }], dimensions: ['product', 'color'] },
+                { source: { color: ['<none>', 'a;b'], link: ['javascript:x'] } },
+                { source: [['color', 'link'], ['a;b', 'pump:1']] },
+            ],
+            series: [{ type: 'bar' }],
+        };
+        expect(sanitizeOption(option)).toBe(option);
+    });
+
+    it('does not HTML-sanitise formatters when told the tooltip renders as rich text', () => {
+        const option = {
+            tooltip: { renderMode: 'richText', formatter: 'T < 5 & P > 2: {c}' },
+            series: [{ type: 'bar', tooltip: 'x <y> z', data: [{ value: 1, tooltip: { formatter: 'a <b' } }] }],
+        };
+        expect(declaresRichTextTooltip(option)).toBe(true);
+        expect(sanitizeOption(option, { richTextTooltip: true })).toBe(option);
+        // Without that assurance it is treated as HTML.
+        expect(sanitizeOption(option)).not.toBe(option);
+    });
+
+    it.each([
+        [{ tooltip: { renderMode: 'html' } }],
+        [{ tooltip: {} }],
+        [{}],
+        [{ tooltip: [{ renderMode: 'richText' }, {}] }],
+        [{ baseOption: { tooltip: { renderMode: 'richText' } }, options: [] }],
+        [{ tooltip: { renderMode: 'richText' }, media: [] }],
+        [null],
+    ])('does not take %j as a rich text tooltip', (option) => {
+        expect(declaresRichTextTooltip(option)).toBe(false);
+    });
+});
+
+describe('sanitizeOption — work done on large data', () => {
+    /** An array row that counts how often its elements are read. */
+    function countedRow(values: any[]) {
+        const reads = { count: 0 };
+        const row = new Proxy(values, {
+            get(target, prop, receiver) {
+                if (typeof prop === 'string' && /^\d+$/.test(prop) && prop !== '0') reads.count++;
+                return Reflect.get(target, prop, receiver);
+            },
+        });
+        return { row, reads };
+    }
+
+    it('does not walk rows that are tuples of values', () => {
+        const rows = Array.from({ length: 1000 }, (_, i) => countedRow([i, i * 2, 'label']));
+        const option = { series: [{ type: 'scatter', data: rows.map(r => r.row) }], dataset: { source: rows.map(r => r.row) } };
+        expect(sanitizeOption(option)).toBe(option);
+        expect(rows.reduce((sum, r) => sum + r.reads.count, 0)).toBe(0);
+    });
+
+    it('still walks rows that start with an object, such as mark line pairs', () => {
+        const out: any = sanitizeOption({ series: [{ markLine: { data: [[{ tooltip: XSS }, { name: 'end', tooltip: { formatter: XSS } }]] } }] });
+        expect(out.series[0].markLine.data[0][0].tooltip).not.toMatch(/onerror/);
+        expect(out.series[0].markLine.data[0][1].tooltip.formatter).not.toMatch(/onerror/);
+    });
+
+    it('checks every data item object, however many there are', () => {
+        const data = Array.from({ length: 5000 }, (_, i) => ({ name: 'n' + i, value: [i, i], itemStyle: { color: '#fff' } }));
+        (data[4999].itemStyle as any).color = 'red"><img src=x onerror=1>';
+        const out = sanitizeOption({ series: [{ type: 'scatter', data }] });
+        expect(out.series[0].data[4999].itemStyle).toEqual({});
+        expect(out.series[0].data[0]).toBe(data[0]);
     });
 });
