@@ -44,3 +44,7 @@ gateway/src/main/resources/mounted/*.css
 # Logs
 *.log
 yarn-error.log
+
+# Test coverage output
+coverage/
+**/coverage/
