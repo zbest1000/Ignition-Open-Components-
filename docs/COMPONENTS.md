@@ -1,6 +1,6 @@
 # Open ECharts — Component Reference
 
-Component reference for the **Open ECharts** Ignition Perspective module: 48 chart components built on Apache ECharts 6.1.0 and ECharts-GL 2.1.0.
+Component reference for the **Open ECharts** Ignition Perspective module: 56 chart components built on Apache ECharts 6.1.0 and ECharts-GL 2.1.0.
 
 ---
 
@@ -870,7 +870,7 @@ These components build their chart from the properties listed here (in addition 
 #### 39. OEE Summary
 - **Component ID:** `open.industrial.OEE`
 - **Default size:** 400x400
-- **Description:** Overall Equipment Effectiveness gauge with A/P/Q inputs.
+- **Description:** Overall Equipment Effectiveness rings with A/P/Q inputs: OEE and its factors as concentric rings with their names and values in the middle. Names, colours, thresholds, a target marker and the factors themselves can be customised; for rings that are not OEE at all, use Metric Rings.
 
 | Property | Type | Description |
 |----------|------|-------------|
@@ -878,7 +878,33 @@ These components build their chart from the properties listed here (in addition 
 | `performance` | number | Performance in percent (0-100). |
 | `quality` | number | Quality in percent (0-100). |
 | `oeeOverride` | number / null | Overrides the calculated OEE, in percent; clamped to 0-100. When null, OEE is computed as A*P*Q/10000. |
-| `showLabels` | boolean | Show A/P/Q/OEE labels on the gauge. |
+| `showLabels` | boolean | Show the names and values in the middle of the rings. |
+| `labels` | object | Ring names, e.g. for another language: `{ "oee": "GAE", "availability": "Verfügbarkeit", "performance": "Leistung", "quality": "Qualität" }`. Missing keys keep the English names. |
+| `colors` | object / array | Ring colours as `{ oee, availability, performance, quality }`, or as an array in ring order starting with OEE (for use with `metrics`). Rings without a colour use the theme palette. |
+| `thresholds` | array | Colours every ring by its value, overriding `colors`: `[{ "upTo": 60, "color": "#e05252" }, { "upTo": 85, "color": "#e6a23c" }, { "color": "#3ba272" }]`. A value takes the colour of the first band, in ascending order of `upTo`, whose `upTo` is greater than it; a band without `upTo` takes everything above. |
+| `target` | number / null | OEE target in percent (e.g. 85 for world class), drawn as a marker on the OEE ring. |
+| `decimals` | integer / null | Decimal places of all values. Null shows the factors as given and the calculated OEE as a whole percent. |
+| `metrics` | array | Optional factors `{ name, value, color, target }`, values in percent. When non-empty they replace availability, performance and quality, and OEE is their product, e.g. A x P x Q x a fourth loss factor. Up to four factors are labelled in the middle; with more, only OEE is. |
+
+Example: four factors, a world-class target and traffic-light colours.
+
+```json
+{
+  "metrics": [
+    { "name": "Availability", "value": 92 },
+    { "name": "Performance", "value": 95 },
+    { "name": "Quality", "value": 97 },
+    { "name": "Loading", "value": 88, "target": 90 }
+  ],
+  "target": 85,
+  "decimals": 1,
+  "thresholds": [
+    { "upTo": 60, "color": "#e05252" },
+    { "upTo": 85, "color": "#e6a23c" },
+    { "color": "#3ba272" }
+  ]
+}
+```
 
 #### 40. Pareto Chart
 - **Component ID:** `open.industrial.Pareto`
@@ -1003,6 +1029,312 @@ These components build their chart from the properties listed here (in addition 
 
 ---
 
+### KPI & Analysis
+
+Domain charts in the *Open Components / Industrial* palette category. Like the other industrial components they are driven by plain props you can bind to tags or query results; a non-empty `option` replaces the generated chart.
+
+#### 49. Metric Rings
+- **Component ID:** `open.industrial.MetricRings`
+- **Default size:** 400x400
+- **Description:** Concentric progress rings for any set of metrics, with targets, thresholds and a centre summary. One ring per metric, each on its own scale if needed (utilities load, tank levels, batch quality attributes, progress against plan). Rings scale with the component; one to six read best, at most 12 are drawn.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `metrics` | array | One ring per metric, outermost first: `{ name, value, min, max, target, color, unit, decimals, thresholds }`. Only `name` and `value` are needed; the rest override the shared props for that ring. A metric without a usable value stays as an empty ring showing "–". |
+| `min` | number | Start of the scale for metrics without their own `min` (default 0). |
+| `max` | number | End of the scale, a full ring, for metrics without their own `max` (default 100). Values outside the scale fill or empty the ring; the displayed number is not clamped. |
+| `unit` | string | Unit written after the values (default `%`). |
+| `decimals` | integer | Decimal places of the values. |
+| `centerTitle` | string | Caption below the value in the centre. |
+| `centerValue` | number / string / null | A number (formatted with `decimals` and `unit`) or a text shown in the centre instead of the calculated summary. |
+| `summary` | string | Centre value: `product` (multiplies the fill of the rings as fractions and gives a percentage, the OEE rule), `average`, `min`, `max`, `sum` (of the values as given), or `none`. |
+| `thresholds` | array | Colours rings by value, overriding metric colours: `[{ "upTo": 60, "color": "#e05252" }, { "upTo": 85, "color": "#e6a23c" }, { "color": "#3ba272" }]`. A value takes the colour of the first band, in ascending order of `upTo`, whose `upTo` is greater than it; a band without `upTo` takes everything above. |
+| `showLabels` | boolean | List the value and name of every metric beside the rings. |
+| `labelPosition` | string | `bottom` (default) or `right` (for a wide component). |
+| `showTargets` | boolean | Mark each metric's `target` on its ring. |
+| `ringThickness` | number | Thickness of all rings together in percent of the outer radius (5-90); 0 chooses it from the number of rings. |
+| `ringGap` | number | Space between rings in percent of the room one ring has (0-90). |
+| `startAngle` | number | Where the rings start, in degrees: 90 is the top. The rings run clockwise. |
+| `sweep` | number | Angle a full ring covers (30-360). `startAngle` 225 with `sweep` 270 gives a gauge open at the bottom. |
+
+Example: three utilities on their own scales, as a 270° gauge.
+
+```json
+{
+  "metrics": [
+    { "name": "Compressed air", "value": 6.8, "max": 10, "unit": "bar", "decimals": 1, "target": 7 },
+    { "name": "Steam", "value": 11.2, "max": 16, "unit": "bar", "decimals": 1 },
+    { "name": "Chilled water", "value": 7.5, "min": 4, "max": 14, "unit": "°C", "decimals": 1, "target": 6 }
+  ],
+  "summary": "none",
+  "centerTitle": "Utilities",
+  "startAngle": 225,
+  "sweep": 270
+}
+```
+
+Bind a ring to a tag with a property binding on `props.metrics[0].value`.
+
+#### 50. Bullet Chart
+- **Component ID:** `open.industrial.BulletChart`
+- **Default size:** 600x300
+- **Description:** Actual versus target per item on qualitative bands (Stephen Few bullet graphs): a bar for the actual value, a marker for the target, and shaded poor / acceptable / good bands behind them. Made for "production vs plan per line". Scales start at zero.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `items` | array | One bullet per item: `{ name, value, target, max, ranges, color }`. `max` is the end of the item's scale (default 120 % of the target, extended if the value is larger); `ranges` are the item's band boundaries in the units of the value, e.g. `[600, 900]`. At most 60 items are drawn. |
+| `title` | string | Chart title. Leave blank for none. |
+| `orientation` | string | `horizontal` (default, one row per item) or `vertical`. |
+| `unit` | string | Unit written after the values. |
+| `decimals` | integer | Decimal places of the values. |
+| `percentOfTarget` | boolean | Draw every item as a percentage of its own target, so that all targets line up at 100 % and items with different targets or units compare directly. Labels keep the real values. |
+| `ranges` | array | Band boundaries in percent of the target, for items without their own `ranges`. Default `[75, 95]`. |
+| `bandColors` | array | Band colours from the lowest band to the highest. The default translucent greys work on light and dark themes. |
+| `color` | string | Bar colour, for items without their own `color`. |
+| `statusColors` | array | Optional. When set, a bar takes the colour of the band its value is in, lowest first, e.g. `["#e05252", "#e6a23c", "#3ba272"]`. |
+| `targetColor` | string | Colour of the target markers (drawn with a thin light outline). On a dark theme `#ffffff` gives a solid light marker. |
+| `showValues` | boolean | Write each value, and its percentage of the target, beside its bar. |
+
+Example: attainment per line, coloured by status.
+
+```json
+{
+  "items": [
+    { "name": "Line 1", "value": 1180, "target": 1200 },
+    { "name": "Line 2", "value": 860, "target": 1000 },
+    { "name": "Line 3", "value": 1320, "target": 1250 }
+  ],
+  "unit": "pcs",
+  "percentOfTarget": true,
+  "statusColors": ["#e05252", "#e6a23c", "#3ba272"]
+}
+```
+
+#### 51. KPI Tile
+- **Component ID:** `open.industrial.KpiTile`
+- **Default size:** 260x150
+- **Description:** One big number with its unit and a caption, the change versus the previous period or a target (arrow, amount and good/bad colour), and a sparkline of recent values. Drawn entirely by ECharts, so it follows the chart theme. Text sizes are fixed so that the tile reads from 160x100 upwards; in a larger tile the sparkline takes the extra room.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `title` | string | Caption above the value. |
+| `value` | number / null | The number shown. When null, the last point of `history` is shown. |
+| `unit` | string | Unit written after the value. |
+| `decimals` | integer | Decimal places of the value. |
+| `previous` | number / null | Value of the previous period. When set, the change is measured against it. |
+| `target` | number / null | Target value. The change is measured against it when `previous` is null; it is also drawn as a dashed line in the sparkline when it lies near the history. |
+| `deltaFormat` | string | `percent` (default, of the reference) or `absolute` (difference in the unit of the value). A reference of 0 always gives the difference. |
+| `deltaLabel` | string | Text after the change, e.g. `vs last shift`. Blank gives "vs previous" / "vs target". |
+| `higherIsBetter` | boolean | True colours an increase as good; false colours a decrease as good (scrap, downtime, energy). |
+| `history` | array | Recent values, oldest first: numbers, `[time, value]` pairs, or objects with a `value`. At least two points draw a sparkline. |
+| `showSparkline` | boolean | Draw the history below the numbers. |
+| `color` | string | Sparkline colour. |
+| `goodColor` | string | Colour of a change in the wanted direction. |
+| `badColor` | string | Colour of a change in the unwanted direction. |
+
+Example: scrap rate against a target, where lower is better.
+
+```json
+{
+  "title": "Scrap rate",
+  "value": 3.42,
+  "unit": "%",
+  "decimals": 2,
+  "previous": null,
+  "target": 2.5,
+  "deltaFormat": "absolute",
+  "higherIsBetter": false,
+  "history": [2.1, 2.3, 2.2, 2.6, 2.9, 2.7, 3.1, 3.0, 3.3, 3.42]
+}
+```
+
+#### 52. Waterfall Chart
+- **Component ID:** `open.industrial.Waterfall`
+- **Default size:** 700x400
+- **Description:** Bridge chart: an opening total, a sequence of increases and decreases, optional subtotals, and a closing total. Use it for OEE loss bridges, energy balances, cost variance or yield loss through process steps.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `steps` | array | Steps in order, as objects: { name, value, type? }. `type` is `"delta"` (default: adds `value` to the running total), `"subtotal"` (shows the running total; `value` is ignored) or `"total"` (shows the running total; a numeric `value` first sets it — use this for the opening total). Rows without a usable value are skipped. |
+| `title` | string | Chart title. Leave blank for no title. |
+| `unit` | string | Unit of the values, shown on the value axis and in tooltips. |
+| `decimals` | integer | Decimal places of value labels and tooltips (0–10). |
+| `increaseColor` | string | Colour of increases (positive deltas). |
+| `decreaseColor` | string | Colour of decreases (negative deltas). |
+| `totalColor` | string | Colour of total and subtotal bars. |
+| `showValues` | boolean | Label each bar with its value; deltas carry a sign (+12 / −38). |
+| `showConnectors` | boolean | Thin lines carrying the running total from bar to bar. |
+| `orientation` | string | `vertical` (default) or `horizontal` (steps run top to bottom; suits long step names). |
+| `startAtZero` | boolean | Start the value axis at zero. Turn off to zoom in on small changes of a large total (total bars are then cut off at the axis). Ignored when the running total reaches or crosses zero. |
+
+The running total starts at 0 and may go negative: bars that cross zero are drawn correctly on both sides of the axis. With more than 8 steps the category labels are rotated instead of wrapped.
+
+Example — OEE time-loss bridge (the default):
+
+```json
+[
+  { "name": "Planned time", "value": 480, "type": "total" },
+  { "name": "Breakdowns", "value": -38 },
+  { "name": "Changeover", "value": -27 },
+  { "name": "Run time", "type": "subtotal" },
+  { "name": "Minor stops", "value": -31 },
+  { "name": "Reduced speed", "value": -42 },
+  { "name": "Scrap & rework", "value": -14 },
+  { "name": "Productive time", "type": "total" }
+]
+```
+
+#### 53. Process Capability Histogram
+- **Component ID:** `open.industrial.CapabilityHistogram`
+- **Default size:** 700x420
+- **Description:** Histogram of measurements with specification limits, a fitted normal curve and capability statistics. The companion of the SPC Chart: SPC shows whether the process is stable, this shows whether it fits the tolerance.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `values` | array | Measurements. Non-numeric entries are ignored. Keep them in time order when `sigmaMethod` is `within`. |
+| `lsl` | number / null | Lower specification limit; null for none. |
+| `usl` | number / null | Upper specification limit; null for none. One-sided specifications are supported. |
+| `target` | number / null | Target (nominal) value; null for none. |
+| `bins` | string / integer | Number of bins (1–200), or `"auto"`: Freedman–Diaconis rule (Sturges when the interquartile range is 0, at most 60 bins), with the bin width rounded up to 1, 2 or 5 × 10^k and edges aligned to it. |
+| `showNormalCurve` | boolean | Overlay the normal distribution fitted to the mean and the selected sigma, scaled to the histogram (n × bin width × density). |
+| `showStats` | boolean | Show the readout: n, mean, sigma, capability indices, values out of spec. |
+| `sigmaMethod` | string | `overall` (default): sample standard deviation of all values; indices are reported as **Pp / Ppk**. `within`: average moving range ÷ 1.128, the short-term estimate the SPC Chart uses for its limits; indices are reported as **Cp / Cpk**. |
+| `decimals` | integer | Decimal places of the mean and bin edges (0–10); sigma is shown with one more. |
+| `unit` | string | Unit of the measurements (axis, readout, tooltips). |
+| `title` | string | Chart title. Leave blank for no title. |
+| `barColor` | string | Colour of the histogram inside the limits. |
+| `outOfSpecColor` | string | Colour of the part of the histogram outside the limits. |
+| `curveColor` | string | Colour of the normal curve and the mean line. |
+| `limitColor` | string | Colour of the LSL / USL lines. |
+| `targetColor` | string | Colour of the target line. |
+
+Statistics: Pp = (USL − LSL) / 6σ, Ppk = min((USL − x̄) / 3σ, (x̄ − LSL) / 3σ) with the overall σ; Cp / Cpk are the same formulas with the within σ. With one limit only, Pp/Cp are omitted and Ppk/Cpk is the index of the existing side (marked "USL only" / "LSL only"). Indices are omitted when σ is 0 or there are fewer than two values. A value exactly on a limit counts as in spec.
+
+Bins contain their lower edge and exclude their upper edge; the last bin contains both. The histogram is split exactly at LSL and USL, so a bin that straddles a limit is drawn in two colours by position; the exact number of out-of-spec values is in the readout. If LSL is greater than USL the two are swapped.
+
+Example — shaft diameter, 25 ± 0.05 mm:
+
+```json
+{ "values": [25.011, 24.994, 25.009, 25.027, "…"], "lsl": 24.95, "usl": 25.05, "target": 25, "unit": "mm", "decimals": 3 }
+```
+
+#### 54. Flow Diagram (Sankey)
+- **Component ID:** `open.industrial.FlowDiagram`
+- **Default size:** 800x450
+- **Description:** Sankey diagram of energy, material or product flow, built from source / target / value rows.
+
+Bind `flows` to a named query or dataset with one row per flow; the nodes are derived from the names in the rows. Duplicate rows are summed, rows with a zero, negative or non-numeric value are skipped. A Sankey diagram cannot draw loops, so flows that close a loop (including a node flowing into itself) are left out, chosen deterministically (the link that leads back to a node already on the path from the sources), and a note under the title says how many were left out. Labels point towards the middle of the diagram so they are never cut off at the edge; tooltips show values with `unit` and `decimals`, inflow and outflow separately where a node does not balance, and each link's share of its source.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `flows` | array | One row per flow: { source, target, value }. Nodes are created from the names used here. Rows with the same source and target are summed; rows whose value is not a positive number are skipped. A Sankey diagram cannot show loops: flows that close a loop (and flows from a node to itself) are left out and counted in a note under the title. |
+| `nodes` | array | Optional per-node overrides: { name, color, label }. name must match a name used in flows; color sets the node colour, label the text shown instead of the name. Nodes without an entry use the theme palette and their own name. |
+| `title` | string | Chart title. Leave blank for no title. |
+| `unit` | string | Unit written after every value, e.g. kWh, t, pcs. |
+| `decimals` | integer | Decimal places of the values in labels and tooltips (0 to 6). |
+| `orientation` | string | Direction of flow: horizontal (left to right) or vertical (top to bottom). One of: `horizontal`, `vertical`. |
+| `nodeAlign` | string | Column placement of nodes: justify puts end nodes in the last column, left packs nodes towards the start, right towards the end. One of: `justify`, `left`, `right`. |
+| `showValues` | boolean | Write each node's throughput next to its name. Turn off for small components. |
+| `linkColor` | string | Colour of the links: that of the source node, of the target node, or a gradient from one to the other. One of: `source`, `target`, `gradient`. |
+| `emphasis` | string | What is highlighted on hover: adjacency (the node or link and its direct neighbours), trajectory (everything up- and downstream), or none. One of: `adjacency`, `trajectory`, `none`. |
+| `nodeWidth` | number | Thickness of the node bars in pixels. |
+| `nodeGap` | number | Gap between neighbouring nodes of a column in pixels. |
+| `maxLabelLength` | integer | Node names longer than this many characters are shortened with an ellipsis in labels (tooltips show the full name). 0 = never shorten. |
+| `colors` | array | Node colour palette, used in order of first appearance. Leave empty to use the palette of the theme. Colours set in nodes take precedence. |
+
+Example `flows` (a named query returning `source`, `target`, `value` columns works as is):
+
+```json
+[
+  { "source": "Grid", "target": "Main bus", "value": 820 },
+  { "source": "Solar PV", "target": "Main bus", "value": 310 },
+  { "source": "Main bus", "target": "Production lines", "value": 540 },
+  { "source": "Production lines", "target": "Useful work", "value": 430 },
+  { "source": "Production lines", "target": "Losses", "value": 110 }
+]
+```
+
+Optional `nodes` overrides: `[{ "name": "Losses", "color": "#9aa0a6", "label": "Heat losses" }]`. For components smaller than about 450 px wide, turn `showValues` off.
+
+#### 55. Event Heatmap
+- **Component ID:** `open.industrial.EventHeatmap`
+- **Default size:** 760x380
+- **Description:** When does it happen? Event counts by hour of day and day of week (alarms, downtime starts, rejects).
+
+Two ways to feed it: bind `cells` to pre-aggregated counts (`GROUP BY` weekday and hour in the database), or bind `timestamps` to the raw event times and let the component bucket them (100,000 timestamps are handled in one pass). Cells with no events are drawn in neutral grey, outside the colour ramp, so "nothing" is never confused with "a little". Bars above and to the right show the totals per hour and per day.
+
+**Time zone.** Hours and weekdays of raw timestamps depend on the clock they are read on. The component never uses the time zone of the browser or gateway (two clients in different zones would show different charts); set `utcOffsetMinutes` instead. It applies to epoch milliseconds and to ISO strings that carry a zone (`Z`, `+02:00`). ISO strings without a zone (`2025-01-06T13:45:00`) are bucketed exactly as written. A fixed offset does not follow daylight saving time: for data that spans a DST change, aggregate in the database and bind `cells`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `cells` | array | Pre-aggregated counts, one row per cell: { day, hour, value }. day is 1 = Monday .. 7 = Sunday (0 is also Sunday, so JavaScript getDay() and PostgreSQL dow values work) or an English day name / one of dayLabels; hour is 0..23. Rows for the same cell are summed; invalid rows are skipped. Ignored while timestamps has entries. Clear this when you bind timestamps, otherwise the sample data shows whenever the binding returns no events. |
+| `timestamps` | array | Raw event times, bucketed by the component: epoch milliseconds, or ISO 8601 strings. Epoch values and strings with a zone (Z, +02:00) are instants and are shifted by utcOffsetMinutes; strings without a zone are taken as local wall-clock time exactly as written. Rows { timestamp \| t_stamp \| t, weight } are accepted too. When non-empty, replaces cells. |
+| `weights` | array | Optional weight of each timestamp, in the same order (e.g. downtime minutes, reject quantity). Leave empty to count every event as 1. When set, events without a valid non-negative weight are skipped. |
+| `utcOffsetMinutes` | number | Offset from UTC, in minutes, of the clock the hours and weekdays are read on (e.g. 60 for UTC+1, -300 for UTC-5). Applied to epoch and zoned timestamps. The zone of the browser or gateway is deliberately not used, so every client shows the same chart. A fixed offset does not follow daylight saving time: for data spanning a DST change, aggregate in the database and bind cells. |
+| `weekStart` | string | First day of the week (top row). One of: `monday`, `sunday`. |
+| `dayLabels` | array | Seven day labels, always Monday first (weekStart only changes the row order). |
+| `hourStep` | integer | Width of a column in hours: 1, 2, 3, 4 or 6. One of: `1`, `2`, `3`, `4`, `6`. |
+| `colors` | array | Colour ramp from low to high counts (two or more colours). The default is one hue with rising opacity, so it reads low-to-high on light and dark themes alike. Cells with no events are always drawn in neutral grey, outside this ramp. |
+| `showValues` | boolean | Write the count in each cell. Best with larger components or a coarser hourStep. |
+| `showTotals` | boolean | Show bars with the total per hour (above) and per day (right). |
+| `showLegend` | boolean | Show the colour scale below the chart. |
+| `max` | number | Count that gets the last colour of the ramp. 0 = automatic (the largest cell). Set a fixed value to keep colours comparable between periods. |
+| `valueLabel` | string | What is being counted, written after values in tooltips and the legend (e.g. alarms, stops, rejects). |
+| `title` | string | Chart title. Leave blank for no title. |
+
+Example `cells` (PostgreSQL: `SELECT EXTRACT(isodow FROM t_stamp) AS day, EXTRACT(hour FROM t_stamp) AS hour, COUNT(*) AS value ... GROUP BY 1, 2`):
+
+```json
+[
+  { "day": 1, "hour": 6, "value": 25 },
+  { "day": 1, "hour": 14, "value": 13 },
+  { "day": "Fri", "hour": 13, "value": 17 }
+]
+```
+
+`day` is 1 = Monday .. 7 = Sunday; 0 is also read as Sunday. MySQL `DAYOFWEEK()` and SQL Server `DATEPART(weekday, ...)` number Sunday as 1: use `WEEKDAY(t) + 1` (MySQL) or map the value in the query.
+
+Example `timestamps` with `utcOffsetMinutes: 60`: `[1736143200000, "2025-01-06T07:12:00Z", "2025-01-07T14:03:10+01:00"]`, optionally with `weights` (e.g. downtime minutes) `[12, 3.5, 40]`.
+
+#### 56. Radar Comparison
+- **Component ID:** `open.industrial.RadarComparison`
+- **Default size:** 560x460
+- **Description:** Compares lines, shifts, machines or suppliers across metrics with different units on one radar.
+
+Every axis is scaled to its own range (`min`..`max` of the metric, or derived from the data with 20 % padding when missing), so percentages, rates and durations can share one chart. **Outward is always better:** metrics with `higherIsBetter: false` (scrap, changeover time, energy per unit) are inverted so their lowest value lies on the rim. The range under each axis name is written from the centre value to the rim value. Tooltips show the real values with units, not the normalised positions. An optional `target` is drawn as a dashed outline. A radar needs at least three metrics; with fewer the component shows a notice instead.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `metrics` | array | The axes, at least three: { name, min, max, higherIsBetter, unit } (or just a name). Each axis is scaled to its own min..max, so metrics with different units can be compared; values outside the range are drawn at its ends. A missing min or max is taken from the data with some padding. Outward is always better: axes with higherIsBetter false are inverted, so their lowest value is at the rim. unit is written after values. |
+| `series` | array | The entities to compare (lines, shifts, machines, suppliers): { name, values }, with values in the same order as metrics, in real units. Extra values are ignored; a missing value is drawn at the centre and shown as a dash in the tooltip. |
+| `target` | object | Optional reference drawn as a dashed outline: { name, values, color } with values in the same order as metrics. Leave empty for none. |
+| `fill` | boolean | Fill the area of each series (the fill gets lighter as the number of series grows). |
+| `shape` | string | Shape of the grid. One of: `polygon`, `circle`. |
+| `showRange` | boolean | Write the range of each axis under its name, from the centre value to the rim value. |
+| `showLegend` | boolean | Show the legend. |
+| `decimals` | integer | Maximum decimal places of values in tooltips and axis ranges (0 to 6). |
+| `colors` | array | Series colours in order. Leave empty to use the palette of the theme. |
+| `title` | string | Chart title. Leave blank for no title. |
+
+Example:
+
+```json
+{
+  "metrics": [
+    { "name": "OEE", "unit": "%", "min": 40, "max": 100 },
+    { "name": "Scrap", "unit": "%", "min": 0, "max": 6, "higherIsBetter": false },
+    { "name": "Changeover", "unit": "min", "higherIsBetter": false }
+  ],
+  "series": [
+    { "name": "Line 1", "values": [78, 1.8, 24] },
+    { "name": "Line 2", "values": [64, 3.9, 41] }
+  ],
+  "target": { "name": "Target", "values": [85, 2, 20] }
+}
+```
+
+---
+
 ## Summary Table
 
 | # | Component | ID | Palette | Size |
@@ -1055,3 +1387,11 @@ These components build their chart from the properties listed here (in addition 
 | 46 | Downtime Tracker | open.industrial.DowntimeTracker | Scheduling | 900x350 |
 | 47 | Batch Timeline | open.industrial.BatchTimeline | Scheduling | 900x350 |
 | 48 | Resource Heatmap | open.industrial.ResourceHeatmap | Scheduling | 800x400 |
+| 49 | Metric Rings | open.industrial.MetricRings | Industrial | 400x400 |
+| 50 | Bullet Chart | open.industrial.BulletChart | Industrial | 600x300 |
+| 51 | KPI Tile | open.industrial.KpiTile | Industrial | 260x150 |
+| 52 | Waterfall Chart | open.industrial.Waterfall | Industrial | 700x400 |
+| 53 | Process Capability Histogram | open.industrial.CapabilityHistogram | Industrial | 700x420 |
+| 54 | Flow Diagram (Sankey) | open.industrial.FlowDiagram | Industrial | 800x450 |
+| 55 | Event Heatmap | open.industrial.EventHeatmap | Industrial | 760x380 |
+| 56 | Radar Comparison | open.industrial.RadarComparison | Industrial | 560x460 |

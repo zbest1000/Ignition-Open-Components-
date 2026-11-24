@@ -1,5 +1,5 @@
 /**
- * `echarts/core`, `echarts/charts`, `echarts/components` and
+ * `echarts/core`, `echarts/charts`, `echarts/components`, `echarts/features` and
  * `echarts/renderers` are ES modules that Jest (CommonJS) cannot load, so the
  * tests run against the real, prebuilt full ECharts bundle instead. Everything
  * is already registered in that bundle, hence `use` is a no-op here.

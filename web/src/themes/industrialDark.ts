@@ -85,6 +85,12 @@ export const industrialDark = {
     bar: {
         barMaxWidth: 40
     },
+    radar: {
+        axisName:  { color: '#d0d0d0' },
+        axisLine:  { lineStyle: { color: '#3a3a52' } },
+        splitLine: { lineStyle: { color: '#3a3a52' } },
+        splitArea: { areaStyle: { color: ['rgba(255,255,255,0.02)', 'rgba(255,255,255,0.05)'] } }
+    },
     gauge: {
         axisLine:  { lineStyle: { color: [[0.3, '#91cc75'], [0.7, '#fac858'], [1, '#ee6666']] } },
         axisTick:  { lineStyle: { color: '#999' } },

@@ -10,7 +10,7 @@ module.exports = {
     moduleNameMapper: {
         '\\.(css|scss)$': '<rootDir>/src/__tests__/__mocks__/styleMock.js',
         '^@inductiveautomation/perspective-client$': '<rootDir>/src/__tests__/__mocks__/perspectiveClient.js',
-        '^echarts/(core|charts|components|renderers)$': '<rootDir>/src/__tests__/__mocks__/echarts.js',
+        '^echarts/(core|charts|components|features|renderers)$': '<rootDir>/src/__tests__/__mocks__/echarts.js',
         '^echarts-gl$': '<rootDir>/src/__tests__/__mocks__/echartsGl.js'
     },
     collectCoverageFrom: [

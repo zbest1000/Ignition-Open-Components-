@@ -32,8 +32,47 @@
     },
     "showLabels": {
       "type": "boolean",
-      "description": "Show A/P/Q/OEE labels on the gauge.",
+      "description": "Show the names and values in the middle of the rings.",
       "default": true
+    },
+    "labels": {
+      "type": "object",
+      "description": "Ring names, e.g. for another language: { oee, availability, performance, quality }. Missing keys keep the English names.",
+      "default": {}
+    },
+    "colors": {
+      "type": [
+        "object",
+        "array"
+      ],
+      "description": "Ring colours as { oee, availability, performance, quality }, or as an array in ring order starting with OEE (for use with metrics). Rings without a colour use the theme palette.",
+      "default": {}
+    },
+    "thresholds": {
+      "type": "array",
+      "description": "Colours every ring by its value, overriding colors. Value bands as objects { upTo, color }. A value takes the colour of the first band, in ascending order of upTo, whose upTo is greater than it; a band without upTo takes everything above. Example: [{\"upTo\": 60, \"color\": \"#e05252\"}, {\"upTo\": 85, \"color\": \"#e6a23c\"}, {\"color\": \"#3ba272\"}].",
+      "default": []
+    },
+    "target": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "OEE target in percent (e.g. 85 for world class), drawn as a marker on the OEE ring. Null for no marker.",
+      "default": null
+    },
+    "decimals": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "Decimal places of all values. Null shows the factors as given and the calculated OEE as a whole percent.",
+      "default": null
+    },
+    "metrics": {
+      "type": "array",
+      "description": "Optional factors as objects { name, value, color, target }, values in percent (0-100). When non-empty they replace availability, performance and quality, and OEE is their product, e.g. A x P x Q x a fourth loss factor.",
+      "default": []
     },
     "theme": {
       "type": "string",

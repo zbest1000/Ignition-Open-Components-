@@ -1,0 +1,301 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "option": {
+      "type": "object",
+      "description": "Advanced override. When non-empty, this ECharts option replaces the generated chart and the domain props are ignored.",
+      "default": {}
+    },
+    "values": {
+      "type": "array",
+      "description": "Measurements. Non-numeric entries are ignored. Keep them in time order when sigmaMethod is \"within\".",
+      "items": {
+        "type": "number"
+      },
+      "default": [
+        25.054,
+        24.994,
+        25.011,
+        24.988,
+        25.009,
+        25.004,
+        25.01,
+        24.993,
+        25.027,
+        25.027,
+        25.005,
+        24.985,
+        24.984,
+        25.014,
+        25.027,
+        25.03,
+        25.001,
+        25.022,
+        25.015,
+        24.995,
+        25.001,
+        24.998,
+        25.014,
+        25.007,
+        25.003,
+        25,
+        25.007,
+        25.012,
+        24.997,
+        25.019,
+        25.026,
+        25.014,
+        24.998,
+        25.012,
+        25.011,
+        24.979,
+        25.005,
+        25.006,
+        25.021,
+        24.999,
+        25.003,
+        25.02,
+        25.019,
+        25.011,
+        25.014,
+        24.994,
+        24.977,
+        25.012,
+        25.011,
+        24.997,
+        25,
+        25,
+        25.004,
+        25.003,
+        24.997,
+        25.029,
+        25.012,
+        25.012,
+        25.006,
+        25.02,
+        25.052,
+        25.022,
+        25.005,
+        25.027,
+        25.009,
+        24.996,
+        24.994,
+        25.006,
+        24.992,
+        24.987,
+        24.992,
+        25.002,
+        24.983,
+        24.992,
+        25.012,
+        24.98,
+        24.995,
+        24.986,
+        24.995,
+        25.017,
+        25.016,
+        25.023,
+        25.03,
+        25.029,
+        24.985,
+        25.023,
+        25.023,
+        25.008,
+        24.983,
+        24.994,
+        25.004,
+        25.033,
+        25.017,
+        25.025,
+        25.009,
+        24.98,
+        24.985,
+        25.006,
+        24.987,
+        25.008,
+        24.986,
+        25.014,
+        24.988,
+        25.01,
+        25,
+        25.014,
+        24.985,
+        25.027,
+        24.976,
+        25.006,
+        24.995,
+        24.995,
+        24.996,
+        25,
+        25.003,
+        25.001,
+        25.016,
+        25.019,
+        25.013,
+        24.99
+      ]
+    },
+    "lsl": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Lower specification limit. null for none (one-sided specification).",
+      "default": 24.95
+    },
+    "usl": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Upper specification limit. null for none (one-sided specification).",
+      "default": 25.05
+    },
+    "target": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Target (nominal) value. null for none.",
+      "default": 25
+    },
+    "bins": {
+      "type": [
+        "string",
+        "integer"
+      ],
+      "description": "Number of bins, or \"auto\": Freedman-Diaconis rule (Sturges when the interquartile range is 0), with the bin width rounded to 1, 2 or 5 x 10^k. Bins include their lower edge and exclude their upper edge; the last bin includes both.",
+      "default": "auto"
+    },
+    "showNormalCurve": {
+      "type": "boolean",
+      "description": "Overlay the normal distribution fitted to the mean and the selected sigma, scaled to the histogram.",
+      "default": true
+    },
+    "showStats": {
+      "type": "boolean",
+      "description": "Show the readout: n, mean, sigma, the capability indices and the number of values out of spec.",
+      "default": true
+    },
+    "sigmaMethod": {
+      "type": "string",
+      "enum": [
+        "overall",
+        "within"
+      ],
+      "description": "overall: sample standard deviation of all values; the indices are reported as Pp / Ppk. within: average moving range / 1.128 (short-term variation, as on the SPC chart; needs values in time order); the indices are reported as Cp / Cpk.",
+      "default": "overall"
+    },
+    "decimals": {
+      "type": "integer",
+      "description": "Decimal places of the mean and the bin edges (0-10); sigma is shown with one more.",
+      "default": 3
+    },
+    "unit": {
+      "type": "string",
+      "description": "Unit of the measurements, shown on the axis, in the readout and in tooltips.",
+      "default": "mm"
+    },
+    "title": {
+      "type": "string",
+      "description": "Chart title. Leave blank for no title.",
+      "default": ""
+    },
+    "barColor": {
+      "type": "string",
+      "format": "color",
+      "description": "Colour of the histogram inside the specification limits.",
+      "default": "#5470c6"
+    },
+    "outOfSpecColor": {
+      "type": "string",
+      "format": "color",
+      "description": "Colour of the part of the histogram outside the specification limits.",
+      "default": "#ee6666"
+    },
+    "curveColor": {
+      "type": "string",
+      "format": "color",
+      "description": "Colour of the normal curve and the mean line.",
+      "default": "#e6a23c"
+    },
+    "limitColor": {
+      "type": "string",
+      "format": "color",
+      "description": "Colour of the LSL and USL lines.",
+      "default": "#d9534f"
+    },
+    "targetColor": {
+      "type": "string",
+      "format": "color",
+      "description": "Colour of the target line.",
+      "default": "#3ba272"
+    },
+    "theme": {
+      "type": "string",
+      "description": "Name of a registered ECharts theme. Built-in themes: IgnitionIndustrialDark, IgnitionIndustrialLight. Leave empty for the ECharts default theme.",
+      "default": ""
+    },
+    "renderer": {
+      "type": "string",
+      "enum": [
+        "canvas",
+        "svg"
+      ],
+      "description": "Rendering engine: canvas (better perf) or svg (better quality/export).",
+      "default": "canvas"
+    },
+    "autoResize": {
+      "type": "boolean",
+      "description": "Automatically resize chart when container dimensions change.",
+      "default": true
+    },
+    "resizeDebounceMs": {
+      "type": "integer",
+      "description": "Debounce interval in milliseconds for resize events.",
+      "default": 150
+    },
+    "notMerge": {
+      "type": "boolean",
+      "description": "If true, setOption will not merge with previous option but replace entirely.",
+      "default": false
+    },
+    "lazyUpdate": {
+      "type": "boolean",
+      "description": "If true, chart update is deferred for better performance during rapid changes.",
+      "default": true
+    },
+    "showLoading": {
+      "type": "boolean",
+      "description": "Show the built-in ECharts loading animation.",
+      "default": false
+    },
+    "loadingOptions": {
+      "type": "object",
+      "description": "Options for the loading animation (text, color, etc.).",
+      "default": {}
+    },
+    "sanitizeTooltip": {
+      "type": "boolean",
+      "description": "Sanitises HTML in tooltip formatters and blocks non-http(s) links.",
+      "default": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label announced by screen readers.",
+      "default": ""
+    },
+    "maps": {
+      "type": "object",
+      "description": "Map definitions for map and geo series, keyed by map name. Each value is a GeoJSON FeatureCollection, or an object with an `svg` string. Set series.map (or geo.map) to the key.",
+      "default": {}
+    },
+    "style": {
+      "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
+      "default": {
+        "classes": ""
+      }
+    }
+  }
+}

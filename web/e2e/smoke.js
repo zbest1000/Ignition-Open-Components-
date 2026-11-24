@@ -213,7 +213,9 @@ async function main() {
 
         // --- registration -------------------------------------------------
         const ids = await page.evaluate(() => Object.keys(window.__metas));
-        check('all 48 components register', ids.length === 48, `${ids.length} registered`);
+        const manifestCount = JSON.parse(fs.readFileSync(
+            path.resolve(__dirname, '../../common/src/main/resources/components.manifest.json'), 'utf8')).components.length;
+        check('every manifest component registers', ids.length === manifestCount, `${ids.length} of ${manifestCount} registered`);
         check('the bundle exposes its UMD library', await page.evaluate(() => typeof window.OpenECharts === 'object'));
 
         // --- 2D chart -----------------------------------------------------

@@ -1120,7 +1120,7 @@
               [
                 "D",
                 80,
-                4.0,
+                4,
                 38
               ],
               [
@@ -2377,52 +2377,52 @@
             },
             "data": [
               [
-                -3.0,
-                -3.0,
+                -3,
+                -3,
                 0.14
               ],
               [
                 -2.2,
-                -3.0,
+                -3,
                 0.77
               ],
               [
                 -1.5,
-                -3.0,
+                -3,
                 0.99
               ],
               [
                 -0.8,
-                -3.0,
+                -3,
                 0.67
               ],
               [
-                0.0,
-                -3.0,
-                -0.0
+                0,
+                -3,
+                0
               ],
               [
                 0.8,
-                -3.0,
+                -3,
                 -0.67
               ],
               [
                 1.5,
-                -3.0,
+                -3,
                 -0.99
               ],
               [
                 2.2,
-                -3.0,
+                -3,
                 -0.77
               ],
               [
-                3.0,
-                -3.0,
+                3,
+                -3,
                 -0.14
               ],
               [
-                -3.0,
+                -3,
                 -2.2,
                 0.09
               ],
@@ -2442,9 +2442,9 @@
                 0.43
               ],
               [
-                0.0,
+                0,
                 -2.2,
-                -0.0
+                0
               ],
               [
                 0.8,
@@ -2462,12 +2462,12 @@
                 -0.49
               ],
               [
-                3.0,
+                3,
                 -2.2,
                 -0.09
               ],
               [
-                -3.0,
+                -3,
                 -1.5,
                 -0.01
               ],
@@ -2487,9 +2487,9 @@
                 -0.05
               ],
               [
-                0.0,
+                0,
                 -1.5,
-                0.0
+                0
               ],
               [
                 0.8,
@@ -2507,12 +2507,12 @@
                 0.06
               ],
               [
-                3.0,
+                3,
                 -1.5,
                 0.01
               ],
               [
-                -3.0,
+                -3,
                 -0.8,
                 -0.1
               ],
@@ -2532,9 +2532,9 @@
                 -0.5
               ],
               [
-                0.0,
+                0,
                 -0.8,
-                0.0
+                0
               ],
               [
                 0.8,
@@ -2552,57 +2552,57 @@
                 0.57
               ],
               [
-                3.0,
+                3,
                 -0.8,
                 0.1
               ],
               [
-                -3.0,
-                0.0,
+                -3,
+                0,
                 -0.14
               ],
               [
                 -2.2,
-                0.0,
+                0,
                 -0.78
               ],
               [
                 -1.5,
-                0.0,
-                -1.0
+                0,
+                -1
               ],
               [
                 -0.8,
-                0.0,
+                0,
                 -0.68
               ],
               [
-                0.0,
-                0.0,
-                0.0
+                0,
+                0,
+                0
               ],
               [
                 0.8,
-                0.0,
+                0,
                 0.68
               ],
               [
                 1.5,
-                0.0,
-                1.0
+                0,
+                1
               ],
               [
                 2.2,
-                0.0,
+                0,
                 0.78
               ],
               [
-                3.0,
-                0.0,
+                3,
+                0,
                 0.14
               ],
               [
-                -3.0,
+                -3,
                 0.8,
                 -0.1
               ],
@@ -2622,9 +2622,9 @@
                 -0.5
               ],
               [
-                0.0,
+                0,
                 0.8,
-                0.0
+                0
               ],
               [
                 0.8,
@@ -2642,12 +2642,12 @@
                 0.57
               ],
               [
-                3.0,
+                3,
                 0.8,
                 0.1
               ],
               [
-                -3.0,
+                -3,
                 1.5,
                 -0.01
               ],
@@ -2667,9 +2667,9 @@
                 -0.05
               ],
               [
-                0.0,
+                0,
                 1.5,
-                0.0
+                0
               ],
               [
                 0.8,
@@ -2687,12 +2687,12 @@
                 0.06
               ],
               [
-                3.0,
+                3,
                 1.5,
                 0.01
               ],
               [
-                -3.0,
+                -3,
                 2.2,
                 0.09
               ],
@@ -2712,9 +2712,9 @@
                 0.43
               ],
               [
-                0.0,
+                0,
                 2.2,
-                -0.0
+                0
               ],
               [
                 0.8,
@@ -2732,53 +2732,53 @@
                 -0.49
               ],
               [
-                3.0,
+                3,
                 2.2,
                 -0.09
               ],
               [
-                -3.0,
-                3.0,
+                -3,
+                3,
                 0.14
               ],
               [
                 -2.2,
-                3.0,
+                3,
                 0.77
               ],
               [
                 -1.5,
-                3.0,
+                3,
                 0.99
               ],
               [
                 -0.8,
-                3.0,
+                3,
                 0.67
               ],
               [
-                0.0,
-                3.0,
-                -0.0
+                0,
+                3,
+                0
               ],
               [
                 0.8,
-                3.0,
+                3,
                 -0.67
               ],
               [
                 1.5,
-                3.0,
+                3,
                 -0.99
               ],
               [
                 2.2,
-                3.0,
+                3,
                 -0.77
               ],
               [
-                3.0,
-                3.0,
+                3,
+                3,
                 -0.14
               ]
             ]
@@ -2855,7 +2855,7 @@
               {
                 "name": "New York",
                 "value": [
-                  -74.0,
+                  -74,
                   40.7,
                   0
                 ]
@@ -2966,7 +2966,7 @@
               ],
               [
                 [
-                  -74.0,
+                  -74,
                   40.7
                 ],
                 [
@@ -3694,6 +3694,110 @@
       "size": {
         "width": 800,
         "height": 500
+      }
+    },
+    {
+      "id": "open.industrial.MetricRings",
+      "name": "Metric Rings",
+      "description": "Concentric progress rings for any set of metrics, with targets, thresholds and a centre summary.",
+      "category": "Open Components / Industrial",
+      "metaName": "metricRings",
+      "schema": "props/industrial-metric-rings.props.json",
+      "cssClass": "open-industrial-metric-rings",
+      "size": {
+        "width": 400,
+        "height": 400
+      }
+    },
+    {
+      "id": "open.industrial.BulletChart",
+      "name": "Bullet Chart",
+      "description": "Actual versus target per item on qualitative bands (Stephen Few bullet graphs).",
+      "category": "Open Components / Industrial",
+      "metaName": "bulletChart",
+      "schema": "props/industrial-bullet-chart.props.json",
+      "cssClass": "open-industrial-bullet-chart",
+      "size": {
+        "width": 600,
+        "height": 300
+      }
+    },
+    {
+      "id": "open.industrial.KpiTile",
+      "name": "KPI Tile",
+      "description": "One big number with unit, change versus previous or target, and a sparkline.",
+      "category": "Open Components / Industrial",
+      "metaName": "kpiTile",
+      "schema": "props/industrial-kpi-tile.props.json",
+      "cssClass": "open-industrial-kpi-tile",
+      "size": {
+        "width": 260,
+        "height": 150
+      }
+    },
+    {
+      "id": "open.industrial.Waterfall",
+      "name": "Waterfall Chart",
+      "description": "Bridge chart: a starting total, increases and decreases, subtotals and an end total (OEE losses, energy balance, cost variance).",
+      "category": "Open Components / Industrial",
+      "metaName": "waterfallChart",
+      "schema": "props/industrial-waterfall.props.json",
+      "cssClass": "open-industrial-waterfall",
+      "size": {
+        "width": 700,
+        "height": 400
+      }
+    },
+    {
+      "id": "open.industrial.CapabilityHistogram",
+      "name": "Process Capability Histogram",
+      "description": "Histogram of measurements with specification limits, fitted normal curve and capability statistics (Pp/Ppk or Cp/Cpk).",
+      "category": "Open Components / Industrial",
+      "metaName": "capabilityHistogram",
+      "schema": "props/industrial-capability-histogram.props.json",
+      "cssClass": "open-industrial-capability-histogram",
+      "size": {
+        "width": 700,
+        "height": 420
+      }
+    },
+    {
+      "id": "open.industrial.FlowDiagram",
+      "name": "Flow Diagram (Sankey)",
+      "description": "Sankey diagram of energy, material or product flow, built from source / target / value rows.",
+      "category": "Open Components / Industrial",
+      "metaName": "flowDiagram",
+      "schema": "props/industrial-flow-diagram.props.json",
+      "cssClass": "open-industrial-flow-diagram",
+      "size": {
+        "width": 800,
+        "height": 450
+      }
+    },
+    {
+      "id": "open.industrial.EventHeatmap",
+      "name": "Event Heatmap",
+      "description": "When does it happen? Event counts by hour of day and day of week (alarms, downtime starts, rejects).",
+      "category": "Open Components / Industrial",
+      "metaName": "eventHeatmap",
+      "schema": "props/industrial-event-heatmap.props.json",
+      "cssClass": "open-industrial-event-heatmap",
+      "size": {
+        "width": 760,
+        "height": 380
+      }
+    },
+    {
+      "id": "open.industrial.RadarComparison",
+      "name": "Radar Comparison",
+      "description": "Compares lines, shifts, machines or suppliers across metrics with different units on one radar.",
+      "category": "Open Components / Industrial",
+      "metaName": "radarComparison",
+      "schema": "props/industrial-radar-comparison.props.json",
+      "cssClass": "open-industrial-radar-comparison",
+      "size": {
+        "width": 560,
+        "height": 460
       }
     },
     {

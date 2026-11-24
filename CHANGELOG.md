@@ -11,11 +11,25 @@ Nothing has been released yet; this section describes the first release as it wi
 "Changed", "Fixed" and "Removed" are relative to earlier development builds.
 
 ### Added
-- 48 Perspective components on one shared runtime:
+- 56 Perspective components on one shared runtime:
   - 26 in *Open Components / ECharts*: the universal `EChart` renderer plus 25 2D chart types
   - 11 in *Open Components / ECharts 3D*: 8 3D types (Bar3D, Line3D, Scatter3D, Surface, Map3D,
     Globe, Lines3D, Polygons3D) and 3 WebGL types (ScatterGL, GraphGL, FlowGL)
-  - 4 in *Open Components / Industrial*: Trend, OEE, Pareto, SPC
+  - 12 in *Open Components / Industrial*: Trend, OEE, Pareto, SPC, and eight KPI and analysis
+    charts built from plain row data:
+    - Metric Rings: concentric progress rings for any metrics, with per-ring range, unit and
+      target, value thresholds, and a centre summary (product, average, min, max, sum)
+    - Bullet Chart: actual versus target on qualitative bands
+    - KPI Tile: a big number with change versus previous or target and a sparkline
+    - Waterfall: bridge of increases, decreases, subtotals and totals; correct across zero
+    - Capability Histogram: histogram with LSL / USL / target, fitted normal curve and
+      Pp/Ppk (overall sigma) or Cp/Cpk (within sigma)
+    - Flow Diagram: Sankey from source/target/value rows; circular flows are dropped with a note
+    - Event Heatmap: event counts by hour of day and day of week, from cells or raw timestamps
+    - Radar Comparison: entities compared across metrics with different units, each axis
+      normalised to its own range, real values in tooltips
+- OEE Summary is customisable: `labels`, `colors`, `thresholds`, `target`, `decimals`, and a
+  `metrics` list that replaces the three fixed factors. Existing props are unchanged.
   - 7 in *Open Components / Scheduling*: State Timeline, Gantt, Schedule Calendar, Shift Calendar,
     Downtime Tracker, Batch Timeline, Resource Heatmap
 - `maps` prop on every component: GeoJSON or SVG maps keyed by map name, so `map`, `geo`, `map3D`

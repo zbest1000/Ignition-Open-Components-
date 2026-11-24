@@ -1,6 +1,6 @@
 # Open ECharts — Installation Guide
 
-Installation guide for the **Open ECharts** Ignition 8.3 Perspective module, which provides 48 ECharts charting components.
+Installation guide for the **Open ECharts** Ignition 8.3 Perspective module, which provides 56 ECharts charting components.
 
 ---
 
@@ -92,7 +92,7 @@ Only versions Ignition can parse are accepted (`1.2.3`, `1.2.3.45`, `1.2.3-rc1`,
 3. In the component palette, look for these categories:
    - **Open Components / ECharts** — 2D charts (line, bar, pie, scatter, gauge, etc.)
    - **Open Components / ECharts 3D** — 3D and WebGL charts (Bar 3D, Globe, Scatter GL, etc.)
-   - **Open Components / Industrial** — Industrial Trend, OEE Summary, Pareto Chart, SPC Chart
+   - **Open Components / Industrial** — Industrial Trend, OEE Summary, Pareto Chart, SPC Chart, Metric Rings, Bullet Chart, KPI Tile, Waterfall Chart, Capability Histogram, Flow Diagram, Event Heatmap, Radar Comparison
    - **Open Components / Scheduling** — State Timeline, Gantt, calendars, Downtime Tracker,
      Batch Timeline, Resource Heatmap
 

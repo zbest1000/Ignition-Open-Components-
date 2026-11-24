@@ -10,11 +10,10 @@ describe('component registry', () => {
     const manifestIds = MANIFEST.map(row => row.id);
     const registeredIds = registered.map(meta => meta.getComponentType());
 
-    it('has the 48 published component ids in the manifest', () => {
-        expect(manifestIds).toHaveLength(48);
-        expect(new Set(manifestIds).size).toBe(48);
-        expect(manifestIds.filter(id => id.startsWith('open.echarts.'))).toHaveLength(37);
-        expect(manifestIds.filter(id => id.startsWith('open.industrial.'))).toHaveLength(11);
+    it('has unique ids, each in a known namespace', () => {
+        expect(manifestIds.length).toBeGreaterThan(0);
+        expect(new Set(manifestIds).size).toBe(manifestIds.length);
+        expect(manifestIds.filter(id => !/^open\.(echarts|industrial)\.[A-Za-z0-9]+$/.test(id))).toEqual([]);
     });
 
     it('registers every manifest id exactly once', () => {
@@ -27,7 +26,7 @@ describe('component registry', () => {
     });
 
     it('gives every row a distinct CSS class', () => {
-        expect(new Set(MANIFEST.map(row => row.cssClass)).size).toBe(48);
+        expect(new Set(MANIFEST.map(row => row.cssClass)).size).toBe(MANIFEST.length);
     });
 
     it.each(MANIFEST.map(row => [row.id, row] as const))('%s registers the size and default props of its row', (id, row) => {

@@ -13,6 +13,14 @@ const IDS = [
     'open.industrial.DowntimeTracker',
     'open.industrial.BatchTimeline',
     'open.industrial.ResourceHeatmap',
+    'open.industrial.MetricRings',
+    'open.industrial.BulletChart',
+    'open.industrial.KpiTile',
+    'open.industrial.Waterfall',
+    'open.industrial.CapabilityHistogram',
+    'open.industrial.FlowDiagram',
+    'open.industrial.EventHeatmap',
+    'open.industrial.RadarComparison',
 ];
 
 const SHARED_PROPS = [
@@ -30,7 +38,7 @@ const GARBAGE: unknown[] = [
 ];
 
 describe('INDUSTRIAL_BEHAVIORS', () => {
-    it('has exactly the eleven published component ids', () => {
+    it('has exactly the published component ids', () => {
         expect(Object.keys(INDUSTRIAL_BEHAVIORS).sort()).toEqual([...IDS].sort());
     });
 
