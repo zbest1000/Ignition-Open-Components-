@@ -29,24 +29,4 @@ function stub(title, eyebrow, dataFn, planned) {
 }
 
 module.exports = {
-    'Pages/Line': stub('Line Performance', 'Selected line', 'demo.data.line_page', [
-        'KPI Tiles for the selected line', 'OEE Summary and Waterfall (planned time to productive time)',
-        'Industrial Trend of line speed (4 h)', 'State Timeline per machine', 'Pareto and Downtime Tracker', 'Radar Comparison of the three lines',
-    ]),
-    'Pages/Quality': stub('Quality', 'QA lab', 'demo.data.quality_page', [
-        'SPC Chart of fill volume and closure torque', 'Process Capability Histogram (Cp / Cpk)', 'Industrial Trend of fill volume with limits',
-        'Flow Diagram of material losses', 'Pareto of defects by category',
-    ]),
-    'Pages/Energy': stub('Energy & Utilities', 'Utilities', 'demo.data.energy_page', [
-        'Dial Gauges and Metric Rings for the utilities', 'Flow Diagram (Sankey) of site energy', 'Bar / line charts of hourly consumption',
-        'Calendar heatmap of daily performance', 'Event Heatmap of alarm load',
-    ]),
-    'Pages/Schedule': stub('Scheduling', 'Planning', 'demo.data.schedule_page', [
-        'Gantt Chart of production orders', 'Shift Calendar and Schedule Calendar', 'Downtime Tracker', 'Batch Timeline of the syrup room',
-        'Resource Heatmap of machine utilisation',
-    ]),
-    'Pages/Gallery': stub('Chart Gallery', 'Reference', 'demo.data.gallery_page', [
-        'Line, bar and pie charts from docs/wiki/examples', 'Sunburst and treemap of the SKU mix', 'Graph and Sankey', 'Calendar heatmap',
-        '3D bar / surface (ECharts-GL)',
-    ]),
 };
