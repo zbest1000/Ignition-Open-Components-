@@ -4,9 +4,9 @@ A Perspective project that shows the Open ECharts components on a made-up plant:
 lines, utilities and a QA lab. It needs no tags and no database; every number comes from a script
 library inside the project.
 
-> **Status.** The shell (header, navigation), the design system, the sample data for every page
-> and the **Overview** page are built. The other five pages are placeholders that already poll
-> their data. **The project has not been imported into a gateway yet**: it was written where no
+> **Status.** All seven pages are built, and together they use **every one of the 57 components**
+> the Open ECharts module ships (`validate.js` checks this against `components.manifest.json`).
+> **The project has not been imported into a gateway yet**: it was written where no
 > Ignition was available, from the file formats of public projects
 > ([FORMAT-NOTES.md](FORMAT-NOTES.md)). Read "If something does not load" before the first import.
 
@@ -17,14 +17,19 @@ in them are the real components; the layout around them is an imitation in plain
 
 ## What is in it
 
-| Page | URL | State |
+| Page | URL | Components |
 |---|---|---|
-| Overview | `/` | built: KPI Tile ×6, OEE Summary, Industrial Trend, Metric Rings, State Timeline, Pareto, Bullet Chart, Event Heatmap, Dial Gauge ×3 |
-| Line Performance | `/line` | placeholder |
-| Quality | `/quality` | placeholder |
-| Energy & Utilities | `/energy` | placeholder |
-| Scheduling | `/schedule` | placeholder |
-| Chart Gallery | `/gallery` | placeholder |
+| Overview | `/` | KPI Tile ×6, OEE Summary, Industrial Trend, Metric Rings, State Timeline, Pareto, Bullet Chart, Event Heatmap, Dial Gauge ×3 |
+| Line Performance | `/line` | KPI Tile ×6, OEE Summary, Waterfall, Bullet Chart, Industrial Trend, Pareto, State Timeline, Downtime Tracker |
+| Quality | `/quality` | KPI Tile ×6, SPC Chart, Capability Histogram, Radar Comparison, Event Heatmap; Boxplot, Treemap, Heatmap |
+| Energy & Utilities | `/energy` | KPI Tile ×6, Flow Diagram, Dial Gauge ×4, Waterfall, Metric Rings, Event Heatmap; Line, Calendar |
+| Scheduling | `/schedule` | KPI Tile ×5, Gantt, Bullet Chart, Resource Heatmap, Batch Timeline, Shift Calendar, Schedule Calendar |
+| Chart Gallery | `/gallery` | 40 tiles of the generic 2D components, including EChart (any option), Map and Lines on an invented plant floor plan, Graphic (a process mimic), Effect Scatter and Custom |
+| 3D & WebGL | `/3d` | all eleven ECharts-GL components: Map 3D and Polygons 3D (the floor plan extruded), Line 3D, Scatter 3D, Bar 3D, Surface, Globe, Lines 3D, Scatter GL, Graph GL, Flow GL |
+
+The maps show an invented floor plan (`tools/pages/floor-plan.js`, GeoJSON in plain metres),
+registered through the components' `maps` prop: no geography. The GL charts have a page of their
+own because browsers limit the number of WebGL contexts per page.
 
 A header is docked at the top (plant name, line selector, clock) and a navigation rail at the
 left. The line selector writes `session.custom.line` (`L1`, `L2`, `L3`); every page reads it.
@@ -152,7 +157,7 @@ Plain Node scripts. They use Node built-ins, `python3`, and for the preview only
 | Command | What it does |
 |---|---|
 | `node examples/demo-project/tools/build.js` | Writes `project/` from `tools/design.js` and `tools/pages/*.js`. `--check` only compares. |
-| `node examples/demo-project/tools/validate.js` | Checks every file against FORMAT-NOTES.md: manifests, view structure, component types, bindings, style classes, page config; runs the script library for all three lines, resolves every binding and validates each Open ECharts component's props against its prop schema; checks the library stays in the Jython 2.7 / Python 3 subset; checks `project/` and the zip are current. Exit code 1 on any error. |
+| `node examples/demo-project/tools/validate.js` | Checks every file against FORMAT-NOTES.md: manifests, view structure, component types (and that every component of the module is used somewhere), bindings, style classes, page config; runs the script library for all three lines, resolves every binding and validates each Open ECharts component's props against its prop schema; checks the library stays in the Jython 2.7 / Python 3 subset; checks `project/` and the zip are current. Exit code 1 on any error. |
 | `node examples/demo-project/tools/preview.js` | Draws a page to `screenshots/` at 1920×1080 and 1366×768. `--page /line`, `--view Shell/NavRail`, `--size WxH`, `--line L2`, `--full`. |
 | `node examples/demo-project/tools/package.js` | Writes `dist/OpenEChartsDemo.zip`. `--check` compares it with `project/`. |
 

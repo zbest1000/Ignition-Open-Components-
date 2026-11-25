@@ -11,6 +11,7 @@ const PAGES = [
     { url: '/energy', view: 'Pages/Energy', title: 'Energy & Utilities', icon: 'material/flash_on', group: 'Monitor' },
     { url: '/schedule', view: 'Pages/Schedule', title: 'Scheduling', icon: 'material/event', group: 'Plan' },
     { url: '/gallery', view: 'Pages/Gallery', title: 'Chart Gallery', icon: 'material/apps', group: 'Reference' },
+    { url: '/3d', view: 'Pages/ThreeD', title: '3D & WebGL', icon: 'material/3d_rotation', group: 'Reference' },
 ];
 
 const LINE_OPTIONS = [

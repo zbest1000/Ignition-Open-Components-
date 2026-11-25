@@ -19,6 +19,7 @@
  *   view       structure, component types (built-ins the previewer imitates, or ids of the module
  *              manifest), sibling names, positions, bindings and expressions inside the supported
  *              subset, style classes exist, embedded views and navigation targets exist
+ *   coverage   every component id in the module's components.manifest.json is used by a view
  *   data       every binding resolves for every line (the Python library is run), and every
  *              Open ECharts component's props, with the data in, validate against its prop schema
  *   build      project/ matches what tools/build.js generates
@@ -370,6 +371,19 @@ function checkViews(viewPaths, styles, pages, session, manifest, libraryModules)
     return { views, pageFunctions: [...pageFunctions] };
 }
 
+// ---- coverage: the demo uses every component the module ships -------------------------
+
+/** Every component id in components.manifest.json must appear in at least one view. */
+function checkCoverage(views, manifest) {
+    const used = new Set();
+    const walk = node => { if (!isObject(node)) return; if (typeof node.type === 'string') used.add(node.type); (node.children || []).forEach(walk); };
+    for (const doc of views.values()) walk(doc.root);
+    const ids = Object.keys(manifest);
+    const missing = ids.filter(id => !used.has(id));
+    for (const id of missing) error('coverage', `${id} is in components.manifest.json but no view uses it; the demo shows every component the module ships`);
+    if (!missing.length) ok('coverage', `all ${ids.length} components of components.manifest.json are used by at least one view`);
+}
+
 // ---- data: resolve every binding and validate chart props -------------------------------
 
 /** The part of JSON Schema the prop schemas use: type, enum, properties, additionalProperties: false, items, required, minimum, maximum. */
@@ -449,6 +463,7 @@ function main() {
     const manifest = lib.componentManifest();
     const libraryModules = resources.filter(r => r.dir.startsWith('ignition/script-python/')).map(r => r.dir.slice('ignition/script-python/'.length).split('/').join('.'));
     const { views, pageFunctions } = checkViews(viewPaths, styles, pages, session, manifest, libraryModules);
+    checkCoverage(views, manifest);
     checkScripts(resources, pageFunctions);
     if (!errors.some(e => e.startsWith('view') || e.startsWith('script'))) checkData(views, pages, session, manifest);
     else warn('data', 'skipped: fix the view and script errors first');

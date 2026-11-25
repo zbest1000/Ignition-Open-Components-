@@ -5,62 +5,20 @@
  * Each tile is one component with a static option, copied from docs/wiki/examples and adjusted
  * for the dark theme in gallery-options.js. Open the view in the Designer, select a chart and copy
  * its `option` prop. Four tiles are live: parts of their option are bound to demo.data.gallery_page.
+ * The 3D and WebGL charts are on their own page (pages/threed.js): browsers limit the number of
+ * WebGL contexts per page.
  */
-const { design, flex, chart, row, pageHeading, page, label, bind } = require('../lib/ui');
+const { design, page, pageHeading, label, bind } = require('../lib/ui');
 const { OPTIONS } = require('./gallery-options');
-const { color, px, space } = design;
+const { tiles } = require('./tiles');
+const GL_CHARTS = Object.keys(require('./threed-options').OPTIONS).length;
 
 const D = 'view.custom.data';
-const fill = { basis: '0px', grow: 1, shrink: 1 };
-const fixed = { basis: 'auto', grow: 0, shrink: 0 };
 
 /** Tile heights, one per kind of row. */
 const H = { gauge: 268, chart: 318, tall: 372, network: 404, strip: 236, matrix: 428 };
 
-let tiles = 0;
-
-/**
- * One tile: title, a caption naming the component (and the wiki example the option comes from),
- * and the chart. opts: units (relative width in its row, default 1), bindings (live tiles).
- */
-function tile(name, title, key, opts = {}) {
-    const spec = OPTIONS[key];
-    if (!spec) throw new Error(`gallery-options.js has no option "${key}"`);
-    tiles += 1;
-    return flex(name, {
-        direction: 'column',
-        classes: 'Card',
-        style: { minWidth: '0px' },
-        position: { basis: '0px', grow: opts.units || 1, shrink: 1 },
-    }, [
-        flex('Header', { alignItems: 'center', style: { gap: px(space.sm) }, position: fixed }, [
-            label('Title', title, { classes: 'CardTitle', position: fill, style: { overflow: 'hidden', textOverflow: 'ellipsis' } }),
-            opts.bindings ? label('Live', 'Live', { classes: 'Chip' }) : null,
-        ]),
-        label('Caption', `${spec.type}  ·  ${spec.example}`, { classes: 'CardHint', style: { marginBottom: px(space.sm) } }),
-        chart('Chart', spec.type, { option: spec.option }, { bindings: opts.bindings, style: { minWidth: '0px' } }),
-    ]);
-}
-
-/**
- * A group of tiles that always stay on one line. A row holds one or two groups; two groups sit
- * side by side on a wide display and under each other on a laptop, so a row of six becomes two
- * rows of three and every tile of a section keeps the same size.
- */
-function group(name, height, children) {
-    return flex(name, { classes: 'Row', style: { height: px(height), minWidth: '0px' }, position: { basis: '560px', grow: 1, shrink: 1 } }, children);
-}
-
-function section(name, title, note, rows) {
-    return flex(name, { direction: 'column', classes: 'Row', position: fixed }, [
-        flex('Heading', { alignItems: 'center', style: { gap: px(space.md), marginTop: px(space.md) }, position: fixed }, [
-            label('Title', title, { style: { color: color.text, fontSize: '16px', fontWeight: '600', lineHeight: '22px', whiteSpace: 'nowrap' } }),
-            label('Note', note, { classes: 'CardHint' }),
-            flex('Rule', { style: { backgroundColor: color.border, height: '1px' }, position: fill }, []),
-        ]),
-        ...rows.map((groups, i) => row(`Row${i + 1}`, groups, { grow: 0 })),
-    ]);
-}
+const { tile, group, section, count } = tiles(OPTIONS);
 
 const live = path => bind.prop(`${D}.${path}`);
 
@@ -167,24 +125,31 @@ const sections = [
         ],
     ]),
 
-    section('ThreeD', '3D', 'ECharts-GL  ·  loaded on demand as a separate chunk  ·  drag to rotate', [
-        [
-            group('A', H.network, [
-                tile('Bar3D', '3D bars', 'bar3D'),
-                tile('Surface', 'Surface', 'surface'),
-            ]),
-            group('B', H.network, [tile('ScatterGL', 'WebGL scatter, 6,000 points', 'scatterGL')]),
-        ],
-    ]),
+    section('Floor', 'Plant Floor & Schematics', 'a GeoJSON floor plan in the maps prop (no geography)  ·  graphic elements  ·  ripple markers', [[
+        group('A', H.network, [
+            tile('FloorMap', 'Zone temperatures on the floor plan', 'floorTemps'),
+            tile('Routes', 'Material routes', 'floorRoutes'),
+        ]),
+        group('B', H.network, [
+            tile('Mimic', 'Process mimic', 'mimic'),
+            tile('Alarms', 'Active alarms on a reliability map', 'alarmRipples'),
+        ]),
+    ]]),
+
+    section('AnyOption', 'Any Option', 'EChart renders any ECharts option; so does every generic component', [[
+        group('A', H.chart, [tile('Universal', 'Datasets, bars, a line and a donut in one option', 'datasetTile')]),
+        group('B', H.chart, [tile('Intervals', 'Intervals without renderItem', 'intervals')]),
+    ]]),
 ];
 
 module.exports = {
     'Pages/Gallery': page('demo.data.gallery_page', [
         pageHeading('Reference', 'Chart Gallery',
-            'The generic ECharts components. Every chart is one component with one option: select it in the Designer and copy its option prop.', [
-                label('Count', `${tiles} charts`, { classes: 'Chip' }),
+            'The generic ECharts components, one option each: select a chart in the Designer and copy its option prop.', [
+                label('Count', `${count()} charts`, { classes: 'Chip' }),
+                label('More', `+ ${GL_CHARTS} on 3D & WebGL`, { classes: 'Chip' }),
                 label('Theme', design.chart.theme, { classes: 'Chip' }),
             ]),
         ...sections,
-    ], { height: 3600 }),
+    ], { height: 4000 }),
 };

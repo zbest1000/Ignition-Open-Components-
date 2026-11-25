@@ -4,6 +4,10 @@
       "title": "Overview",
       "viewPath": "Pages/Overview"
     },
+    "/3d": {
+      "title": "3D \u0026 WebGL",
+      "viewPath": "Pages/ThreeD"
+    },
     "/energy": {
       "title": "Energy \u0026 Utilities",
       "viewPath": "Pages/Energy"

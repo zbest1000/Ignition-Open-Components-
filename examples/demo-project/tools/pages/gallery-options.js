@@ -6,7 +6,7 @@
  * taken as it is and then adjusted for this project by a small patch function: the dark
  * IgnitionIndustrialDark theme, the card surface (#1a1a2e) and the size of the tile. The patches
  * are the list of what an integrator has to touch when copying a wiki example onto a dark view.
- * The 3D options start from the component defaults in components.manifest.json.
+ * The 3D and WebGL options are in threed-options.js (the 3D page).
  *
  *   OPTIONS.<key> = { type, example, option }
  *
@@ -626,91 +626,229 @@ fromWiki('candlestick', 'CandlestickChart', 'volume-zoom', o => {
     });
 });
 
-// ---- 3D (ECharts-GL) --------------------------------------------------------------------
+// ---- Plant floor & schematics (no wiki example: built here) ------------------------------
 
-/** The 3D axes are not covered by the theme: every line and label colour is set here. */
-const axis3D = (name, extra) => Object.assign({
-    name, nameGap: 22,
-    nameTextStyle: { color: C.textSecondary, fontSize: 12 },
-    axisLine: { lineStyle: { color: C.textMuted } },
-    axisLabel: { textStyle: { color: C.textSecondary, fontSize: 11 } },
-    axisTick: { lineStyle: { color: C.textMuted } },
-    splitLine: { lineStyle: { color: C.borderStrong } },
-    splitArea: { show: false },
-    axisPointer: { lineStyle: { color: C.textMuted } },
-}, extra || {});
+const floor = require('./floor-plan');
 
-const grid3D = (alphaAngle, beta, distance) => ({
-    boxWidth: 100, boxDepth: 100, boxHeight: 62,
-    environment: 'none',
-    // zoom and pan are off so that the mouse wheel scrolls the page; dragging still rotates
-    viewControl: { alpha: alphaAngle, beta, distance, center: [0, -24, 0], autoRotate: false, zoomSensitivity: 0, panSensitivity: 0 },
-    light: { main: { intensity: 0.85, shadow: false, alpha: 40, beta: 30 }, ambient: { intensity: 0.4 } },
-    axisPointer: { show: false },
+/** Registers a tile option written here rather than taken from a wiki example. */
+function own(key, component, example, option, props) {
+    OPTIONS[key] = { type: `open.echarts.${component}`, example, option, props };
+}
+
+const AXIS_NAME = { color: C.textMuted, fontSize: 11 };
+const DASHED = { lineStyle: { color: FAINT, type: 'dashed' } };
+
+// MapChart: the floor plan as a choropleth, zones coloured by air temperature
+own('floorTemps', 'MapChart', 'floor plan in the maps prop', {
+    tooltip: { trigger: 'item', formatter: '{b}: {c} °C' },
+    visualMap: {
+        type: 'continuous', min: 16, max: 34, calculable: false, orient: 'vertical', right: 4, bottom: 6,
+        itemWidth: 10, itemHeight: 110, text: ['34 °C', '16 °C'], textGap: 6,
+        textStyle: { color: C.textMuted, fontSize: 10 }, inRange: { color: THERMAL },
+    },
+    series: [{
+        type: 'map', map: floor.MAP_NAME, aspectScale: 1, roam: false, selectedMode: false,
+        left: 6, right: 56, top: 6, bottom: 6,
+        itemStyle: { borderColor: C.card, borderWidth: 2.5 },
+        label: { show: true, color: C.page, fontSize: 10, fontWeight: 600, formatter: '{b}\n{c} °C', lineHeight: 13 },
+        emphasis: { label: { color: C.page }, itemStyle: { areaColor: mix(C.accent, WHITE, 0.5) } },
+        data: [
+            { name: 'Warehouse', value: 18.5 }, { name: 'Packaging', value: 23.1 }, { name: 'QA lab', value: 21.0 },
+            { name: 'Offices', value: 21.8 }, { name: 'Filling hall', value: 26.4 }, { name: 'Syrup room', value: 24.2 },
+            { name: 'Utilities', value: 32.7 },
+        ],
+    }],
+}, { maps: floor.maps() });
+
+// LinesChart: material routes drawn on the same plan through a geo coordinate system
+const ROUTES = [
+    ['Syrup to fillers', C.cyan, [[56, 53], [62, 53], [62, 43], [66, 39]]],
+    ['Filled product', C.accent, [[70, 36], [58, 34], [52, 30], [52, 24]]],
+    ['Pallets to store', C.violet, [[51, 9], [36, 9], [28, 9], [28, 26]]],
+    ['Steam and CIP', C.pink, [[100, 40], [92, 42], [86, 44]]],
+    ['QA samples', mix(C.accent, WHITE, 0.45), [[80, 34], [80, 30], [80, 22]]],
+];
+own('floorRoutes', 'LinesChart', 'lines on a geo floor plan', {
+    tooltip: { trigger: 'item', formatter: '{b}' },
+    legend: Object.assign({ bottom: 0, data: ROUTES.map(r => r[0]) }, LEGEND, { itemGap: 10, textStyle: { color: C.textSecondary, fontSize: 10 } }),
+    geo: {
+        map: floor.MAP_NAME, aspectScale: 1, roam: false, silent: true, left: 6, right: 6, top: 4, bottom: 52,
+        itemStyle: { areaColor: alpha(WHITE, 0.035), borderColor: C.borderStrong, borderWidth: 1.5 },
+        label: { show: true, color: C.textMuted, fontSize: 10 },
+    },
+    series: ROUTES.map(([name, color, coords]) => ({
+        type: 'lines', name, coordinateSystem: 'geo', polyline: true, zlevel: 1,
+        lineStyle: { color, width: 2.5, opacity: 0.9 },
+        effect: { show: true, period: 3.5, symbol: 'arrow', symbolSize: 7, trailLength: 0, color: WHITE },
+        data: [{ name, coords }],
+    })),
+}, { maps: floor.maps() });
+
+// EffectScatterChart: a reliability map where machines with an active alarm ripple
+const MACHINES = [
+    ['Rinser L1', 46, 6, 0], ['Filler L1', 18, 14, 1], ['Capper L1', 31, 9, 0], ['Labeller L1', 24, 11, 0],
+    ['Filler L2', 39, 8, 0], ['Capper L2', 12, 19, 1], ['Labeller L2', 52, 5, 0], ['Packer L2', 28, 12, 0],
+    ['Filler L3', 34, 10, 0], ['Seamer L3', 21, 16, 1], ['Packer L3', 44, 7, 0], ['Palletiser', 58, 9, 0],
+    ['Mixer', 63, 4, 0], ['Pasteuriser', 49, 13, 0], ['Case packer', 37, 6, 0],
+];
+own('alarmRipples', 'EffectScatterChart', 'active alarms ripple', {
+    tooltip: { trigger: 'item', formatter: '{a}<br/>{b}' },
+    legend: Object.assign({ top: 0, data: ['Running', 'Active alarm'] }, LEGEND),
+    grid: { left: 44, right: 16, top: 34, bottom: 34 },
+    xAxis: { name: 'MTBF (h)', nameLocation: 'middle', nameGap: 22, nameTextStyle: AXIS_NAME, min: 0, max: 70, splitLine: DASHED },
+    yAxis: { name: 'MTTR (min)', nameTextStyle: AXIS_NAME, min: 0, max: 24, splitLine: DASHED },
+    series: [
+        {
+            type: 'scatter', name: 'Running', symbolSize: 9, itemStyle: { color: C.accent, opacity: 0.85 },
+            data: MACHINES.filter(m => !m[3]).map(m => ({ name: m[0], value: [m[1], m[2]] })),
+        },
+        {
+            type: 'effectScatter', name: 'Active alarm', symbolSize: 12, showEffectOn: 'render',
+            rippleEffect: { brushType: 'stroke', scale: 3.2, period: 3 }, itemStyle: { color: C.alarm },
+            label: { show: true, position: 'right', formatter: '{b}', color: C.text, fontSize: 11, distance: 8 },
+            data: MACHINES.filter(m => m[3]).map(m => ({ name: m[0], value: [m[1], m[2]] })),
+        },
+    ],
 });
 
-fromDefault('bar3D', 'Bar3DChart', o => {
-    // output by machine and weekday; values follow a daily rhythm instead of the 5 x 5 default sample
-    const machines = ['Rinser', 'Filler', 'Capper', 'Labeller', 'Packer', 'Palletiser'];
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const g = generator(7);
-    const data = [];
-    days.forEach((day, d) => machines.forEach((machine, m) => {
-        const level = 62 + 22 * Math.sin((m + 1) * 0.9 + d * 0.55) + 10 * g.next() - (d > 4 ? 18 : 0);
-        data.push([m, d, Math.round(Math.max(12, level))]);
-    }));
-    return {
-        tooltip: {},
-        visualMap: { show: false, dimension: 2, min: 20, max: 95, inRange: { color: [mix(C.accent, C.card, 0.45), C.accent, mix(C.accent, C.cyan, 0.6)] } },
-        grid3D: grid3D(24, 38, 205),
-        xAxis3D: axis3D('', { type: 'category', data: machines, axisLabel: { interval: 0, textStyle: { color: C.textSecondary, fontSize: 10 } } }),
-        yAxis3D: axis3D('', { type: 'category', data: days }),
-        zAxis3D: axis3D('', { type: 'value' }), // k units; a name here is cut off in a narrow tile
-        series: [Object.assign(o.series[0], { data, bevelSize: 0.25, bevelSmoothness: 2, barSize: 9, itemStyle: { opacity: 1 }, emphasis: { itemStyle: { color: C.pink } } })],
-    };
+// GraphicChart: a process mimic drawn only with graphic elements (rect, circle, line, polygon, text)
+(() => {
+    const text = (x, y, t, extra) => ({ type: 'text', x, y, style: Object.assign({ text: t, fill: C.textSecondary, fontSize: 11, align: 'center' }, extra || {}) });
+    const pipe = (points, colour) => ({
+        type: 'polyline', shape: { points }, z: 1,
+        style: { stroke: colour, lineWidth: 5, lineCap: 'round', lineJoin: 'round', fill: null },
+    });
+    const flow = points => ({
+        type: 'polyline', shape: { points }, z: 2,
+        style: { stroke: alpha(WHITE, 0.55), lineWidth: 1.5, lineDash: [6, 8], fill: null },
+        keyframeAnimation: { duration: 1200, loop: true, keyframes: [{ percent: 1, style: { lineDashOffset: -28 } }] },
+    });
+    const tank = (x, y, w, h, level, tag, name, colour) => [
+        { type: 'rect', shape: { x, y, width: w, height: h, r: 10 }, style: { fill: alpha(WHITE, 0.035), stroke: C.borderStrong, lineWidth: 2 } },
+        { type: 'rect', shape: { x: x + 4, y: y + 4 + (h - 8) * (1 - level), width: w - 8, height: (h - 8) * level, r: [0, 0, 7, 7] }, style: { fill: alpha(colour, 0.55) } },
+        { type: 'line', shape: { x1: x + 4, y1: y + 4 + (h - 8) * (1 - level), x2: x + w - 4, y2: y + 4 + (h - 8) * (1 - level) }, style: { stroke: colour, lineWidth: 2 } },
+        text(x, y - 18, tag, { fill: C.text, fontWeight: 600, fontSize: 12, align: 'left' }),
+        text(x + w, y - 17, name, { fill: C.textMuted, fontSize: 10, align: 'right' }),
+        text(x + w / 2, y + h / 2 - 9, `${Math.round(level * 100)} %`, { fill: C.text, fontSize: 16, fontWeight: 600 }),
+    ];
+    const valve = (cx, cy, open, tag) => [
+        { type: 'polygon', shape: { points: [[cx - 11, cy - 9], [cx - 11, cy + 9], [cx + 11, cy - 9], [cx + 11, cy + 9]] }, z: 3, style: { fill: open ? C.ok : C.alarm, stroke: C.card, lineWidth: 1.5 } },
+        { type: 'line', shape: { x1: cx, y1: cy, x2: cx, y2: cy - 16 }, z: 3, style: { stroke: C.textSecondary, lineWidth: 2 } },
+        { type: 'rect', shape: { x: cx - 8, y: cy - 20, width: 16, height: 5, r: 1 }, z: 3, style: { fill: C.textSecondary } },
+        text(cx, cy + 15, tag, { fontSize: 10, fill: C.textSecondary }),
+        text(cx, cy + 28, open ? 'open' : 'closed', { fontSize: 10, fill: open ? C.ok : C.alarm, fontWeight: 600 }),
+    ];
+    const pump = (cx, cy, tag) => [
+        { type: 'circle', shape: { cx, cy, r: 17 }, z: 3, style: { fill: C.card, stroke: C.ok, lineWidth: 2.5 } },
+        { type: 'polygon', shape: { points: [[cx - 7, cy - 9], [cx - 7, cy + 9], [cx + 10, cy]] }, z: 3, style: { fill: C.ok } },
+        text(cx, cy + 24, tag, { fontSize: 10 }),
+        text(cx, cy + 37, 'running', { fontSize: 10, fill: C.ok, fontWeight: 600 }),
+    ];
+    const y = 168; // the transfer line
+    own('mimic', 'GraphicChart', 'graphic elements, no series', {
+        graphic: [{
+            type: 'group', left: 'center', top: 'middle', width: 380, height: 236,
+            children: [
+                pipe([[96, y], [262, y], [262, 150]], C.cyan),
+                flow([[96, y], [262, y], [262, 150]]),
+                pipe([[58, 196], [58, 222], [20, 222]], C.borderStrong),
+                ...tank(20, 30, 76, 166, 0.72, 'T-101', 'Syrup', C.cyan),
+                ...tank(224, 62, 76, 112, 0.38, 'T-102', 'Blend', C.accent),
+                ...pump(140, y, 'P-201'),
+                ...valve(200, y, true, 'XV-301'),
+                ...valve(36, 222, false, 'XV-102'),
+                text(330, 40, 'Level', { fill: C.textMuted, fontSize: 10, align: 'left' }),
+                text(330, 54, '2.4 m', { fill: C.text, fontSize: 13, fontWeight: 600, align: 'left' }),
+                text(330, 80, 'Flow', { fill: C.textMuted, fontSize: 10, align: 'left' }),
+                text(330, 94, '18.6 m³/h', { fill: C.text, fontSize: 13, fontWeight: 600, align: 'left' }),
+                text(330, 120, 'Temp', { fill: C.textMuted, fontSize: 10, align: 'left' }),
+                text(330, 134, '6.8 °C', { fill: C.text, fontSize: 13, fontWeight: 600, align: 'left' }),
+            ],
+        }],
+    });
+})();
+
+// ---- Any option -------------------------------------------------------------------------
+
+// EChart: the universal renderer; here two datasets drive stacked bars, a plan line and a donut
+own('datasetTile', 'EChart', 'any option: datasets, mixed series', {
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    legend: Object.assign({ top: 0, left: 0, data: ['Line 1', 'Line 2', 'Line 3', 'Plan'] }, LEGEND),
+    color: [C.accent, C.cyan, C.violet, C.text],
+    dataset: [
+        {
+            source: [
+                ['day', 'Line 1', 'Line 2', 'Line 3', 'Plan'],
+                ['Mon', 41.2, 28.4, 33.0, 104], ['Tue', 43.8, 30.1, 31.6, 104], ['Wed', 39.5, 29.7, 35.2, 104],
+                ['Thu', 44.1, 31.4, 34.8, 108], ['Fri', 42.6, 27.9, 36.1, 108], ['Sat', 30.2, 22.5, 24.0, 80],
+                ['Sun', 18.4, 12.0, 15.5, 48],
+            ],
+        },
+        { source: [['line', 'units'], ['Line 1', 259.8], ['Line 2', 182.0], ['Line 3', 210.2]] },
+    ],
+    grid: { left: 40, right: '36%', top: 52, bottom: 24 },
+    xAxis: { type: 'category' },
+    yAxis: { type: 'value', name: 'k units', nameTextStyle: AXIS_NAME, splitNumber: 4 },
+    series: [
+        { type: 'bar', name: 'Line 1', stack: 'out', encode: { x: 'day', y: 'Line 1' }, barWidth: '56%' },
+        { type: 'bar', name: 'Line 2', stack: 'out', encode: { x: 'day', y: 'Line 2' } },
+        { type: 'bar', name: 'Line 3', stack: 'out', encode: { x: 'day', y: 'Line 3' }, itemStyle: { borderRadius: [2, 2, 0, 0] } },
+        { type: 'line', name: 'Plan', encode: { x: 'day', y: 'Plan' }, step: 'middle', symbol: 'none', lineStyle: { width: 1.5, type: 'dashed', color: C.textSecondary }, itemStyle: { color: C.textSecondary } },
+        {
+            type: 'pie', datasetIndex: 1, encode: { itemName: 'line', value: 'units' }, center: ['82%', '52%'], radius: ['34%', '56%'],
+            itemStyle: { borderColor: C.card, borderWidth: 2 }, label: { color: C.textSecondary, fontSize: 10, formatter: '{b}\n{d} %' },
+            labelLine: { length: 6, length2: 4, lineStyle: { color: LINE } },
+        },
+    ],
+    graphic: [{ type: 'text', right: '18%', top: 22, style: { text: 'Week, k units', fill: C.textMuted, fontSize: 10, align: 'center' } }],
 });
 
-fromDefault('surface', 'SurfaceChart', o => {
-    // a response surface z = f(x, y) on a finer grid than the 9 x 9 default sample
-    const data = [];
-    const steps = 30;
-    for (let j = 0; j <= steps; j++) {
-        for (let i = 0; i <= steps; i++) {
-            const x = -3 + 6 * i / steps, y = -3 + 6 * j / steps;
-            const z = Math.sin(x) * Math.cos(y) * Math.exp(-(x * x + y * y) / 14);
-            data.push([Number(x.toFixed(2)), Number(y.toFixed(2)), Number(z.toFixed(3))]);
-        }
+// CustomChart: a custom series needs a renderItem FUNCTION, which a JSON prop cannot carry, so this
+// tile draws intervals with plain stacked bars (transparent gaps) instead: the component renders any option
+const INTERVALS = [
+    // machine, then [start, end, kind] in hours since 06:00; kinds: C changeover, W wash, M maintenance
+    ['Rinser', [[1.0, 1.6, 'C'], [5.2, 6.0, 'W']]],
+    ['Filler', [[1.0, 2.1, 'C'], [4.0, 4.4, 'M'], [6.3, 7.2, 'W']]],
+    ['Capper', [[1.1, 1.8, 'C'], [6.3, 7.0, 'W']]],
+    ['Labeller', [[0.4, 0.9, 'M'], [1.2, 2.0, 'C']]],
+    ['Packer', [[1.4, 2.2, 'C'], [3.5, 4.6, 'M']]],
+];
+(() => {
+    const KIND = { C: ['Changeover', C.violet], W: ['Wash (CIP)', C.cyan], M: ['Maintenance', C.pink] };
+    const slots = Math.max(...INTERVALS.map(r => r[1].length));
+    const series = [];
+    for (let k = 0; k < slots; k++) {
+        const gap = [], dur = [];
+        INTERVALS.forEach(([, list]) => {
+            const prevEnd = k ? (list[k - 1] ? list[k - 1][1] : null) : 0;
+            const item = list[k];
+            gap.push(item ? Number((item[0] - prevEnd).toFixed(2)) : 0);
+            dur.push(item ? { value: Number((item[1] - item[0]).toFixed(2)), itemStyle: { color: KIND[item[2]][1] }, name: KIND[item[2]][0] } : 0);
+        });
+        series.push({ type: 'bar', stack: 't', silent: true, itemStyle: { color: 'transparent' }, data: gap, barWidth: 14 });
+        series.push({ type: 'bar', stack: 't', name: `slot ${k + 1}`, data: dur, itemStyle: { borderRadius: 3 } });
     }
-    return {
-        tooltip: {},
-        visualMap: { show: false, dimension: 2, min: -0.85, max: 0.85, inRange: { color: [C.violet, C.accent, C.cyan] } },
-        grid3D: grid3D(26, 42, 205),
-        xAxis3D: axis3D('x', { type: 'value' }),
-        yAxis3D: axis3D('y', { type: 'value' }),
-        zAxis3D: axis3D('z', { type: 'value' }),
-        series: [Object.assign(o.series[0], { data, shading: 'lambert', wireframe: { show: true, lineStyle: { color: alpha(C.page, 0.55), width: 1 } } })],
-    };
-});
+    // legend entries without data: three empty series that carry a name and a colour
+    for (const [name, colour] of Object.values(KIND)) series.push({ type: 'bar', stack: 't', name, data: [], itemStyle: { color: colour } });
+    own('intervals', 'CustomChart', 'renders any option without renderItem', {
+        tooltip: { trigger: 'item', formatter: '{b}: {c} h' },
+        legend: Object.assign({ top: 0, data: Object.values(KIND).map(v => v[0]) }, LEGEND),
+        grid: { left: 64, right: 16, top: 30, bottom: 50 },
+        xAxis: {
+            type: 'value', min: 0, max: 8, interval: 1, splitLine: DASHED,
+            axisLabel: { formatter: '+{value} h', fontSize: 10 },
+        },
+        yAxis: { type: 'category', data: INTERVALS.map(r => r[0]), inverse: true, axisTick: { show: false } },
+        series,
+        graphic: [{
+            type: 'text', left: 8, bottom: 4,
+            style: { text: 'Custom series need a renderItem function, which props cannot carry;\nthis component still renders any option.', fill: C.textMuted, fontSize: 10, lineHeight: 13 },
+        }],
+    });
+})();
 
-fromDefault('scatterGL', 'ScatterGLChart', o => {
-    // 6,000 points in three clusters: what the WebGL scatter is for
-    const g = generator(42);
-    const clusters = [[34, 58, 9, 7, C.accent, 'Line 1'], [58, 41, 11, 8, C.cyan, 'Line 2'], [74, 66, 7, 9, C.pink, 'Line 3']];
-    const base = o.series[0];
-    return {
-        legend: Object.assign({ top: 0, data: clusters.map(c => c[5]), itemStyle: { opacity: 1 } }, LEGEND),
-        grid: { left: 46, right: 16, top: 34, bottom: 42 },
-        xAxis: { name: 'Application torque (N·cm)', nameLocation: 'middle', nameGap: 26, nameTextStyle: { color: C.textMuted }, min: 0, max: 100, splitLine: { lineStyle: { color: FAINT, type: 'dashed' } } },
-        yAxis: { name: 'Removal torque (N·cm)', nameTextStyle: { color: C.textMuted }, min: 0, max: 100, splitLine: { lineStyle: { color: FAINT, type: 'dashed' } } },
-        series: clusters.map(([cx, cy, sx, sy, color, name]) => {
-            const data = [];
-            for (let i = 0; i < 2000; i++) {
-                const a = g.gauss(), b = g.gauss();
-                data.push([Number((cx + sx * a).toFixed(2)), Number((cy + sy * (0.55 * a + 0.83 * b)).toFixed(2))]);
-            }
-            return Object.assign({}, base, { name, data, symbolSize: 3, itemStyle: { color, opacity: 0.55 } });
-        }),
-    };
-});
-
-module.exports = { OPTIONS, PALETTE };
+module.exports = {
+    OPTIONS, PALETTE,
+    // shared with threed-options.js
+    kit: { C, mix, alpha, WHITE, PALETTE, RAMP, THERMAL, STATUS_RAMP, TRACK, LINE, FAINT, LEGEND, generator, manifest },
+};

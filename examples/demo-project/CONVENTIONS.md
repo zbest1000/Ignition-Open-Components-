@@ -40,7 +40,10 @@ tools/lib/ui.js              builders: page, row, card, chart, kpiTile, stat, la
 tools/pages/index.js         the list of all views
 tools/pages/shell.js         header, navigation rail, PAGES (URL, view, title, icon)
 tools/pages/overview.js      Pages/Overview
-tools/pages/stubs.js         the five placeholder pages
+tools/pages/stubs.js         placeholder pages (none left)
+tools/pages/tiles.js         tile / group / section layout of the Gallery and 3D pages
+tools/pages/gallery-options.js, threed-options.js   the options of those tiles
+tools/pages/floor-plan.js    the invented plant floor plan (GeoJSON) for the map components
 project/ignition/script-python/demo/data/code.py    demo.data
 ```
 
@@ -288,6 +291,16 @@ the tokens. Examples whose description says they hard-code colours keep them und
 check the preview. ECharts-GL charts (3D) load an extra chunk; give the preview a moment and look
 for an empty box.
 
+**Every component is used.** `validate.js` fails if a component id of
+`components.manifest.json` appears in no view. A new component in the module needs a tile in the
+Chart Gallery (2D) or on the 3D & WebGL page (anything with `"gl": true` in the manifest: keep all
+WebGL charts on that one page, a browser allows only about 16 WebGL contexts per page).
+
+**Maps.** No geography: MapChart, LinesChart, Map3DChart and Polygons3DChart draw the plant floor
+plan of `tools/pages/floor-plan.js`, passed as `maps: floor.maps()` and named `meridian-floor`.
+Map names are global to the browser page, so reuse that name only for that geometry. Set
+`aspectScale: 1`, or the plan is squashed.
+
 ## Pitfalls already hit
 
 1. **`option` on an industrial or scheduling component replaces its whole chart.** A non-empty
@@ -324,3 +337,9 @@ for an empty box.
    above). In `.js` sources they are fine.
 10. **Unverified format assumptions** are listed in FORMAT-NOTES.md section 9. If you learn that
     one is wrong, fix it in `tools/lib/ui.js` or `tools/build.js` (one place), not per page.
+11. **polygons3D on geo3D is broken in echarts-gl 2.1.0**: every polygon lands on one line along
+    the front edge of the map (the points are transformed twice). `threed-options.js` writes the
+    points so that the second pass puts them right, with an invisible scatter3D that creates a 1:1
+    altitude axis; read the comment there before changing the box size or region height.
+12. **Globe columns and altitude.** On a globe, bar3D heights are scaled to `globeOuterRadius -
+    globeRadius`; the default outer radius makes them several times the globe's radius.

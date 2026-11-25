@@ -8,5 +8,5 @@ const shell = require('./shell');
 
 module.exports = {
     PAGES: shell.PAGES,
-    views: Object.assign({}, shell.views, require('./stubs'), require('./overview'), require('./line'), require('./quality'), require('./gallery'), require('./energy'), require('./schedule')),
+    views: Object.assign({}, shell.views, require('./stubs'), require('./overview'), require('./line'), require('./quality'), require('./gallery'), require('./threed'), require('./energy'), require('./schedule')),
 };
