@@ -1,44 +1,58 @@
 Open ECharts — Ignition Perspective Component Module
 Copyright 2026 zbest
 
-This product bundles the following third-party software:
+This product bundles the following third-party software in its web bundle:
 
 ────────────────────────────────────────────────────────────────────────────────
 
 Apache ECharts
-Copyright 2017-2024 The Apache Software Foundation
+Copyright 2017-2026 The Apache Software Foundation
 Licensed under the Apache License, Version 2.0
 https://github.com/apache/echarts
 
-────────────────────────────────────────────────────────────────────────────────
-
-ECharts-GL
-Copyright 2014, echarts-gl contributors
-Licensed under the BSD 2-Clause License
-https://github.com/ecomfe/echarts-gl
+This product includes software developed at
+The Apache Software Foundation (https://www.apache.org/).
 
 ────────────────────────────────────────────────────────────────────────────────
 
 ZRender (bundled by ECharts)
-Copyright 2017-2024 The Apache Software Foundation
+Copyright (c) 2017, Baidu Inc.
 Licensed under the BSD 3-Clause License
 https://github.com/ecomfe/zrender
 
 ────────────────────────────────────────────────────────────────────────────────
 
+tslib (bundled by ECharts)
+Copyright (c) Microsoft Corporation
+Licensed under the 0BSD License
+https://github.com/microsoft/tslib
+
+────────────────────────────────────────────────────────────────────────────────
+
+ECharts-GL
+Copyright (c) 2017, Baidu Inc.
+Licensed under the BSD 3-Clause License
+https://github.com/ecomfe/echarts-gl
+
+────────────────────────────────────────────────────────────────────────────────
+
 ClayGL (bundled by ECharts-GL)
-Copyright 2013, Yi Shen
+Copyright (c) 2014, Yi Shen
 Licensed under the BSD 2-Clause License
 https://github.com/pissang/claygl
 
 ────────────────────────────────────────────────────────────────────────────────
 
-React (external — provided by Ignition Perspective runtime)
-Copyright (c) Meta Platforms, Inc. and affiliates
-Licensed under the MIT License
+DOMPurify
+Copyright Cure53 and other contributors
+Dual-licensed under the Mozilla Public License 2.0 or the Apache License,
+Version 2.0; used here under the Apache License, Version 2.0
+https://github.com/cure53/DOMPurify
 
 ────────────────────────────────────────────────────────────────────────────────
 
-Inductive Automation Perspective Client SDK (external — provided by Ignition)
-Copyright Inductive Automation
-Proprietary — used under SDK terms
+Not bundled (provided by the Ignition Perspective runtime):
+
+React — Copyright (c) Meta Platforms, Inc. and affiliates — MIT License
+Inductive Automation Perspective Client SDK — Copyright Inductive Automation —
+proprietary, used under the SDK terms

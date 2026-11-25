@@ -1,0 +1,13 @@
+{
+  "custom": {
+    "line": "L1"
+  },
+  "propConfig": {
+    "custom.line": {
+      "persistent": true
+    }
+  },
+  "props": {
+    "theme": "dark"
+  }
+}

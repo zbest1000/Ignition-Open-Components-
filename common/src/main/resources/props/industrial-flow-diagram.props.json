@@ -1,0 +1,262 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "option": {
+      "type": "object",
+      "description": "Advanced override. When non-empty, this ECharts option replaces the generated chart and the domain props are ignored.",
+      "default": {}
+    },
+    "flows": {
+      "type": "array",
+      "description": "One row per flow: { source, target, value }. Nodes are created from the names used here. Rows with the same source and target are summed; rows whose value is not a positive number are skipped. A Sankey diagram cannot show loops: flows that close a loop (and flows from a node to itself) are left out and counted in a note under the title.",
+      "default": [
+        {
+          "source": "Grid",
+          "target": "Main bus",
+          "value": 820
+        },
+        {
+          "source": "Solar PV",
+          "target": "Main bus",
+          "value": 310
+        },
+        {
+          "source": "Main bus",
+          "target": "Production lines",
+          "value": 540
+        },
+        {
+          "source": "Main bus",
+          "target": "HVAC",
+          "value": 210
+        },
+        {
+          "source": "Main bus",
+          "target": "Compressed air",
+          "value": 180
+        },
+        {
+          "source": "Main bus",
+          "target": "Lighting & office",
+          "value": 90
+        },
+        {
+          "source": "Main bus",
+          "target": "Losses",
+          "value": 110
+        },
+        {
+          "source": "Production lines",
+          "target": "Useful work",
+          "value": 430
+        },
+        {
+          "source": "Production lines",
+          "target": "Losses",
+          "value": 110
+        },
+        {
+          "source": "HVAC",
+          "target": "Useful work",
+          "value": 150
+        },
+        {
+          "source": "HVAC",
+          "target": "Losses",
+          "value": 60
+        },
+        {
+          "source": "Compressed air",
+          "target": "Useful work",
+          "value": 70
+        },
+        {
+          "source": "Compressed air",
+          "target": "Losses",
+          "value": 110
+        },
+        {
+          "source": "Lighting & office",
+          "target": "Useful work",
+          "value": 75
+        },
+        {
+          "source": "Lighting & office",
+          "target": "Losses",
+          "value": 15
+        }
+      ]
+    },
+    "nodes": {
+      "type": "array",
+      "description": "Optional per-node overrides: { name, color, label }. name must match a name used in flows; color sets the node colour, label the text shown instead of the name. Nodes without an entry use the theme palette and their own name.",
+      "default": [
+        {
+          "name": "Grid",
+          "color": "#5b7fa6"
+        },
+        {
+          "name": "Solar PV",
+          "color": "#eda100"
+        },
+        {
+          "name": "Main bus",
+          "color": "#2a78d6"
+        },
+        {
+          "name": "Useful work",
+          "color": "#1baf7a"
+        },
+        {
+          "name": "Losses",
+          "color": "#9aa0a6"
+        }
+      ]
+    },
+    "title": {
+      "type": "string",
+      "description": "Chart title. Leave blank for no title.",
+      "default": ""
+    },
+    "unit": {
+      "type": "string",
+      "description": "Unit written after every value, e.g. kWh, t, pcs.",
+      "default": "MWh"
+    },
+    "decimals": {
+      "type": "integer",
+      "description": "Decimal places of the values in labels and tooltips (0 to 6).",
+      "default": 0
+    },
+    "orientation": {
+      "type": "string",
+      "enum": [
+        "horizontal",
+        "vertical"
+      ],
+      "description": "Direction of flow: horizontal (left to right) or vertical (top to bottom).",
+      "default": "horizontal"
+    },
+    "nodeAlign": {
+      "type": "string",
+      "enum": [
+        "justify",
+        "left",
+        "right"
+      ],
+      "description": "Column placement of nodes: justify puts end nodes in the last column, left packs nodes towards the start, right towards the end.",
+      "default": "justify"
+    },
+    "showValues": {
+      "type": "boolean",
+      "description": "Write each node's throughput next to its name. Turn off for small components.",
+      "default": true
+    },
+    "linkColor": {
+      "type": "string",
+      "enum": [
+        "source",
+        "target",
+        "gradient"
+      ],
+      "description": "Colour of the links: that of the source node, of the target node, or a gradient from one to the other.",
+      "default": "gradient"
+    },
+    "emphasis": {
+      "type": "string",
+      "enum": [
+        "adjacency",
+        "trajectory",
+        "none"
+      ],
+      "description": "What is highlighted on hover: adjacency (the node or link and its direct neighbours), trajectory (everything up- and downstream), or none.",
+      "default": "adjacency"
+    },
+    "nodeWidth": {
+      "type": "number",
+      "description": "Thickness of the node bars in pixels.",
+      "default": 16
+    },
+    "nodeGap": {
+      "type": "number",
+      "description": "Gap between neighbouring nodes of a column in pixels.",
+      "default": 12
+    },
+    "maxLabelLength": {
+      "type": "integer",
+      "description": "Node names longer than this many characters are shortened with an ellipsis in labels (tooltips show the full name). 0 = never shorten.",
+      "default": 28
+    },
+    "colors": {
+      "type": "array",
+      "description": "Node colour palette, used in order of first appearance. Leave empty to use the palette of the theme. Colours set in nodes take precedence.",
+      "default": []
+    },
+    "theme": {
+      "type": "string",
+      "description": "Name of a registered ECharts theme. Built-in themes: IgnitionIndustrialDark, IgnitionIndustrialLight. Leave empty for the ECharts default theme.",
+      "default": ""
+    },
+    "renderer": {
+      "type": "string",
+      "enum": [
+        "canvas",
+        "svg"
+      ],
+      "description": "Rendering engine: canvas (better perf) or svg (better quality/export).",
+      "default": "canvas"
+    },
+    "autoResize": {
+      "type": "boolean",
+      "description": "Automatically resize chart when container dimensions change.",
+      "default": true
+    },
+    "resizeDebounceMs": {
+      "type": "integer",
+      "description": "Debounce interval in milliseconds for resize events.",
+      "default": 150
+    },
+    "notMerge": {
+      "type": "boolean",
+      "description": "If true, setOption will not merge with previous option but replace entirely.",
+      "default": false
+    },
+    "lazyUpdate": {
+      "type": "boolean",
+      "description": "If true, chart update is deferred for better performance during rapid changes.",
+      "default": true
+    },
+    "showLoading": {
+      "type": "boolean",
+      "description": "Show the built-in ECharts loading animation.",
+      "default": false
+    },
+    "loadingOptions": {
+      "type": "object",
+      "description": "Options for the loading animation (text, color, etc.).",
+      "default": {}
+    },
+    "sanitizeTooltip": {
+      "type": "boolean",
+      "description": "Sanitises HTML in tooltip formatters and blocks non-http(s) links.",
+      "default": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label announced by screen readers.",
+      "default": ""
+    },
+    "maps": {
+      "type": "object",
+      "description": "Map definitions for map and geo series, keyed by map name. Each value is a GeoJSON FeatureCollection, or an object with an `svg` string. Set series.map (or geo.map) to the key.",
+      "default": {}
+    },
+    "style": {
+      "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
+      "default": {
+        "classes": ""
+      }
+    }
+  }
+}

@@ -4,28 +4,276 @@
   "properties": {
     "year": {
       "type": "string",
-      "description": "Calendar year to render (e.g. \"2025\"). Leave blank to use the current year.",
-      "default": ""
+      "description": "Period to render: a year (\"2025\") or a month (\"2025-03\"). Leave blank to use the current year.",
+      "default": "2025"
     },
     "entries": {
       "type": "array",
-      "description": "Schedule entries: { date (YYYY-MM-DD), shift, crew?, value?, color? }. Bind to your shift schedule.",
+      "description": "Schedule entries: { date, shift, crew? } with date as a YYYY-MM-DD string. value and color are reserved and currently have no effect. Bind to your shift schedule.",
       "items": {
         "type": "object",
         "properties": {
-          "date":  { "type": "string" },
-          "shift": { "type": "string" },
-          "crew":  { "type": "string" },
-          "value": { "type": "number" },
-          "color": { "type": "string" }
+          "date": {
+            "type": "string",
+            "description": "Date as a YYYY-MM-DD string."
+          },
+          "shift": {
+            "type": "string"
+          },
+          "crew": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number",
+            "description": "Reserved, currently unused."
+          },
+          "color": {
+            "type": "string",
+            "description": "Reserved, currently unused."
+          }
         }
       },
-      "default": []
+      "default": [
+        {
+          "date": "2025-01-06",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-07",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-08",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-09",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-10",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-11",
+          "shift": "Off"
+        },
+        {
+          "date": "2025-01-13",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-01-14",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-01-15",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-01-16",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-01-17",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-01-18",
+          "shift": "Off"
+        },
+        {
+          "date": "2025-01-20",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-21",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-22",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-23",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-24",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-01-25",
+          "shift": "Off"
+        },
+        {
+          "date": "2025-01-27",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-01-28",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-01-29",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-01-30",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-01-31",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-01",
+          "shift": "Off"
+        },
+        {
+          "date": "2025-02-03",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-04",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-05",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-06",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-07",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-08",
+          "shift": "Off"
+        },
+        {
+          "date": "2025-02-10",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-11",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-12",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-13",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-14",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-15",
+          "shift": "Off"
+        },
+        {
+          "date": "2025-02-17",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-18",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-19",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-20",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-21",
+          "shift": "Day",
+          "crew": "Crew A"
+        },
+        {
+          "date": "2025-02-22",
+          "shift": "Off"
+        },
+        {
+          "date": "2025-02-24",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-25",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-26",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-27",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-02-28",
+          "shift": "Night",
+          "crew": "Crew B"
+        },
+        {
+          "date": "2025-03-01",
+          "shift": "Off"
+        }
+      ]
     },
     "shiftColors": {
       "type": "object",
       "description": "Map of shift name to colour. Merged over the built-in defaults.",
-      "additionalProperties": { "type": "string" },
+      "additionalProperties": {
+        "type": "string"
+      },
       "default": {}
     },
     "showLegend": {
@@ -40,21 +288,73 @@
     },
     "option": {
       "type": "object",
-      "description": "Advanced override. If non-empty, this ECharts option is used verbatim and the domain props above are ignored.",
+      "description": "Advanced override. When non-empty, this ECharts option replaces the generated chart and the domain props are ignored.",
       "default": {}
     },
-    "theme": { "type": "string", "default": "" },
-    "renderer": { "type": "string", "enum": ["canvas", "svg"], "default": "canvas" },
-    "autoResize": { "type": "boolean", "default": true },
-    "resizeDebounceMs": { "type": "integer", "default": 150 },
-    "notMerge": { "type": "boolean", "default": false },
-    "lazyUpdate": { "type": "boolean", "default": true },
-    "showLoading": { "type": "boolean", "default": false },
-    "loadingOptions": { "type": "object", "default": {} },
-    "sanitizeTooltip": { "type": "boolean", "default": true },
+    "theme": {
+      "type": "string",
+      "description": "Name of a registered ECharts theme. Built-in themes: IgnitionIndustrialDark, IgnitionIndustrialLight. Leave empty for the ECharts default theme.",
+      "default": ""
+    },
+    "renderer": {
+      "type": "string",
+      "enum": [
+        "canvas",
+        "svg"
+      ],
+      "description": "Rendering engine: canvas (better perf) or svg (better quality/export).",
+      "default": "canvas"
+    },
+    "autoResize": {
+      "type": "boolean",
+      "description": "Automatically resize chart when container dimensions change.",
+      "default": true
+    },
+    "resizeDebounceMs": {
+      "type": "integer",
+      "description": "Debounce interval in milliseconds for resize events.",
+      "default": 150
+    },
+    "notMerge": {
+      "type": "boolean",
+      "description": "If true, setOption will not merge with previous option but replace entirely.",
+      "default": false
+    },
+    "lazyUpdate": {
+      "type": "boolean",
+      "description": "If true, chart update is deferred for better performance during rapid changes.",
+      "default": true
+    },
+    "showLoading": {
+      "type": "boolean",
+      "description": "Show the built-in ECharts loading animation.",
+      "default": false
+    },
+    "loadingOptions": {
+      "type": "object",
+      "description": "Options for the loading animation (text, color, etc.).",
+      "default": {}
+    },
+    "sanitizeTooltip": {
+      "type": "boolean",
+      "description": "Sanitises HTML in tooltip formatters and blocks non-http(s) links.",
+      "default": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label announced by screen readers.",
+      "default": ""
+    },
+    "maps": {
+      "type": "object",
+      "description": "Map definitions for map and geo series, keyed by map name. Each value is a GeoJSON FeatureCollection, or an object with an `svg` string. Set series.map (or geo.map) to the key.",
+      "default": {}
+    },
     "style": {
       "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
-      "default": { "classes": "" }
+      "default": {
+        "classes": ""
+      }
     }
   }
 }

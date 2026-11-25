@@ -1,0 +1,214 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "option": {
+      "type": "object",
+      "description": "Advanced override. When non-empty, this ECharts option replaces the generated chart and the domain props are ignored.",
+      "default": {}
+    },
+    "metrics": {
+      "type": "array",
+      "description": "The axes, at least three: { name, min, max, higherIsBetter, unit } (or just a name). Each axis is scaled to its own min..max, so metrics with different units can be compared; values outside the range are drawn at its ends. A missing min or max is taken from the data with some padding. Outward is always better: axes with higherIsBetter false are inverted, so their lowest value is at the rim. unit is written after values.",
+      "default": [
+        {
+          "name": "OEE",
+          "unit": "%",
+          "min": 40,
+          "max": 100
+        },
+        {
+          "name": "Throughput",
+          "unit": "u/h",
+          "min": 600,
+          "max": 1400
+        },
+        {
+          "name": "First-pass yield",
+          "unit": "%",
+          "min": 85,
+          "max": 100
+        },
+        {
+          "name": "Scrap",
+          "unit": "%",
+          "min": 0,
+          "max": 6,
+          "higherIsBetter": false
+        },
+        {
+          "name": "Changeover",
+          "unit": "min",
+          "min": 10,
+          "max": 60,
+          "higherIsBetter": false
+        },
+        {
+          "name": "Energy",
+          "unit": "kWh/u",
+          "min": 0.4,
+          "max": 1.2,
+          "higherIsBetter": false
+        }
+      ]
+    },
+    "series": {
+      "type": "array",
+      "description": "The entities to compare (lines, shifts, machines, suppliers): { name, values }, with values in the same order as metrics, in real units. Extra values are ignored; a missing value is drawn at the centre and shown as a dash in the tooltip.",
+      "default": [
+        {
+          "name": "Line 1",
+          "values": [
+            78,
+            1180,
+            97.2,
+            1.8,
+            24,
+            0.62
+          ]
+        },
+        {
+          "name": "Line 2",
+          "values": [
+            64,
+            1290,
+            93.5,
+            3.9,
+            41,
+            0.71
+          ]
+        },
+        {
+          "name": "Line 3",
+          "values": [
+            71,
+            860,
+            98.4,
+            1.1,
+            18,
+            0.95
+          ]
+        }
+      ]
+    },
+    "target": {
+      "type": "object",
+      "description": "Optional reference drawn as a dashed outline: { name, values, color } with values in the same order as metrics. Leave empty for none.",
+      "default": {
+        "name": "Target",
+        "values": [
+          85,
+          1200,
+          98,
+          2,
+          20,
+          0.6
+        ]
+      }
+    },
+    "fill": {
+      "type": "boolean",
+      "description": "Fill the area of each series (the fill gets lighter as the number of series grows).",
+      "default": true
+    },
+    "shape": {
+      "type": "string",
+      "enum": [
+        "polygon",
+        "circle"
+      ],
+      "description": "Shape of the grid.",
+      "default": "polygon"
+    },
+    "showRange": {
+      "type": "boolean",
+      "description": "Write the range of each axis under its name, from the centre value to the rim value.",
+      "default": true
+    },
+    "showLegend": {
+      "type": "boolean",
+      "description": "Show the legend.",
+      "default": true
+    },
+    "decimals": {
+      "type": "integer",
+      "description": "Maximum decimal places of values in tooltips and axis ranges (0 to 6).",
+      "default": 2
+    },
+    "colors": {
+      "type": "array",
+      "description": "Series colours in order. Leave empty to use the palette of the theme.",
+      "default": []
+    },
+    "title": {
+      "type": "string",
+      "description": "Chart title. Leave blank for no title.",
+      "default": ""
+    },
+    "theme": {
+      "type": "string",
+      "description": "Name of a registered ECharts theme. Built-in themes: IgnitionIndustrialDark, IgnitionIndustrialLight. Leave empty for the ECharts default theme.",
+      "default": ""
+    },
+    "renderer": {
+      "type": "string",
+      "enum": [
+        "canvas",
+        "svg"
+      ],
+      "description": "Rendering engine: canvas (better perf) or svg (better quality/export).",
+      "default": "canvas"
+    },
+    "autoResize": {
+      "type": "boolean",
+      "description": "Automatically resize chart when container dimensions change.",
+      "default": true
+    },
+    "resizeDebounceMs": {
+      "type": "integer",
+      "description": "Debounce interval in milliseconds for resize events.",
+      "default": 150
+    },
+    "notMerge": {
+      "type": "boolean",
+      "description": "If true, setOption will not merge with previous option but replace entirely.",
+      "default": false
+    },
+    "lazyUpdate": {
+      "type": "boolean",
+      "description": "If true, chart update is deferred for better performance during rapid changes.",
+      "default": true
+    },
+    "showLoading": {
+      "type": "boolean",
+      "description": "Show the built-in ECharts loading animation.",
+      "default": false
+    },
+    "loadingOptions": {
+      "type": "object",
+      "description": "Options for the loading animation (text, color, etc.).",
+      "default": {}
+    },
+    "sanitizeTooltip": {
+      "type": "boolean",
+      "description": "Sanitises HTML in tooltip formatters and blocks non-http(s) links.",
+      "default": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label announced by screen readers.",
+      "default": ""
+    },
+    "maps": {
+      "type": "object",
+      "description": "Map definitions for map and geo series, keyed by map name. Each value is a GeoJSON FeatureCollection, or an object with an `svg` string. Set series.map (or geo.map) to the key.",
+      "default": {}
+    },
+    "style": {
+      "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
+      "default": {
+        "classes": ""
+      }
+    }
+  }
+}

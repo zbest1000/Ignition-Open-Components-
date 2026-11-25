@@ -4,46 +4,140 @@
   "properties": {
     "option": {
       "type": "object",
-      "description": "ECharts option object. Pre-configured for OEE gauge.",
+      "description": "Advanced override. When non-empty, this ECharts option replaces the generated chart and the domain props are ignored.",
       "default": {}
     },
     "availability": {
       "type": "number",
-      "description": "Availability percentage (0-100).",
+      "description": "Availability in percent (0-100).",
       "default": 92
     },
     "performance": {
       "type": "number",
-      "description": "Performance percentage (0-100).",
+      "description": "Performance in percent (0-100).",
       "default": 95
     },
     "quality": {
       "type": "number",
-      "description": "Quality percentage (0-100).",
+      "description": "Quality in percent (0-100).",
       "default": 97
     },
     "oeeOverride": {
-      "type": "number",
-      "description": "Override the calculated OEE value. If null, OEE is computed as A*P*Q/10000.",
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Overrides the calculated OEE, in percent; clamped to 0-100. When null, OEE is computed as A*P*Q/10000.",
       "default": null
     },
     "showLabels": {
       "type": "boolean",
-      "description": "Show A/P/Q/OEE labels on the gauge.",
+      "description": "Show the names and values in the middle of the rings.",
       "default": true
     },
-    "theme": { "type": "string", "default": "" },
-    "renderer": { "type": "string", "enum": ["canvas", "svg"], "default": "canvas" },
-    "autoResize": { "type": "boolean", "default": true },
-    "resizeDebounceMs": { "type": "integer", "default": 150 },
-    "notMerge": { "type": "boolean", "default": false },
-    "lazyUpdate": { "type": "boolean", "default": true },
-    "showLoading": { "type": "boolean", "default": false },
-    "loadingOptions": { "type": "object", "default": {} },
-    "sanitizeTooltip": { "type": "boolean", "default": true },
+    "labels": {
+      "type": "object",
+      "description": "Ring names, e.g. for another language: { oee, availability, performance, quality }. Missing keys keep the English names.",
+      "default": {}
+    },
+    "colors": {
+      "type": [
+        "object",
+        "array"
+      ],
+      "description": "Ring colours as { oee, availability, performance, quality }, or as an array in ring order starting with OEE (for use with metrics). Rings without a colour use the theme palette.",
+      "default": {}
+    },
+    "thresholds": {
+      "type": "array",
+      "description": "Colours every ring by its value, overriding colors. Value bands as objects { upTo, color }. A value takes the colour of the first band, in ascending order of upTo, whose upTo is greater than it; a band without upTo takes everything above. Example: [{\"upTo\": 60, \"color\": \"#e05252\"}, {\"upTo\": 85, \"color\": \"#e6a23c\"}, {\"color\": \"#3ba272\"}].",
+      "default": []
+    },
+    "target": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "OEE target in percent (e.g. 85 for world class), drawn as a marker on the OEE ring. Null for no marker.",
+      "default": null
+    },
+    "decimals": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "Decimal places of all values. Null shows the factors as given and the calculated OEE as a whole percent.",
+      "default": null
+    },
+    "metrics": {
+      "type": "array",
+      "description": "Optional factors as objects { name, value, color, target }, values in percent (0-100). When non-empty they replace availability, performance and quality, and OEE is their product, e.g. A x P x Q x a fourth loss factor.",
+      "default": []
+    },
+    "theme": {
+      "type": "string",
+      "description": "Name of a registered ECharts theme. Built-in themes: IgnitionIndustrialDark, IgnitionIndustrialLight. Leave empty for the ECharts default theme.",
+      "default": ""
+    },
+    "renderer": {
+      "type": "string",
+      "enum": [
+        "canvas",
+        "svg"
+      ],
+      "description": "Rendering engine: canvas (better perf) or svg (better quality/export).",
+      "default": "canvas"
+    },
+    "autoResize": {
+      "type": "boolean",
+      "description": "Automatically resize chart when container dimensions change.",
+      "default": true
+    },
+    "resizeDebounceMs": {
+      "type": "integer",
+      "description": "Debounce interval in milliseconds for resize events.",
+      "default": 150
+    },
+    "notMerge": {
+      "type": "boolean",
+      "description": "If true, setOption will not merge with previous option but replace entirely.",
+      "default": false
+    },
+    "lazyUpdate": {
+      "type": "boolean",
+      "description": "If true, chart update is deferred for better performance during rapid changes.",
+      "default": true
+    },
+    "showLoading": {
+      "type": "boolean",
+      "description": "Show the built-in ECharts loading animation.",
+      "default": false
+    },
+    "loadingOptions": {
+      "type": "object",
+      "description": "Options for the loading animation (text, color, etc.).",
+      "default": {}
+    },
+    "sanitizeTooltip": {
+      "type": "boolean",
+      "description": "Sanitises HTML in tooltip formatters and blocks non-http(s) links.",
+      "default": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label announced by screen readers.",
+      "default": ""
+    },
+    "maps": {
+      "type": "object",
+      "description": "Map definitions for map and geo series, keyed by map name. Each value is a GeoJSON FeatureCollection, or an object with an `svg` string. Set series.map (or geo.map) to the key.",
+      "default": {}
+    },
     "style": {
       "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
-      "default": { "classes": "" }
+      "default": {
+        "classes": ""
+      }
     }
   }
 }

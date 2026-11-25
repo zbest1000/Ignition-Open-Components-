@@ -1,0 +1,143 @@
+# Reusable build-and-verify pipeline. Called by ci.yml (every push / PR) and by release.yml
+# (as the gate before publishing). Needs no secrets and only read access.
+name: Build and verify
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: >
+          Module version to build. Empty = derive a CI version, <base>.<run number>, from
+          `version` in gradle.properties (for example 0.1.0.57).
+        type: string
+        required: false
+        default: ""
+    outputs:
+      version:
+        description: The module version that was built.
+        value: ${{ jobs.build.outputs.version }}
+      artifact-name:
+        description: Name of the uploaded workflow artifact (unsigned .modl + SBOM).
+        value: ${{ jobs.build.outputs.artifact-name }}
+
+permissions: {}
+
+jobs:
+  build:
+    name: Build, lint, test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      artifact-name: ${{ steps.version.outputs.artifact }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up build environment
+        id: setup
+        uses: ./.github/actions/setup-build
+
+      - name: Resolve version
+        id: version
+        env:
+          REQUESTED_VERSION: ${{ inputs.version }}
+        run: |
+          if [ -n "$REQUESTED_VERSION" ]; then
+            version="$REQUESTED_VERSION"
+          else
+            # Ignition only parses X.Y.Z[.BUILD][-rcN|-betaN|-SNAPSHOT]; "+sha" or "-pr12" forms
+            # produce a module the gateway refuses to install.
+            base=$(sed -n 's/^version=\([0-9]*\.[0-9]*\.[0-9]*\).*/\1/p' gradle.properties)
+            if [ -z "$base" ]; then
+              echo "::error::Could not read version=X.Y.Z from gradle.properties"
+              exit 1
+            fi
+            version="${base}.${GITHUB_RUN_NUMBER}"
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "artifact=open-echarts-$version" >> "$GITHUB_OUTPUT"
+          echo "Building version $version"
+
+      - name: Audit bundled npm dependencies
+        working-directory: web
+        run: npm audit --omit=dev --audit-level=moderate
+
+      # One command: npm ci, webpack, eslint, jest, Java compile, checkstyle, JUnit, module assembly.
+      - name: Build and verify
+        env:
+          MODULE_VERSION: ${{ steps.version.outputs.version }}
+        run: ./gradlew build -PmoduleVersion="$MODULE_VERSION"
+
+      - name: Check module contents
+        env:
+          MODULE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          modl=build/Open-ECharts.unsigned.modl
+          test -f "$modl" || { echo "::error::$modl was not produced"; exit 1; }
+          unzip -l "$modl"
+          unzip -p "$modl" module.xml | tee module.xml
+          grep -q "<version>${MODULE_VERSION}</version>" module.xml \
+            || { echo "::error::module.xml does not carry version ${MODULE_VERSION}"; exit 1; }
+          unzip -o -q "$modl" 'web-*.jar' -d "$RUNNER_TEMP/modl"
+          unzip -l "$RUNNER_TEMP"/modl/web-*.jar | grep -q 'mounted/OpenECharts\.js' \
+            || { echo "::error::web jar does not contain mounted/OpenECharts.js"; exit 1; }
+          rm -f module.xml
+
+      - name: Stage artifacts and SBOM
+        env:
+          MODULE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          mkdir -p dist
+          cp build/Open-ECharts.unsigned.modl "dist/Open-ECharts-${MODULE_VERSION}.unsigned.modl"
+          # CycloneDX SBOM of what webpack bundles into the module (production npm dependencies).
+          # The Java side bundles no third-party libraries (all Ignition dependencies are compileOnly).
+          (cd web && npm sbom --sbom-format cyclonedx --omit dev) \
+            > "dist/Open-ECharts-${MODULE_VERSION}.sbom.cdx.json"
+
+      - name: Upload module and SBOM
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ${{ steps.version.outputs.artifact }}
+          path: dist/
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Upload reports
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: build-reports
+          path: |
+            **/build/reports/
+            web/coverage/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Summary
+        env:
+          MODULE_VERSION: ${{ steps.version.outputs.version }}
+          NODE_VERSION: ${{ steps.setup.outputs.node-version }}
+        run: |
+          sdk=$(sed -n 's/^[[:space:]]*ignition[[:space:]]*=[[:space:]]*"\(.*\)".*/\1/p' gradle/libs.versions.toml)
+          echarts=$(node -p "require('./web/package-lock.json').packages['node_modules/echarts'].version")
+          echarts_gl=$(node -p "require('./web/package-lock.json').packages['node_modules/echarts-gl'].version")
+          size=$(du -h build/Open-ECharts.unsigned.modl | cut -f1)
+          {
+            echo "## Build summary"
+            echo
+            echo "| Property | Value |"
+            echo "|----------|-------|"
+            echo "| Version | \`${MODULE_VERSION}\` |"
+            echo "| Module size | ${size} |"
+            echo "| Ignition SDK | ${sdk} |"
+            echo "| ECharts | ${echarts} |"
+            echo "| ECharts-GL | ${echarts_gl} |"
+            echo "| Node.js | ${NODE_VERSION} |"
+            echo "| Java | 17 |"
+          } >> "$GITHUB_STEP_SUMMARY"

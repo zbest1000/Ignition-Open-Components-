@@ -1,35 +1,64 @@
 {
   "name": "onBrushSelected",
-  "description": "Fired when a brush selection changes. Provides series/data point information for the selection.",
+  "description": "Fired when the brush selection changes.",
   "schema": {
     "type": "object",
     "properties": {
-      "componentType": {
-        "type": "string",
-        "description": "ECharts component type emitting the event (e.g. 'brush')."
-      },
-      "seriesType": {
-        "type": "string",
-        "description": "Series type, when applicable."
-      },
-      "seriesIndex": {
-        "type": "integer",
-        "description": "Index of the series, when applicable."
-      },
-      "seriesName": {
-        "type": "string",
-        "description": "Series name, when applicable."
-      },
-      "name": {
-        "type": "string",
-        "description": "Associated name, when applicable."
-      },
-      "dataIndex": {
-        "type": "integer",
-        "description": "Index of the data item, when applicable."
-      },
-      "value": {
-        "description": "Associated value, when applicable."
+      "batch": {
+        "type": "array",
+        "description": "One entry per brush component.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "brushId": {
+              "type": "string",
+              "description": "Id of the brush component."
+            },
+            "brushIndex": {
+              "type": "integer",
+              "description": "Index of the brush component."
+            },
+            "brushName": {
+              "type": "string",
+              "description": "Name of the brush component."
+            },
+            "areas": {
+              "type": "array",
+              "description": "The brushed areas (brush type, range and coordinate range of each).",
+              "items": {
+                "type": "object"
+              }
+            },
+            "selected": {
+              "type": "array",
+              "description": "Per series, the indices of the data items inside the brushed areas.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "seriesIndex": {
+                    "type": "integer",
+                    "description": "Index of the series."
+                  },
+                  "seriesName": {
+                    "type": "string",
+                    "description": "Name of the series."
+                  },
+                  "dataIndex": {
+                    "type": "array",
+                    "description": "Indices of the selected data items; at most the first 1000.",
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "dataIndexCount": {
+                    "type": "integer",
+                    "description": "Total number of selected data items. Greater than the length of dataIndex when the list was cut."
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   }

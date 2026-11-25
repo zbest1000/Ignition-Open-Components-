@@ -13,12 +13,11 @@
 
 ## Checklist
 
-- [ ] `./gradlew clean build` passes locally
-- [ ] Component ID follows naming convention (`open.echarts.*` or `open.industrial.*`)
-- [ ] Java descriptor added to `ComponentDefs.java`
-- [ ] TypeScript component registered in `web/src/index.ts`
-- [ ] CSS class added to `web/src/css/styles.css`
-- [ ] Default option provides a meaningful starter chart
+- [ ] `./gradlew build` passes locally (includes eslint, jest, checkstyle, JUnit)
+- [ ] New component: added to `common/src/main/resources/components.manifest.json` with a
+      meaningful `defaultOption` (see CONTRIBUTING, "Adding a component")
+- [ ] Component ID follows naming convention (`open.echarts.*` or `open.industrial.*`); no published ID changed
+- [ ] Docs updated (`docs/COMPONENTS.md`) if props, events or components changed
 - [ ] CHANGELOG.md updated (if user-facing change)
 
 ## Testing

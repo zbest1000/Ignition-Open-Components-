@@ -1,5 +1,8 @@
 [versions]
     ignition = "8.3.7"
+    # Node.js used by the web build (downloaded by Gradle) and by CI (actions/setup-node).
+    # Keep on a release that satisfies eslint 10 (^22.13.0).
+    node = "22.23.5"
 
 [libraries]
     ignition-common = { module = "com.inductiveautomation.ignitionsdk:ignition-common", version.ref = "ignition" }
@@ -9,6 +12,4 @@
     ignition-perspective-designer = { module = "com.inductiveautomation.ignitionsdk:perspective-designer", version.ref = "ignition" }
     ignition-perspective-gateway = { module = "com.inductiveautomation.ignitionsdk:perspective-gateway", version.ref = "ignition" }
 
-    google-guava = { module = "com.google.guava:guava", version = "33.5.0-jre" }
-    google-jsr305 = { module = "com.google.code.findbugs:jsr305", version = "3.0.2" }
     ia-gson = { module = "com.inductiveautomation.ignition:ia-gson", version = "2.10.1" }

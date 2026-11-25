@@ -4,32 +4,259 @@
   "properties": {
     "option": {
       "type": "object",
-      "description": "ECharts option object. Pre-configured for time-series trending.",
+      "description": "Advanced override. When non-empty, this ECharts option replaces the generated chart and the domain props are ignored.",
       "default": {}
     },
     "data": {
       "type": "object",
       "description": "Data configuration for the trend.",
-      "default": {},
+      "default": {
+        "pvData": [
+          [
+            1735718400000,
+            30.0
+          ],
+          [
+            1735718700000,
+            31.8
+          ],
+          [
+            1735719000000,
+            30.7
+          ],
+          [
+            1735719300000,
+            31.1
+          ],
+          [
+            1735719600000,
+            29.5
+          ],
+          [
+            1735719900000,
+            27.8
+          ],
+          [
+            1735720200000,
+            29.6
+          ],
+          [
+            1735720500000,
+            29.7
+          ],
+          [
+            1735720800000,
+            30.8
+          ],
+          [
+            1735721100000,
+            32.2
+          ],
+          [
+            1735721400000,
+            29.9
+          ],
+          [
+            1735721700000,
+            29.4
+          ],
+          [
+            1735722000000,
+            38.0
+          ],
+          [
+            1735722300000,
+            43.4
+          ],
+          [
+            1735722600000,
+            50.3
+          ],
+          [
+            1735722900000,
+            54.0
+          ],
+          [
+            1735723200000,
+            55.8
+          ],
+          [
+            1735723500000,
+            57.9
+          ],
+          [
+            1735723800000,
+            56.4
+          ],
+          [
+            1735724100000,
+            56.6
+          ],
+          [
+            1735724400000,
+            58.4
+          ],
+          [
+            1735724700000,
+            58.5
+          ],
+          [
+            1735725000000,
+            60.9
+          ],
+          [
+            1735725300000,
+            61.4
+          ],
+          [
+            1735725600000,
+            59.5
+          ],
+          [
+            1735725900000,
+            59.7
+          ],
+          [
+            1735726200000,
+            58.3
+          ],
+          [
+            1735726500000,
+            58.3
+          ],
+          [
+            1735726800000,
+            60.8
+          ],
+          [
+            1735727100000,
+            60.7
+          ],
+          [
+            1735727400000,
+            61.3
+          ],
+          [
+            1735727700000,
+            61.2
+          ],
+          [
+            1735728000000,
+            58.5
+          ],
+          [
+            1735728300000,
+            58.9
+          ],
+          [
+            1735728600000,
+            59.2
+          ],
+          [
+            1735728900000,
+            59.4
+          ],
+          [
+            1735729200000,
+            57.5
+          ],
+          [
+            1735729500000,
+            53.6
+          ],
+          [
+            1735729800000,
+            50.2
+          ],
+          [
+            1735730100000,
+            48.6
+          ],
+          [
+            1735730400000,
+            45.4
+          ],
+          [
+            1735730700000,
+            45.7
+          ],
+          [
+            1735731000000,
+            47.0
+          ],
+          [
+            1735731300000,
+            46.3
+          ],
+          [
+            1735731600000,
+            47.5
+          ],
+          [
+            1735731900000,
+            46.1
+          ],
+          [
+            1735732200000,
+            43.8
+          ],
+          [
+            1735732500000,
+            44.5
+          ],
+          [
+            1735732800000,
+            43.7
+          ]
+        ],
+        "spData": [
+          [
+            1735718400000,
+            30
+          ],
+          [
+            1735722000000,
+            30
+          ],
+          [
+            1735722000000,
+            60
+          ],
+          [
+            1735729200000,
+            60
+          ],
+          [
+            1735729200000,
+            45
+          ],
+          [
+            1735732800000,
+            45
+          ]
+        ],
+        "timeField": "t",
+        "valueField": "v"
+      },
       "properties": {
         "pvData": {
           "type": "array",
-          "description": "Process variable data as [[timestamp, value], ...] or array of objects.",
+          "description": "Process variable data: array of [time, value] pairs or array of objects.",
           "default": []
         },
         "spData": {
           "type": "array",
-          "description": "Setpoint data as [[timestamp, value], ...].",
+          "description": "Setpoint data: array of [time, value] pairs or array of objects.",
           "default": []
         },
         "timeField": {
           "type": "string",
-          "description": "Field name for timestamp when using object arrays.",
+          "description": "Field holding the time when the data is an array of objects. Defaults to \"t\".",
           "default": "t"
         },
         "valueField": {
           "type": "string",
-          "description": "Field name for value when using object arrays.",
+          "description": "Field holding the value when the data is an array of objects. Defaults to \"v\".",
           "default": "v"
         }
       }
@@ -39,10 +266,34 @@
       "description": "Alarm and warning limits displayed as horizontal markLines.",
       "default": {},
       "properties": {
-        "hiAlarm":   { "type": "number", "description": "High alarm limit." },
-        "hiWarning": { "type": "number", "description": "High warning limit." },
-        "loWarning": { "type": "number", "description": "Low warning limit." },
-        "loAlarm":   { "type": "number", "description": "Low alarm limit." }
+        "hiAlarm": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "High alarm limit."
+        },
+        "hiWarning": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "High warning limit."
+        },
+        "loWarning": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Low warning limit."
+        },
+        "loAlarm": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Low alarm limit."
+        }
       }
     },
     "yAxisLabel": {
@@ -62,29 +313,68 @@
     },
     "theme": {
       "type": "string",
+      "description": "Name of a registered ECharts theme. Built-in themes: IgnitionIndustrialDark, IgnitionIndustrialLight. Leave empty for the ECharts default theme.",
       "default": ""
     },
     "renderer": {
       "type": "string",
-      "enum": ["canvas", "svg"],
+      "enum": [
+        "canvas",
+        "svg"
+      ],
+      "description": "Rendering engine: canvas (better perf) or svg (better quality/export).",
       "default": "canvas"
     },
     "autoResize": {
       "type": "boolean",
+      "description": "Automatically resize chart when container dimensions change.",
       "default": true
     },
     "resizeDebounceMs": {
       "type": "integer",
+      "description": "Debounce interval in milliseconds for resize events.",
       "default": 150
     },
-    "notMerge": { "type": "boolean", "default": false },
-    "lazyUpdate": { "type": "boolean", "default": true },
-    "showLoading": { "type": "boolean", "default": false },
-    "loadingOptions": { "type": "object", "default": {} },
-    "sanitizeTooltip": { "type": "boolean", "default": true },
+    "notMerge": {
+      "type": "boolean",
+      "description": "If true, setOption will not merge with previous option but replace entirely.",
+      "default": false
+    },
+    "lazyUpdate": {
+      "type": "boolean",
+      "description": "If true, chart update is deferred for better performance during rapid changes.",
+      "default": true
+    },
+    "showLoading": {
+      "type": "boolean",
+      "description": "Show the built-in ECharts loading animation.",
+      "default": false
+    },
+    "loadingOptions": {
+      "type": "object",
+      "description": "Options for the loading animation (text, color, etc.).",
+      "default": {}
+    },
+    "sanitizeTooltip": {
+      "type": "boolean",
+      "description": "Sanitises HTML in tooltip formatters and blocks non-http(s) links.",
+      "default": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label announced by screen readers.",
+      "default": ""
+    },
+    "maps": {
+      "type": "object",
+      "description": "Map definitions for map and geo series, keyed by map name. Each value is a GeoJSON FeatureCollection, or an object with an `svg` string. Set series.map (or geo.map) to the key.",
+      "default": {}
+    },
     "style": {
       "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
-      "default": { "classes": "" }
+      "default": {
+        "classes": ""
+      }
     }
   }
 }

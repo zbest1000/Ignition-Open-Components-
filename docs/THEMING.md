@@ -1,6 +1,6 @@
 # Theming
 
-Open ECharts uses Apache ECharts theming. Themes are registered via `echarts.registerTheme` and applied by setting the `theme` property on chart components.
+Open ECharts uses Apache ECharts theming. The module registers two built-in themes, applied by setting the `theme` property on a chart component. Changing `theme` re-creates the chart.
 
 ## Built-in Themes
 
@@ -27,6 +27,10 @@ Both themes include:
 - `line`, `bar`, `gauge` defaults
 - Semantic alarm/warning/ok colors in gauge ranges
 
+They do not style `radar`, `calendar` or the ECharts-GL 3D axes: on the dark theme, set those
+colours in the `option` (for example `radar.splitArea`, `calendar.itemStyle`,
+`xAxis3D.axisLabel.textStyle.color`).
+
 ## Using a Theme
 
 Set the `theme` property on your chart component to the theme name string:
@@ -41,35 +45,17 @@ or
 theme: "IgnitionIndustrialLight"
 ```
 
-## Custom Themes
+## Custom Styling
 
-1. Create a JSON object following the ECharts theme format.
-2. Use the Theme Builder at https://echarts.apache.org/en/theme-builder.html to generate or customize themes.
-3. Register the theme in a script (e.g., gateway script or custom script):
-   ```javascript
-   echarts.registerTheme('MyTheme', themeJson);
-   ```
-4. Set the `theme` property on your component to the registered theme name.
+Only the two built-in themes (and the ECharts default, with an empty `theme`) are available.
+Themes are part of the client bundle; the module has no theme storage on the gateway and does not
+currently provide a way to register additional named themes.
 
-## Theme JSON Structure Reference
-
-| Key | Description |
-|-----|-------------|
-| `color` | Array of color strings for the palette |
-| `textStyle` | Global text style (fontFamily, fontSize, color, etc.) |
-| `title` | Title component styling |
-| `legend` | Legend component styling |
-| `tooltip` | Tooltip styling |
-| `categoryAxis` | Category axis |
-| `valueAxis` | Value axis |
-| `timeAxis` | Time axis |
-| `logAxis` | Log axis |
-| `dataZoom` | Data zoom component |
-| `visualMap` | Visual map component |
-| `toolbox` | Toolbox component |
-| `line` | Line series defaults |
-| `bar` | Bar series defaults |
-| `gauge` | Gauge series defaults |
+To style a chart beyond the built-in themes, set the same keys directly in its `option` —
+`color`, `backgroundColor`, `textStyle`, and per-component styling such as `legend.textStyle` or
+`xAxis.axisLine`. Values in `option` override the theme. Keeping a shared style object in a
+session custom property or a project script and merging it into each option gives the effect of
+a custom theme.
 
 ## Industrial Theme Design Guidelines
 

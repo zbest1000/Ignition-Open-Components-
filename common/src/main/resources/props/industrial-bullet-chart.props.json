@@ -1,0 +1,168 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "option": {
+      "type": "object",
+      "description": "Advanced override. When non-empty, this ECharts option replaces the generated chart and the domain props are ignored.",
+      "default": {}
+    },
+    "items": {
+      "type": "array",
+      "description": "One bullet per item: objects { name, value, target, max, ranges, color }. max is the end of the item's scale (default: 120 % of the target); ranges are its band boundaries in the units of the value, e.g. [600, 900].",
+      "default": [
+        {
+          "name": "Line 1",
+          "value": 1180,
+          "target": 1200
+        },
+        {
+          "name": "Line 2",
+          "value": 860,
+          "target": 1000
+        },
+        {
+          "name": "Line 3",
+          "value": 1320,
+          "target": 1250
+        },
+        {
+          "name": "Line 4",
+          "value": 540,
+          "target": 900
+        }
+      ]
+    },
+    "title": {
+      "type": "string",
+      "description": "Chart title. Leave blank for none.",
+      "default": ""
+    },
+    "orientation": {
+      "type": "string",
+      "enum": [
+        "horizontal",
+        "vertical"
+      ],
+      "description": "Horizontal bars (one row per item) or vertical bars (one column per item).",
+      "default": "horizontal"
+    },
+    "unit": {
+      "type": "string",
+      "description": "Unit written after the values.",
+      "default": "pcs"
+    },
+    "decimals": {
+      "type": "integer",
+      "description": "Decimal places of the values.",
+      "default": 0
+    },
+    "percentOfTarget": {
+      "type": "boolean",
+      "description": "Draw every item as a percentage of its own target, so that all targets line up at 100 % and items with different targets or units can be compared. The labels keep the real values.",
+      "default": false
+    },
+    "ranges": {
+      "type": "array",
+      "description": "Boundaries between the qualitative bands in percent of the target, for items without their own ranges. [75, 95] gives poor below 75 %, acceptable up to 95 %, good above.",
+      "default": [
+        75,
+        95
+      ]
+    },
+    "bandColors": {
+      "type": "array",
+      "description": "Colours of the bands from the lowest to the highest.",
+      "default": [
+        "rgba(128,128,128,0.45)",
+        "rgba(128,128,128,0.28)",
+        "rgba(128,128,128,0.14)"
+      ]
+    },
+    "color": {
+      "type": "string",
+      "description": "Colour of the bars, for items without their own color.",
+      "default": "#5470c6"
+    },
+    "statusColors": {
+      "type": "array",
+      "description": "Optional. When set, a bar takes the colour of the band its value is in, lowest band first, e.g. [\"#e05252\", \"#e6a23c\", \"#3ba272\"].",
+      "default": []
+    },
+    "targetColor": {
+      "type": "string",
+      "description": "Colour of the target markers. They carry a thin light outline so that they show on any background.",
+      "default": "#262626"
+    },
+    "showValues": {
+      "type": "boolean",
+      "description": "Write each value, and its percentage of the target, beside its bar.",
+      "default": true
+    },
+    "theme": {
+      "type": "string",
+      "description": "Name of a registered ECharts theme. Built-in themes: IgnitionIndustrialDark, IgnitionIndustrialLight. Leave empty for the ECharts default theme.",
+      "default": ""
+    },
+    "renderer": {
+      "type": "string",
+      "enum": [
+        "canvas",
+        "svg"
+      ],
+      "description": "Rendering engine: canvas (better perf) or svg (better quality/export).",
+      "default": "canvas"
+    },
+    "autoResize": {
+      "type": "boolean",
+      "description": "Automatically resize chart when container dimensions change.",
+      "default": true
+    },
+    "resizeDebounceMs": {
+      "type": "integer",
+      "description": "Debounce interval in milliseconds for resize events.",
+      "default": 150
+    },
+    "notMerge": {
+      "type": "boolean",
+      "description": "If true, setOption will not merge with previous option but replace entirely.",
+      "default": false
+    },
+    "lazyUpdate": {
+      "type": "boolean",
+      "description": "If true, chart update is deferred for better performance during rapid changes.",
+      "default": true
+    },
+    "showLoading": {
+      "type": "boolean",
+      "description": "Show the built-in ECharts loading animation.",
+      "default": false
+    },
+    "loadingOptions": {
+      "type": "object",
+      "description": "Options for the loading animation (text, color, etc.).",
+      "default": {}
+    },
+    "sanitizeTooltip": {
+      "type": "boolean",
+      "description": "Sanitises HTML in tooltip formatters and blocks non-http(s) links.",
+      "default": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label announced by screen readers.",
+      "default": ""
+    },
+    "maps": {
+      "type": "object",
+      "description": "Map definitions for map and geo series, keyed by map name. Each value is a GeoJSON FeatureCollection, or an object with an `svg` string. Set series.map (or geo.map) to the key.",
+      "default": {}
+    },
+    "style": {
+      "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
+      "default": {
+        "classes": ""
+      }
+    }
+  }
+}

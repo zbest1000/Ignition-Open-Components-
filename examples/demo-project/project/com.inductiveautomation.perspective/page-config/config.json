@@ -1,0 +1,67 @@
+{
+  "pages": {
+    "/": {
+      "title": "Overview",
+      "viewPath": "Pages/Overview"
+    },
+    "/3d": {
+      "title": "3D \u0026 WebGL",
+      "viewPath": "Pages/ThreeD"
+    },
+    "/energy": {
+      "title": "Energy \u0026 Utilities",
+      "viewPath": "Pages/Energy"
+    },
+    "/gallery": {
+      "title": "Chart Gallery",
+      "viewPath": "Pages/Gallery"
+    },
+    "/line": {
+      "title": "Line Performance",
+      "viewPath": "Pages/Line"
+    },
+    "/quality": {
+      "title": "Quality",
+      "viewPath": "Pages/Quality"
+    },
+    "/schedule": {
+      "title": "Scheduling",
+      "viewPath": "Pages/Schedule"
+    }
+  },
+  "sharedDocks": {
+    "cornerPriority": "top-bottom",
+    "left": [
+      {
+        "anchor": "fixed",
+        "autoBreakpoint": 480,
+        "content": "push",
+        "handle": "hide",
+        "iconUrl": "",
+        "id": "nav",
+        "modal": false,
+        "resizable": false,
+        "show": "visible",
+        "size": 208,
+        "viewParams": {},
+        "viewPath": "Shell/NavRail"
+      }
+    ],
+    "top": [
+      {
+        "anchor": "fixed",
+        "autoBreakpoint": 480,
+        "content": "push",
+        "handle": "hide",
+        "iconUrl": "",
+        "id": "header",
+        "modal": false,
+        "resizable": false,
+        "show": "visible",
+        "size": 56,
+        "viewParams": {},
+        "viewPath": "Shell/Header"
+      }
+    ]
+  }
+}

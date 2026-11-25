@@ -1,0 +1,2346 @@
+{
+  "custom": {
+    "data": {}
+  },
+  "params": {},
+  "propConfig": {
+    "custom.data": {
+      "binding": {
+        "config": {
+          "expression": "runScript(\"demo.data.energy_page\", 5000, {session.custom.line})"
+        },
+        "type": "expr"
+      },
+      "persistent": false
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 1024,
+      "width": 1712
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "meta": {
+                  "name": "Eyebrow"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "style": {
+                    "classes": "Demo/Eyebrow"
+                  },
+                  "text": "Utilities"
+                },
+                "type": "ia.display.label"
+              },
+              {
+                "meta": {
+                  "name": "Title"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "style": {
+                    "classes": "Demo/PageTitle"
+                  },
+                  "text": "Energy \u0026 Utilities"
+                },
+                "type": "ia.display.label"
+              },
+              {
+                "meta": {
+                  "name": "Subtitle"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.meta.subtitle"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "style": {
+                    "classes": "Demo/PageSubtitle"
+                  }
+                },
+                "type": "ia.display.label"
+              }
+            ],
+            "meta": {
+              "name": "Titles"
+            },
+            "position": {
+              "basis": "0px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Stack"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "meta": {
+              "name": "Total"
+            },
+            "position": {
+              "basis": "auto",
+              "grow": 0,
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "config": {
+                    "path": "view.custom.data.balance.total"
+                  },
+                  "type": "property"
+                }
+              }
+            },
+            "props": {
+              "style": {
+                "classes": "Demo/Chip"
+              }
+            },
+            "type": "ia.display.label"
+          },
+          {
+            "meta": {
+              "name": "Useful"
+            },
+            "position": {
+              "basis": "auto",
+              "grow": 0,
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "config": {
+                    "path": "view.custom.data.balance.useful"
+                  },
+                  "type": "property"
+                }
+              }
+            },
+            "props": {
+              "style": {
+                "classes": "Demo/Chip"
+              }
+            },
+            "type": "ia.display.label"
+          }
+        ],
+        "meta": {
+          "name": "Heading"
+        },
+        "position": {
+          "basis": "auto",
+          "grow": 0,
+          "shrink": 0
+        },
+        "props": {
+          "alignItems": "flex-end",
+          "style": {
+            "classes": "Demo/Row"
+          }
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "meta": {
+                  "name": "Kpi"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.decimals": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.power.decimals"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.deltaLabel": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.power.deltaLabel"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.higherIsBetter": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.power.higherIsBetter"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.history": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.power.history"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.previous": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.power.previous"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.target": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.power.target"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.title": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.power.title"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.unit": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.power.unit"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.value": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.power.value"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "badColor": "#e05252",
+                  "color": "#6f8ce8",
+                  "goodColor": "#3ba272",
+                  "theme": "IgnitionIndustrialDark"
+                },
+                "type": "open.industrial.KpiTile"
+              }
+            ],
+            "meta": {
+              "name": "KpiPower"
+            },
+            "position": {
+              "basis": "172px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Tile",
+                "height": "112px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "children": [
+              {
+                "meta": {
+                  "name": "Kpi"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.decimals": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.intensity.decimals"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.deltaLabel": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.intensity.deltaLabel"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.higherIsBetter": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.intensity.higherIsBetter"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.history": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.intensity.history"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.previous": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.intensity.previous"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.target": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.intensity.target"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.title": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.intensity.title"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.unit": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.intensity.unit"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.value": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.intensity.value"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "badColor": "#e05252",
+                  "color": "#6f8ce8",
+                  "goodColor": "#3ba272",
+                  "theme": "IgnitionIndustrialDark"
+                },
+                "type": "open.industrial.KpiTile"
+              }
+            ],
+            "meta": {
+              "name": "KpiIntensity"
+            },
+            "position": {
+              "basis": "172px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Tile",
+                "height": "112px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "children": [
+              {
+                "meta": {
+                  "name": "Kpi"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.decimals": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.solar.decimals"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.deltaLabel": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.solar.deltaLabel"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.higherIsBetter": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.solar.higherIsBetter"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.history": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.solar.history"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.previous": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.solar.previous"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.target": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.solar.target"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.title": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.solar.title"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.unit": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.solar.unit"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.value": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.solar.value"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "badColor": "#e05252",
+                  "color": "#6f8ce8",
+                  "goodColor": "#3ba272",
+                  "theme": "IgnitionIndustrialDark"
+                },
+                "type": "open.industrial.KpiTile"
+              }
+            ],
+            "meta": {
+              "name": "KpiSolar"
+            },
+            "position": {
+              "basis": "172px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Tile",
+                "height": "112px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "children": [
+              {
+                "meta": {
+                  "name": "Kpi"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.decimals": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.peak.decimals"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.deltaLabel": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.peak.deltaLabel"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.higherIsBetter": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.peak.higherIsBetter"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.history": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.peak.history"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.previous": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.peak.previous"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.target": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.peak.target"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.title": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.peak.title"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.unit": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.peak.unit"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.value": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.peak.value"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "badColor": "#e05252",
+                  "color": "#6f8ce8",
+                  "goodColor": "#3ba272",
+                  "theme": "IgnitionIndustrialDark"
+                },
+                "type": "open.industrial.KpiTile"
+              }
+            ],
+            "meta": {
+              "name": "KpiPeak"
+            },
+            "position": {
+              "basis": "172px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Tile",
+                "height": "112px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "children": [
+              {
+                "meta": {
+                  "name": "Kpi"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.decimals": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.air.decimals"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.deltaLabel": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.air.deltaLabel"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.higherIsBetter": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.air.higherIsBetter"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.history": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.air.history"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.previous": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.air.previous"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.target": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.air.target"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.title": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.air.title"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.unit": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.air.unit"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.value": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.air.value"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "badColor": "#e05252",
+                  "color": "#6f8ce8",
+                  "goodColor": "#3ba272",
+                  "theme": "IgnitionIndustrialDark"
+                },
+                "type": "open.industrial.KpiTile"
+              }
+            ],
+            "meta": {
+              "name": "KpiAir"
+            },
+            "position": {
+              "basis": "172px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Tile",
+                "height": "112px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "children": [
+              {
+                "meta": {
+                  "name": "Kpi"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.decimals": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.energy.decimals"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.deltaLabel": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.energy.deltaLabel"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.higherIsBetter": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.energy.higherIsBetter"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.history": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.energy.history"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.previous": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.energy.previous"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.target": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.energy.target"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.title": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.energy.title"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.unit": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.energy.unit"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.value": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.energy.value"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "badColor": "#e05252",
+                  "color": "#6f8ce8",
+                  "goodColor": "#3ba272",
+                  "theme": "IgnitionIndustrialDark"
+                },
+                "type": "open.industrial.KpiTile"
+              }
+            ],
+            "meta": {
+              "name": "KpiEnergy"
+            },
+            "position": {
+              "basis": "172px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Tile",
+                "height": "112px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          }
+        ],
+        "meta": {
+          "name": "Kpis"
+        },
+        "position": {
+          "basis": "auto",
+          "grow": 0,
+          "shrink": 0
+        },
+        "props": {
+          "style": {
+            "classes": "Demo/Row"
+          },
+          "wrap": "wrap"
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "grow": 0,
+                      "shrink": 0
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardTitle"
+                      },
+                      "text": "Energy balance"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "Hint"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardHint"
+                      },
+                      "text": "grid and solar to useful work and losses  ·  last 24 h  ·  MWh"
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "Header"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "alignItems": "center",
+                  "style": {
+                    "classes": "Demo/CardHeader"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "meta": {
+                  "name": "Chart"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.decimals": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.flow.decimals"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.flows": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.flow.flows"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.unit": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.flow.unit"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "emphasis": "trajectory",
+                  "linkColor": "gradient",
+                  "nodeGap": 14,
+                  "nodeWidth": 14,
+                  "nodes": [
+                    {
+                      "color": "#74778f",
+                      "name": "Grid import"
+                    },
+                    {
+                      "color": "#e6e7ef",
+                      "name": "Solar PV"
+                    },
+                    {
+                      "color": "#a9acbf",
+                      "label": "Bus",
+                      "name": "Main bus"
+                    },
+                    {
+                      "color": "#6f8ce8",
+                      "name": "Line 1"
+                    },
+                    {
+                      "color": "#6f8ce8",
+                      "name": "Line 2"
+                    },
+                    {
+                      "color": "#6f8ce8",
+                      "name": "Line 3"
+                    },
+                    {
+                      "color": "#48b8d0",
+                      "name": "Compressed air"
+                    },
+                    {
+                      "color": "#b08bd9",
+                      "name": "Chillers"
+                    },
+                    {
+                      "color": "#d98bb6",
+                      "name": "Boilers"
+                    },
+                    {
+                      "color": "#5d6785",
+                      "name": "HVAC \u0026 lighting"
+                    },
+                    {
+                      "color": "#3ba272",
+                      "name": "Useful work"
+                    },
+                    {
+                      "color": "#e6a23c",
+                      "name": "Air leaks"
+                    },
+                    {
+                      "color": "#e05252",
+                      "name": "Losses"
+                    }
+                  ],
+                  "theme": "IgnitionIndustrialDark"
+                },
+                "type": "open.industrial.FlowDiagram"
+              }
+            ],
+            "meta": {
+              "name": "Flow"
+            },
+            "position": {
+              "basis": "640px",
+              "grow": 3,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Card",
+                "minHeight": "430px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "grow": 0,
+                      "shrink": 0
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardTitle"
+                      },
+                      "text": "Headers"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "Hint"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardHint"
+                      },
+                      "text": "pressure and temperature  ·  live"
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "Header"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "alignItems": "center",
+                  "style": {
+                    "classes": "Demo/CardHeader"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Air"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "propConfig": {
+                      "props.decimals": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.air.decimals"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.stages": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.air.stages"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.target": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.air.target"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.unit": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.air.unit"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.value": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.air.value"
+                          },
+                          "type": "property"
+                        }
+                      }
+                    },
+                    "props": {
+                      "color": "#6f8ce8",
+                      "max": 9,
+                      "min": 5,
+                      "style": {
+                        "minWidth": "0px"
+                      },
+                      "theme": "IgnitionIndustrialDark",
+                      "title": "Air header",
+                      "variant": "stages"
+                    },
+                    "type": "open.industrial.DialGauge"
+                  },
+                  {
+                    "meta": {
+                      "name": "Steam"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "propConfig": {
+                      "props.decimals": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.steam.decimals"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.stages": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.steam.stages"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.target": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.steam.target"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.unit": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.steam.unit"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.value": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.steam.value"
+                          },
+                          "type": "property"
+                        }
+                      }
+                    },
+                    "props": {
+                      "color": "#6f8ce8",
+                      "max": 11,
+                      "min": 6,
+                      "style": {
+                        "minWidth": "0px"
+                      },
+                      "theme": "IgnitionIndustrialDark",
+                      "title": "Steam header",
+                      "variant": "stages"
+                    },
+                    "type": "open.industrial.DialGauge"
+                  }
+                ],
+                "meta": {
+                  "name": "Pressures"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 3,
+                  "shrink": 1
+                },
+                "props": {
+                  "style": {
+                    "gap": "8px"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Chilled"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "propConfig": {
+                      "props.decimals": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.chilled.decimals"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.stages": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.chilled.stages"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.target": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.chilled.target"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.unit": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.chilled.unit"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.value": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.chilled.value"
+                          },
+                          "type": "property"
+                        }
+                      }
+                    },
+                    "props": {
+                      "color": "#6f8ce8",
+                      "max": 10,
+                      "min": 0,
+                      "style": {
+                        "minWidth": "0px"
+                      },
+                      "theme": "IgnitionIndustrialDark",
+                      "title": "Chilled water",
+                      "variant": "grade"
+                    },
+                    "type": "open.industrial.DialGauge"
+                  },
+                  {
+                    "meta": {
+                      "name": "Hot"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "propConfig": {
+                      "props.decimals": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.hot.decimals"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.stages": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.hot.stages"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.target": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.hot.target"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.unit": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.hot.unit"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.value": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.dials.hot.value"
+                          },
+                          "type": "property"
+                        }
+                      }
+                    },
+                    "props": {
+                      "color": "#6f8ce8",
+                      "max": 95,
+                      "min": 70,
+                      "style": {
+                        "minWidth": "0px"
+                      },
+                      "theme": "IgnitionIndustrialDark",
+                      "title": "Hot water loop",
+                      "variant": "grade"
+                    },
+                    "type": "open.industrial.DialGauge"
+                  }
+                ],
+                "meta": {
+                  "name": "Temperatures"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 3,
+                  "shrink": 1
+                },
+                "props": {
+                  "style": {
+                    "gap": "8px"
+                  }
+                },
+                "type": "ia.container.flex"
+              }
+            ],
+            "meta": {
+              "name": "Headers"
+            },
+            "position": {
+              "basis": "400px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Card",
+                "minHeight": "430px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          }
+        ],
+        "meta": {
+          "name": "Balance"
+        },
+        "position": {
+          "basis": "auto",
+          "grow": 3,
+          "shrink": 0
+        },
+        "props": {
+          "style": {
+            "classes": "Demo/Row"
+          },
+          "wrap": "wrap"
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "grow": 0,
+                      "shrink": 0
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardTitle"
+                      },
+                      "text": "Power by consumer"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "Hint"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardHint"
+                      },
+                      "text": "kW  ·  last 24 h (UTC)"
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "Header"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "alignItems": "center",
+                  "style": {
+                    "classes": "Demo/CardHeader"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "meta": {
+                  "name": "Chart"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.option.series[0].data": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.load.lines"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.option.series[1].data": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.load.air"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.option.series[2].data": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.load.chill"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.option.series[3].data": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.load.boil"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.option.series[4].data": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.load.hvac"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.option.series[4].markLine.data[0].yAxis": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.load.contract"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "option": {
+                    "grid": {
+                      "bottom": 56,
+                      "left": 52,
+                      "right": 18,
+                      "top": 28
+                    },
+                    "legend": {
+                      "bottom": 0,
+                      "icon": "roundRect",
+                      "itemGap": 14,
+                      "itemHeight": 8,
+                      "itemWidth": 12,
+                      "textStyle": {
+                        "color": "#a9acbf",
+                        "fontSize": 11
+                      }
+                    },
+                    "series": [
+                      {
+                        "areaStyle": {
+                          "color": "#6f8ce8",
+                          "opacity": 0.55
+                        },
+                        "data": [],
+                        "emphasis": {
+                          "focus": "series"
+                        },
+                        "itemStyle": {
+                          "color": "#6f8ce8"
+                        },
+                        "lineStyle": {
+                          "color": "#6f8ce8",
+                          "width": 1
+                        },
+                        "name": "Lines",
+                        "smooth": 0.25,
+                        "stack": "load",
+                        "symbol": "none",
+                        "type": "line"
+                      },
+                      {
+                        "areaStyle": {
+                          "color": "#48b8d0",
+                          "opacity": 0.55
+                        },
+                        "data": [],
+                        "emphasis": {
+                          "focus": "series"
+                        },
+                        "itemStyle": {
+                          "color": "#48b8d0"
+                        },
+                        "lineStyle": {
+                          "color": "#48b8d0",
+                          "width": 1
+                        },
+                        "name": "Compressed air",
+                        "smooth": 0.25,
+                        "stack": "load",
+                        "symbol": "none",
+                        "type": "line"
+                      },
+                      {
+                        "areaStyle": {
+                          "color": "#b08bd9",
+                          "opacity": 0.55
+                        },
+                        "data": [],
+                        "emphasis": {
+                          "focus": "series"
+                        },
+                        "itemStyle": {
+                          "color": "#b08bd9"
+                        },
+                        "lineStyle": {
+                          "color": "#b08bd9",
+                          "width": 1
+                        },
+                        "name": "Chillers",
+                        "smooth": 0.25,
+                        "stack": "load",
+                        "symbol": "none",
+                        "type": "line"
+                      },
+                      {
+                        "areaStyle": {
+                          "color": "#d98bb6",
+                          "opacity": 0.55
+                        },
+                        "data": [],
+                        "emphasis": {
+                          "focus": "series"
+                        },
+                        "itemStyle": {
+                          "color": "#d98bb6"
+                        },
+                        "lineStyle": {
+                          "color": "#d98bb6",
+                          "width": 1
+                        },
+                        "name": "Boilers",
+                        "smooth": 0.25,
+                        "stack": "load",
+                        "symbol": "none",
+                        "type": "line"
+                      },
+                      {
+                        "areaStyle": {
+                          "color": "#5d6785",
+                          "opacity": 0.55
+                        },
+                        "data": [],
+                        "emphasis": {
+                          "focus": "series"
+                        },
+                        "itemStyle": {
+                          "color": "#5d6785"
+                        },
+                        "lineStyle": {
+                          "color": "#5d6785",
+                          "width": 1
+                        },
+                        "markLine": {
+                          "data": [
+                            {
+                              "yAxis": 2400
+                            }
+                          ],
+                          "label": {
+                            "color": "#e05252",
+                            "fontSize": 11,
+                            "formatter": "Contract {c} kW",
+                            "position": "insideEndTop"
+                          },
+                          "lineStyle": {
+                            "color": "#e05252",
+                            "type": "dashed",
+                            "width": 1.5
+                          },
+                          "silent": true,
+                          "symbol": "none"
+                        },
+                        "name": "HVAC",
+                        "smooth": 0.25,
+                        "stack": "load",
+                        "symbol": "none",
+                        "type": "line"
+                      }
+                    ],
+                    "tooltip": {
+                      "trigger": "axis"
+                    },
+                    "xAxis": {
+                      "axisLabel": {
+                        "color": "#74778f",
+                        "fontSize": 11,
+                        "hideOverlap": true
+                      },
+                      "axisLine": {
+                        "lineStyle": {
+                          "color": "#3a3a58"
+                        }
+                      },
+                      "splitLine": {
+                        "show": false
+                      },
+                      "type": "time"
+                    },
+                    "yAxis": {
+                      "axisLabel": {
+                        "color": "#74778f",
+                        "fontSize": 11
+                      },
+                      "interval": 700,
+                      "max": 2800,
+                      "min": 0,
+                      "name": "kW",
+                      "nameTextStyle": {
+                        "color": "#74778f",
+                        "fontSize": 11
+                      },
+                      "splitLine": {
+                        "lineStyle": {
+                          "color": "#2a2a42"
+                        }
+                      },
+                      "type": "value"
+                    }
+                  },
+                  "theme": "IgnitionIndustrialDark"
+                },
+                "type": "open.echarts.LineChart"
+              }
+            ],
+            "meta": {
+              "name": "Profile"
+            },
+            "position": {
+              "basis": "480px",
+              "grow": 2,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Card",
+                "minHeight": "300px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "grow": 0,
+                      "shrink": 0
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardTitle"
+                      },
+                      "text": "Energy bridge"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "Hint"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardHint"
+                      },
+                      "text": "previous 24 h to last 24 h"
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "Header"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "alignItems": "center",
+                  "style": {
+                    "classes": "Demo/CardHeader"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "meta": {
+                  "name": "Chart"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.decimals": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.bridge.decimals"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.steps": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.bridge.steps"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.unit": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.bridge.unit"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "decreaseColor": "#3ba272",
+                  "increaseColor": "#e05252",
+                  "orientation": "horizontal",
+                  "startAtZero": false,
+                  "theme": "IgnitionIndustrialDark",
+                  "totalColor": "#6f8ce8"
+                },
+                "type": "open.industrial.Waterfall"
+              }
+            ],
+            "meta": {
+              "name": "Bridge"
+            },
+            "position": {
+              "basis": "320px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Card",
+                "minHeight": "300px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "grow": 0,
+                      "shrink": 0
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardTitle"
+                      },
+                      "text": "Load against capacity"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "Hint"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardHint"
+                      },
+                      "text": "live  ·  limit 85 %"
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "Header"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "alignItems": "center",
+                  "style": {
+                    "classes": "Demo/CardHeader"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "meta": {
+                  "name": "Chart"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.metrics": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.rings.metrics"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "centerTitle": "Highest",
+                  "decimals": 0,
+                  "labelPosition": "right",
+                  "summary": "max",
+                  "theme": "IgnitionIndustrialDark",
+                  "thresholds": [
+                    {
+                      "color": "#3ba272",
+                      "upTo": 75
+                    },
+                    {
+                      "color": "#e6a23c",
+                      "upTo": 90
+                    },
+                    {
+                      "color": "#e05252"
+                    }
+                  ],
+                  "unit": "%"
+                },
+                "type": "open.industrial.MetricRings"
+              }
+            ],
+            "meta": {
+              "name": "Capacity"
+            },
+            "position": {
+              "basis": "280px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Card",
+                "minHeight": "300px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          }
+        ],
+        "meta": {
+          "name": "Demand"
+        },
+        "position": {
+          "basis": "auto",
+          "grow": 2,
+          "shrink": 0
+        },
+        "props": {
+          "style": {
+            "classes": "Demo/Row"
+          },
+          "wrap": "wrap"
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "grow": 0,
+                      "shrink": 0
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardTitle"
+                      },
+                      "text": "Daily energy"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "Hint"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardHint"
+                      },
+                      "text": "site  ·  MWh per day  ·  last 26 weeks"
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "Header"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "alignItems": "center",
+                  "style": {
+                    "classes": "Demo/CardHeader"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "meta": {
+                  "name": "Chart"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.option.calendar.range": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.calendar.range"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.option.series[0].data": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.calendar.data"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.option.visualMap.max": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.calendar.max"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.option.visualMap.min": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.calendar.min"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "option": {
+                    "calendar": {
+                      "bottom": 44,
+                      "cellSize": [
+                        "auto",
+                        "auto"
+                      ],
+                      "dayLabel": {
+                        "color": "#74778f",
+                        "firstDay": 1,
+                        "fontSize": 10
+                      },
+                      "itemStyle": {
+                        "borderColor": "#1a1a2e",
+                        "borderWidth": 2,
+                        "color": "transparent"
+                      },
+                      "left": 44,
+                      "monthLabel": {
+                        "color": "#74778f",
+                        "fontSize": 11
+                      },
+                      "range": "2026",
+                      "right": 12,
+                      "splitLine": {
+                        "lineStyle": {
+                          "color": "#3a3a58",
+                          "width": 1
+                        }
+                      },
+                      "top": 26,
+                      "yearLabel": {
+                        "show": false
+                      }
+                    },
+                    "series": [
+                      {
+                        "coordinateSystem": "calendar",
+                        "data": [],
+                        "type": "heatmap"
+                      }
+                    ],
+                    "tooltip": {
+                      "formatter": "{c} MWh"
+                    },
+                    "visualMap": {
+                      "bottom": 0,
+                      "inRange": {
+                        "color": [
+                          "#22223a",
+                          "#6f8ce8",
+                          "#e6e7ef"
+                        ]
+                      },
+                      "itemHeight": 160,
+                      "itemWidth": 10,
+                      "left": "center",
+                      "max": 52,
+                      "min": 40,
+                      "orient": "horizontal",
+                      "text": [
+                        "more",
+                        "MWh / day  ·  less"
+                      ],
+                      "textStyle": {
+                        "color": "#74778f",
+                        "fontSize": 11
+                      },
+                      "type": "continuous"
+                    }
+                  },
+                  "theme": "IgnitionIndustrialDark"
+                },
+                "type": "open.echarts.CalendarChart"
+              }
+            ],
+            "meta": {
+              "name": "Daily"
+            },
+            "position": {
+              "basis": "600px",
+              "grow": 2,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Card",
+                "minHeight": "260px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "grow": 0,
+                      "shrink": 0
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardTitle"
+                      },
+                      "text": "Demand peaks"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "Hint"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardHint"
+                      },
+                      "text": "half hours above 90 % of contract  ·  4 weeks"
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "Header"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "alignItems": "center",
+                  "style": {
+                    "classes": "Demo/CardHeader"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "meta": {
+                  "name": "Chart"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.cells": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.peaks.cells"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.utcOffsetMinutes": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.peaks.utcOffsetMinutes"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.valueLabel": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.peaks.valueLabel"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "hourStep": 1,
+                  "showLegend": false,
+                  "theme": "IgnitionIndustrialDark"
+                },
+                "type": "open.industrial.EventHeatmap"
+              }
+            ],
+            "meta": {
+              "name": "Peaks"
+            },
+            "position": {
+              "basis": "440px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Card",
+                "minHeight": "260px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          }
+        ],
+        "meta": {
+          "name": "History"
+        },
+        "position": {
+          "basis": "auto",
+          "grow": 2,
+          "shrink": 0
+        },
+        "props": {
+          "style": {
+            "classes": "Demo/Row"
+          },
+          "wrap": "wrap"
+        },
+        "type": "ia.container.flex"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "classes": "Demo/Page"
+      }
+    },
+    "type": "ia.container.flex"
+  }
+}

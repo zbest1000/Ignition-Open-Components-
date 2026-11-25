@@ -1,35 +1,19 @@
 {
   "name": "onLegendSelectChanged",
-  "description": "Fired when a legend item's selected state changes.",
+  "description": "Fired when a legend item is toggled.",
   "schema": {
     "type": "object",
     "properties": {
-      "componentType": {
-        "type": "string",
-        "description": "ECharts component type emitting the event (e.g. 'legend')."
-      },
-      "seriesType": {
-        "type": "string",
-        "description": "Series type, when applicable."
-      },
-      "seriesIndex": {
-        "type": "integer",
-        "description": "Index of the series, when applicable."
-      },
-      "seriesName": {
-        "type": "string",
-        "description": "Series name, when applicable."
-      },
       "name": {
         "type": "string",
-        "description": "Name of the legend item whose selection changed."
+        "description": "Name of the legend item that was toggled."
       },
-      "dataIndex": {
-        "type": "integer",
-        "description": "Index of the data item, when applicable."
-      },
-      "value": {
-        "description": "Associated value, when applicable."
+      "selected": {
+        "type": "object",
+        "description": "Selected state of every legend item, keyed by name.",
+        "additionalProperties": {
+          "type": "boolean"
+        }
       }
     }
   }

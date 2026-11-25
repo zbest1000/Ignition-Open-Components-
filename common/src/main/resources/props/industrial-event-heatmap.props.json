@@ -1,0 +1,876 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "option": {
+      "type": "object",
+      "description": "Advanced override. When non-empty, this ECharts option replaces the generated chart and the domain props are ignored.",
+      "default": {}
+    },
+    "cells": {
+      "type": "array",
+      "description": "Pre-aggregated counts, one row per cell: { day, hour, value }. day is 1 = Monday .. 7 = Sunday (0 is also Sunday, so JavaScript getDay() and PostgreSQL dow values work) or an English day name / one of dayLabels; hour is 0..23. Rows for the same cell are summed; invalid rows are skipped. Ignored while timestamps has entries. Clear this when you bind timestamps, otherwise the sample data shows whenever the binding returns no events.",
+      "default": [
+        {
+          "day": "Mon",
+          "hour": 0,
+          "value": 4
+        },
+        {
+          "day": "Mon",
+          "hour": 1,
+          "value": 2
+        },
+        {
+          "day": "Mon",
+          "hour": 2,
+          "value": 3
+        },
+        {
+          "day": "Mon",
+          "hour": 4,
+          "value": 3
+        },
+        {
+          "day": "Mon",
+          "hour": 5,
+          "value": 16
+        },
+        {
+          "day": "Mon",
+          "hour": 6,
+          "value": 25
+        },
+        {
+          "day": "Mon",
+          "hour": 7,
+          "value": 23
+        },
+        {
+          "day": "Mon",
+          "hour": 8,
+          "value": 14
+        },
+        {
+          "day": "Mon",
+          "hour": 9,
+          "value": 9
+        },
+        {
+          "day": "Mon",
+          "hour": 10,
+          "value": 3
+        },
+        {
+          "day": "Mon",
+          "hour": 11,
+          "value": 4
+        },
+        {
+          "day": "Mon",
+          "hour": 12,
+          "value": 6
+        },
+        {
+          "day": "Mon",
+          "hour": 13,
+          "value": 8
+        },
+        {
+          "day": "Mon",
+          "hour": 14,
+          "value": 13
+        },
+        {
+          "day": "Mon",
+          "hour": 15,
+          "value": 10
+        },
+        {
+          "day": "Mon",
+          "hour": 16,
+          "value": 7
+        },
+        {
+          "day": "Mon",
+          "hour": 17,
+          "value": 3
+        },
+        {
+          "day": "Mon",
+          "hour": 18,
+          "value": 4
+        },
+        {
+          "day": "Mon",
+          "hour": 19,
+          "value": 5
+        },
+        {
+          "day": "Mon",
+          "hour": 20,
+          "value": 3
+        },
+        {
+          "day": "Mon",
+          "hour": 21,
+          "value": 8
+        },
+        {
+          "day": "Mon",
+          "hour": 22,
+          "value": 13
+        },
+        {
+          "day": "Mon",
+          "hour": 23,
+          "value": 10
+        },
+        {
+          "day": "Tue",
+          "hour": 0,
+          "value": 5
+        },
+        {
+          "day": "Tue",
+          "hour": 1,
+          "value": 3
+        },
+        {
+          "day": "Tue",
+          "hour": 2,
+          "value": 3
+        },
+        {
+          "day": "Tue",
+          "hour": 4,
+          "value": 1
+        },
+        {
+          "day": "Tue",
+          "hour": 5,
+          "value": 11
+        },
+        {
+          "day": "Tue",
+          "hour": 6,
+          "value": 18
+        },
+        {
+          "day": "Tue",
+          "hour": 7,
+          "value": 12
+        },
+        {
+          "day": "Tue",
+          "hour": 8,
+          "value": 6
+        },
+        {
+          "day": "Tue",
+          "hour": 9,
+          "value": 6
+        },
+        {
+          "day": "Tue",
+          "hour": 10,
+          "value": 2
+        },
+        {
+          "day": "Tue",
+          "hour": 11,
+          "value": 3
+        },
+        {
+          "day": "Tue",
+          "hour": 12,
+          "value": 4
+        },
+        {
+          "day": "Tue",
+          "hour": 13,
+          "value": 9
+        },
+        {
+          "day": "Tue",
+          "hour": 14,
+          "value": 15
+        },
+        {
+          "day": "Tue",
+          "hour": 15,
+          "value": 11
+        },
+        {
+          "day": "Tue",
+          "hour": 16,
+          "value": 7
+        },
+        {
+          "day": "Tue",
+          "hour": 17,
+          "value": 2
+        },
+        {
+          "day": "Tue",
+          "hour": 18,
+          "value": 3
+        },
+        {
+          "day": "Tue",
+          "hour": 19,
+          "value": 3
+        },
+        {
+          "day": "Tue",
+          "hour": 20,
+          "value": 5
+        },
+        {
+          "day": "Tue",
+          "hour": 21,
+          "value": 9
+        },
+        {
+          "day": "Tue",
+          "hour": 22,
+          "value": 13
+        },
+        {
+          "day": "Tue",
+          "hour": 23,
+          "value": 10
+        },
+        {
+          "day": "Wed",
+          "hour": 0,
+          "value": 6
+        },
+        {
+          "day": "Wed",
+          "hour": 1,
+          "value": 3
+        },
+        {
+          "day": "Wed",
+          "hour": 2,
+          "value": 3
+        },
+        {
+          "day": "Wed",
+          "hour": 3,
+          "value": 3
+        },
+        {
+          "day": "Wed",
+          "hour": 4,
+          "value": 4
+        },
+        {
+          "day": "Wed",
+          "hour": 5,
+          "value": 13
+        },
+        {
+          "day": "Wed",
+          "hour": 6,
+          "value": 20
+        },
+        {
+          "day": "Wed",
+          "hour": 7,
+          "value": 13
+        },
+        {
+          "day": "Wed",
+          "hour": 8,
+          "value": 7
+        },
+        {
+          "day": "Wed",
+          "hour": 9,
+          "value": 6
+        },
+        {
+          "day": "Wed",
+          "hour": 10,
+          "value": 6
+        },
+        {
+          "day": "Wed",
+          "hour": 11,
+          "value": 6
+        },
+        {
+          "day": "Wed",
+          "hour": 12,
+          "value": 7
+        },
+        {
+          "day": "Wed",
+          "hour": 13,
+          "value": 11
+        },
+        {
+          "day": "Wed",
+          "hour": 14,
+          "value": 16
+        },
+        {
+          "day": "Wed",
+          "hour": 15,
+          "value": 11
+        },
+        {
+          "day": "Wed",
+          "hour": 16,
+          "value": 7
+        },
+        {
+          "day": "Wed",
+          "hour": 17,
+          "value": 6
+        },
+        {
+          "day": "Wed",
+          "hour": 18,
+          "value": 6
+        },
+        {
+          "day": "Wed",
+          "hour": 19,
+          "value": 6
+        },
+        {
+          "day": "Wed",
+          "hour": 20,
+          "value": 6
+        },
+        {
+          "day": "Wed",
+          "hour": 21,
+          "value": 10
+        },
+        {
+          "day": "Wed",
+          "hour": 22,
+          "value": 14
+        },
+        {
+          "day": "Wed",
+          "hour": 23,
+          "value": 10
+        },
+        {
+          "day": "Thu",
+          "hour": 0,
+          "value": 3
+        },
+        {
+          "day": "Thu",
+          "hour": 2,
+          "value": 3
+        },
+        {
+          "day": "Thu",
+          "hour": 3,
+          "value": 3
+        },
+        {
+          "day": "Thu",
+          "hour": 4,
+          "value": 3
+        },
+        {
+          "day": "Thu",
+          "hour": 5,
+          "value": 11
+        },
+        {
+          "day": "Thu",
+          "hour": 6,
+          "value": 17
+        },
+        {
+          "day": "Thu",
+          "hour": 7,
+          "value": 10
+        },
+        {
+          "day": "Thu",
+          "hour": 8,
+          "value": 3
+        },
+        {
+          "day": "Thu",
+          "hour": 9,
+          "value": 6
+        },
+        {
+          "day": "Thu",
+          "hour": 10,
+          "value": 5
+        },
+        {
+          "day": "Thu",
+          "hour": 11,
+          "value": 5
+        },
+        {
+          "day": "Thu",
+          "hour": 12,
+          "value": 5
+        },
+        {
+          "day": "Thu",
+          "hour": 13,
+          "value": 9
+        },
+        {
+          "day": "Thu",
+          "hour": 14,
+          "value": 13
+        },
+        {
+          "day": "Thu",
+          "hour": 15,
+          "value": 8
+        },
+        {
+          "day": "Thu",
+          "hour": 16,
+          "value": 7
+        },
+        {
+          "day": "Thu",
+          "hour": 17,
+          "value": 5
+        },
+        {
+          "day": "Thu",
+          "hour": 18,
+          "value": 5
+        },
+        {
+          "day": "Thu",
+          "hour": 19,
+          "value": 4
+        },
+        {
+          "day": "Thu",
+          "hour": 20,
+          "value": 4
+        },
+        {
+          "day": "Thu",
+          "hour": 21,
+          "value": 7
+        },
+        {
+          "day": "Thu",
+          "hour": 22,
+          "value": 10
+        },
+        {
+          "day": "Thu",
+          "hour": 23,
+          "value": 10
+        },
+        {
+          "day": "Fri",
+          "hour": 0,
+          "value": 5
+        },
+        {
+          "day": "Fri",
+          "hour": 2,
+          "value": 3
+        },
+        {
+          "day": "Fri",
+          "hour": 3,
+          "value": 2
+        },
+        {
+          "day": "Fri",
+          "hour": 4,
+          "value": 2
+        },
+        {
+          "day": "Fri",
+          "hour": 5,
+          "value": 10
+        },
+        {
+          "day": "Fri",
+          "hour": 6,
+          "value": 19
+        },
+        {
+          "day": "Fri",
+          "hour": 7,
+          "value": 11
+        },
+        {
+          "day": "Fri",
+          "hour": 8,
+          "value": 4
+        },
+        {
+          "day": "Fri",
+          "hour": 9,
+          "value": 6
+        },
+        {
+          "day": "Fri",
+          "hour": 10,
+          "value": 5
+        },
+        {
+          "day": "Fri",
+          "hour": 11,
+          "value": 3
+        },
+        {
+          "day": "Fri",
+          "hour": 12,
+          "value": 3
+        },
+        {
+          "day": "Fri",
+          "hour": 13,
+          "value": 17
+        },
+        {
+          "day": "Fri",
+          "hour": 14,
+          "value": 20
+        },
+        {
+          "day": "Fri",
+          "hour": 15,
+          "value": 14
+        },
+        {
+          "day": "Fri",
+          "hour": 16,
+          "value": 13
+        },
+        {
+          "day": "Fri",
+          "hour": 17,
+          "value": 5
+        },
+        {
+          "day": "Fri",
+          "hour": 18,
+          "value": 3
+        },
+        {
+          "day": "Fri",
+          "hour": 19,
+          "value": 2
+        },
+        {
+          "day": "Fri",
+          "hour": 20,
+          "value": 6
+        },
+        {
+          "day": "Fri",
+          "hour": 21,
+          "value": 8
+        },
+        {
+          "day": "Fri",
+          "hour": 22,
+          "value": 11
+        },
+        {
+          "day": "Fri",
+          "hour": 23,
+          "value": 10
+        },
+        {
+          "day": "Sat",
+          "hour": 1,
+          "value": 1
+        },
+        {
+          "day": "Sat",
+          "hour": 2,
+          "value": 3
+        },
+        {
+          "day": "Sat",
+          "hour": 5,
+          "value": 4
+        },
+        {
+          "day": "Sat",
+          "hour": 7,
+          "value": 4
+        },
+        {
+          "day": "Sat",
+          "hour": 8,
+          "value": 1
+        },
+        {
+          "day": "Sat",
+          "hour": 10,
+          "value": 1
+        },
+        {
+          "day": "Sat",
+          "hour": 13,
+          "value": 1
+        },
+        {
+          "day": "Sat",
+          "hour": 14,
+          "value": 5
+        },
+        {
+          "day": "Sat",
+          "hour": 16,
+          "value": 3
+        },
+        {
+          "day": "Sat",
+          "hour": 17,
+          "value": 1
+        },
+        {
+          "day": "Sat",
+          "hour": 19,
+          "value": 2
+        },
+        {
+          "day": "Sat",
+          "hour": 22,
+          "value": 3
+        },
+        {
+          "day": "Sat",
+          "hour": 23,
+          "value": 4
+        },
+        {
+          "day": "Sun",
+          "hour": 1,
+          "value": 1
+        },
+        {
+          "day": "Sun",
+          "hour": 3,
+          "value": 1
+        },
+        {
+          "day": "Sun",
+          "hour": 4,
+          "value": 3
+        },
+        {
+          "day": "Sun",
+          "hour": 6,
+          "value": 5
+        },
+        {
+          "day": "Sun",
+          "hour": 7,
+          "value": 1
+        },
+        {
+          "day": "Sun",
+          "hour": 9,
+          "value": 3
+        },
+        {
+          "day": "Sun",
+          "hour": 10,
+          "value": 1
+        },
+        {
+          "day": "Sun",
+          "hour": 13,
+          "value": 3
+        },
+        {
+          "day": "Sun",
+          "hour": 15,
+          "value": 3
+        },
+        {
+          "day": "Sun",
+          "hour": 16,
+          "value": 3
+        },
+        {
+          "day": "Sun",
+          "hour": 18,
+          "value": 2
+        },
+        {
+          "day": "Sun",
+          "hour": 22,
+          "value": 3
+        }
+      ]
+    },
+    "timestamps": {
+      "type": "array",
+      "description": "Raw event times, bucketed by the component: epoch milliseconds, or ISO 8601 strings. Epoch values and strings with a zone (Z, +02:00) are instants and are shifted by utcOffsetMinutes; strings without a zone are taken as local wall-clock time exactly as written. Rows { timestamp | t_stamp | t, weight } are accepted too. When non-empty, replaces cells.",
+      "default": []
+    },
+    "weights": {
+      "type": "array",
+      "description": "Optional weight of each timestamp, in the same order (e.g. downtime minutes, reject quantity). Leave empty to count every event as 1. When set, events without a valid non-negative weight are skipped.",
+      "default": []
+    },
+    "utcOffsetMinutes": {
+      "type": "number",
+      "description": "Offset from UTC, in minutes, of the clock the hours and weekdays are read on (e.g. 60 for UTC+1, -300 for UTC-5). Applied to epoch and zoned timestamps. The zone of the browser or gateway is deliberately not used, so every client shows the same chart. A fixed offset does not follow daylight saving time: for data spanning a DST change, aggregate in the database and bind cells.",
+      "default": 0
+    },
+    "weekStart": {
+      "type": "string",
+      "enum": [
+        "monday",
+        "sunday"
+      ],
+      "description": "First day of the week (top row).",
+      "default": "monday"
+    },
+    "dayLabels": {
+      "type": "array",
+      "description": "Seven day labels, always Monday first (weekStart only changes the row order).",
+      "default": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ]
+    },
+    "hourStep": {
+      "type": "integer",
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        6
+      ],
+      "description": "Width of a column in hours: 1, 2, 3, 4 or 6.",
+      "default": 1
+    },
+    "colors": {
+      "type": "array",
+      "description": "Colour ramp from low to high counts (two or more colours). The default is one hue with rising opacity, so it reads low-to-high on light and dark themes alike. Cells with no events are always drawn in neutral grey, outside this ramp.",
+      "default": [
+        "rgba(47,125,225,0.18)",
+        "rgba(47,125,225,0.45)",
+        "rgba(47,125,225,0.75)",
+        "rgba(47,125,225,1)"
+      ]
+    },
+    "showValues": {
+      "type": "boolean",
+      "description": "Write the count in each cell. Best with larger components or a coarser hourStep.",
+      "default": false
+    },
+    "showTotals": {
+      "type": "boolean",
+      "description": "Show bars with the total per hour (above) and per day (right).",
+      "default": true
+    },
+    "showLegend": {
+      "type": "boolean",
+      "description": "Show the colour scale below the chart.",
+      "default": true
+    },
+    "max": {
+      "type": "number",
+      "description": "Count that gets the last colour of the ramp. 0 = automatic (the largest cell). Set a fixed value to keep colours comparable between periods.",
+      "default": 0
+    },
+    "valueLabel": {
+      "type": "string",
+      "description": "What is being counted, written after values in tooltips and the legend (e.g. alarms, stops, rejects).",
+      "default": "alarms"
+    },
+    "title": {
+      "type": "string",
+      "description": "Chart title. Leave blank for no title.",
+      "default": ""
+    },
+    "theme": {
+      "type": "string",
+      "description": "Name of a registered ECharts theme. Built-in themes: IgnitionIndustrialDark, IgnitionIndustrialLight. Leave empty for the ECharts default theme.",
+      "default": ""
+    },
+    "renderer": {
+      "type": "string",
+      "enum": [
+        "canvas",
+        "svg"
+      ],
+      "description": "Rendering engine: canvas (better perf) or svg (better quality/export).",
+      "default": "canvas"
+    },
+    "autoResize": {
+      "type": "boolean",
+      "description": "Automatically resize chart when container dimensions change.",
+      "default": true
+    },
+    "resizeDebounceMs": {
+      "type": "integer",
+      "description": "Debounce interval in milliseconds for resize events.",
+      "default": 150
+    },
+    "notMerge": {
+      "type": "boolean",
+      "description": "If true, setOption will not merge with previous option but replace entirely.",
+      "default": false
+    },
+    "lazyUpdate": {
+      "type": "boolean",
+      "description": "If true, chart update is deferred for better performance during rapid changes.",
+      "default": true
+    },
+    "showLoading": {
+      "type": "boolean",
+      "description": "Show the built-in ECharts loading animation.",
+      "default": false
+    },
+    "loadingOptions": {
+      "type": "object",
+      "description": "Options for the loading animation (text, color, etc.).",
+      "default": {}
+    },
+    "sanitizeTooltip": {
+      "type": "boolean",
+      "description": "Sanitises HTML in tooltip formatters and blocks non-http(s) links.",
+      "default": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label announced by screen readers.",
+      "default": ""
+    },
+    "maps": {
+      "type": "object",
+      "description": "Map definitions for map and geo series, keyed by map name. Each value is a GeoJSON FeatureCollection, or an object with an `svg` string. Set series.map (or geo.map) to the key.",
+      "default": {}
+    },
+    "style": {
+      "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
+      "default": {
+        "classes": ""
+      }
+    }
+  }
+}

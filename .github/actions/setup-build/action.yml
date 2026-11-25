@@ -1,0 +1,50 @@
+name: Set up build environment
+description: >
+  JDK 17, Gradle (with caching and wrapper validation) and, optionally, the Node.js version the
+  Gradle web build uses. Requires the repository to be checked out first.
+
+inputs:
+  node:
+    description: Install Node.js and restore the npm download cache ("true"/"false").
+    required: false
+    default: "true"
+
+outputs:
+  node-version:
+    description: Node.js version pinned in gradle/libs.versions.toml.
+    value: ${{ steps.versions.outputs.node }}
+
+runs:
+  using: composite
+  steps:
+    - name: Read pinned tool versions
+      id: versions
+      shell: bash
+      run: |
+        node=$(sed -n 's/^[[:space:]]*node[[:space:]]*=[[:space:]]*"\(.*\)".*/\1/p' gradle/libs.versions.toml)
+        if [ -z "$node" ]; then
+          echo "::error::No node version found in gradle/libs.versions.toml"
+          exit 1
+        fi
+        echo "node=$node" >> "$GITHUB_OUTPUT"
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+      with:
+        distribution: temurin
+        java-version: "17"
+
+    # Same Node.js version Gradle downloads for the web build; `cache: npm` caches ~/.npm,
+    # which survives `npm ci` (node_modules does not).
+    - name: Set up Node.js
+      if: inputs.node == 'true'
+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      with:
+        node-version: ${{ steps.versions.outputs.node }}
+        cache: npm
+        cache-dependency-path: web/package-lock.json
+
+    # Caches Gradle dependencies (written from the default branch only) and validates the
+    # wrapper jar checksum.
+    - name: Set up Gradle
+      uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1

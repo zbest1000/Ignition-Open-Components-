@@ -1,0 +1,175 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "option": {
+      "type": "object",
+      "description": "Advanced override. When non-empty, this ECharts option replaces the generated chart and the domain props are ignored.",
+      "default": {}
+    },
+    "steps": {
+      "type": "array",
+      "description": "Steps of the bridge, in order, as objects: { name, value, type? }. type \"delta\" (default) adds value to the running total; \"subtotal\" shows the running total; \"total\" shows the running total, or sets it when a value is given (use it for the opening total). Bind to your loss or variance data.",
+      "items": {
+        "type": "object"
+      },
+      "default": [
+        {
+          "name": "Planned time",
+          "value": 480,
+          "type": "total"
+        },
+        {
+          "name": "Breakdowns",
+          "value": -38
+        },
+        {
+          "name": "Changeover",
+          "value": -27
+        },
+        {
+          "name": "Run time",
+          "type": "subtotal"
+        },
+        {
+          "name": "Minor stops",
+          "value": -31
+        },
+        {
+          "name": "Reduced speed",
+          "value": -42
+        },
+        {
+          "name": "Scrap & rework",
+          "value": -14
+        },
+        {
+          "name": "Productive time",
+          "type": "total"
+        }
+      ]
+    },
+    "title": {
+      "type": "string",
+      "description": "Chart title. Leave blank for no title.",
+      "default": ""
+    },
+    "unit": {
+      "type": "string",
+      "description": "Unit of the values, shown on the value axis and in tooltips.",
+      "default": "min"
+    },
+    "decimals": {
+      "type": "integer",
+      "description": "Decimal places of the value labels and tooltips (0-10).",
+      "default": 0
+    },
+    "increaseColor": {
+      "type": "string",
+      "format": "color",
+      "description": "Colour of increases (positive deltas).",
+      "default": "#3ba272"
+    },
+    "decreaseColor": {
+      "type": "string",
+      "format": "color",
+      "description": "Colour of decreases (negative deltas).",
+      "default": "#ee6666"
+    },
+    "totalColor": {
+      "type": "string",
+      "format": "color",
+      "description": "Colour of total and subtotal bars.",
+      "default": "#5470c6"
+    },
+    "showValues": {
+      "type": "boolean",
+      "description": "Label each bar with its value; deltas carry a sign.",
+      "default": true
+    },
+    "showConnectors": {
+      "type": "boolean",
+      "description": "Draw thin lines carrying the running total from bar to bar.",
+      "default": true
+    },
+    "orientation": {
+      "type": "string",
+      "enum": [
+        "vertical",
+        "horizontal"
+      ],
+      "description": "vertical: bars rise from a category axis at the bottom. horizontal: steps run top to bottom, which suits long step names.",
+      "default": "vertical"
+    },
+    "startAtZero": {
+      "type": "boolean",
+      "description": "Start the value axis at zero. Turn off to zoom in on small changes of a large total; total bars are then cut off at the axis. Ignored when the running total crosses zero.",
+      "default": true
+    },
+    "theme": {
+      "type": "string",
+      "description": "Name of a registered ECharts theme. Built-in themes: IgnitionIndustrialDark, IgnitionIndustrialLight. Leave empty for the ECharts default theme.",
+      "default": ""
+    },
+    "renderer": {
+      "type": "string",
+      "enum": [
+        "canvas",
+        "svg"
+      ],
+      "description": "Rendering engine: canvas (better perf) or svg (better quality/export).",
+      "default": "canvas"
+    },
+    "autoResize": {
+      "type": "boolean",
+      "description": "Automatically resize chart when container dimensions change.",
+      "default": true
+    },
+    "resizeDebounceMs": {
+      "type": "integer",
+      "description": "Debounce interval in milliseconds for resize events.",
+      "default": 150
+    },
+    "notMerge": {
+      "type": "boolean",
+      "description": "If true, setOption will not merge with previous option but replace entirely.",
+      "default": false
+    },
+    "lazyUpdate": {
+      "type": "boolean",
+      "description": "If true, chart update is deferred for better performance during rapid changes.",
+      "default": true
+    },
+    "showLoading": {
+      "type": "boolean",
+      "description": "Show the built-in ECharts loading animation.",
+      "default": false
+    },
+    "loadingOptions": {
+      "type": "object",
+      "description": "Options for the loading animation (text, color, etc.).",
+      "default": {}
+    },
+    "sanitizeTooltip": {
+      "type": "boolean",
+      "description": "Sanitises HTML in tooltip formatters and blocks non-http(s) links.",
+      "default": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label announced by screen readers.",
+      "default": ""
+    },
+    "maps": {
+      "type": "object",
+      "description": "Map definitions for map and geo series, keyed by map name. Each value is a GeoJSON FeatureCollection, or an object with an `svg` string. Set series.map (or geo.map) to the key.",
+      "default": {}
+    },
+    "style": {
+      "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
+      "default": {
+        "classes": ""
+      }
+    }
+  }
+}

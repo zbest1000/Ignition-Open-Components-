@@ -27,10 +27,15 @@ web/.awcache/
 # Gradle
 .gradle/
 **/.gradle/
-gradle.properties
 
-# Module signing
-sign.props
+# Module signing material -- never commit (credentials live in ~/.gradle/gradle.properties)
+secrets/
+*.jks
+*.p12
+*.pfx
+*.p7b
+*.pem
+*.keystore
 
 # OS files
 .DS_Store
@@ -44,3 +49,7 @@ gateway/src/main/resources/mounted/*.css
 # Logs
 *.log
 yarn-error.log
+
+# Test coverage output
+coverage/
+**/coverage/

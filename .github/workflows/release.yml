@@ -1,65 +1,109 @@
 name: Release
 
+# Tags must be vX.Y.Z or vX.Y.Z-rcN -- the only release forms Ignition's version parser accepts
+# (v1.0.0-rc.1, v1.0.0-beta.2 etc. would build a module the gateway rejects).
 on:
   push:
     tags:
-      - "v[0-9]+.[0-9]+.[0-9]+*"
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+-rc[0-9]+"
 
-permissions:
-  contents: write
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
-env:
-  JAVA_VERSION: "17"
-  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true"
+permissions: {}
 
 jobs:
-  release:
-    name: Build & Publish Release
+  preflight:
+    name: Preflight
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.tag.outputs.version }}
+      prerelease: ${{ steps.tag.outputs.prerelease }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
 
-      - name: Validate Gradle wrapper
-        uses: gradle/actions/wrapper-validation@v6
-
-      - name: Extract version from tag
-        id: version
+      - name: Validate tag
+        id: tag
         run: |
-          TAG="${GITHUB_REF#refs/tags/v}"
-          echo "version=${TAG}" >> "$GITHUB_OUTPUT"
-          echo "tag=v${TAG}" >> "$GITHUB_OUTPUT"
-          echo "Building release version: ${TAG}"
+          if [[ ! "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-rc[0-9]+)?$ ]]; then
+            echo "::error::Tag '$GITHUB_REF_NAME' is not vX.Y.Z or vX.Y.Z-rcN"
+            exit 1
+          fi
+          version="${GITHUB_REF_NAME#v}"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if [[ "$version" == *-rc* ]]; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v5
+      - name: Require the tagged commit to be on main
+        run: |
+          git fetch --no-tags origin '+refs/heads/main:refs/remotes/origin/main'
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::$GITHUB_REF_NAME ($GITHUB_SHA) is not on main; releases are cut from main only."
+            exit 1
+          fi
+
+      - name: Require a changelog section
+        env:
+          MODULE_VERSION: ${{ steps.tag.outputs.version }}
+        run: bash .github/scripts/release-notes.sh "$MODULE_VERSION" > /dev/null
+
+  verify:
+    name: Build and verify
+    needs: preflight
+    permissions:
+      contents: read
+    uses: ./.github/workflows/build.yml
+    with:
+      version: ${{ needs.preflight.outputs.version }}
+
+  publish:
+    name: Sign and publish
+    needs: [preflight, verify]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Protected environment: holds the signing secrets and (if configured) requires approval.
+    environment: release
+    permissions:
+      contents: write      # create the GitHub Release
+      id-token: write      # build provenance attestation (Sigstore OIDC)
+      attestations: write  # store the attestation
+    env:
+      MODULE_VERSION: ${{ needs.preflight.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          distribution: temurin
-          java-version: ${{ env.JAVA_VERSION }}
+          persist-credentials: false
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v5
+      - name: Set up build environment
+        uses: ./.github/actions/setup-build
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}
-          restore-keys: gradle-${{ runner.os }}-
+          node: "false"
 
-      - name: Cache npm packages
-        uses: actions/cache@v5
+      # The exact module that passed lint, tests and checks in the verify job.
+      - name: Download verified module
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
-          path: web/node_modules
-          key: npm-${{ runner.os }}-${{ hashFiles('web/package-lock.json') }}
-          restore-keys: npm-${{ runner.os }}-
+          name: ${{ needs.verify.outputs.artifact-name }}
+          path: verified
 
-      - name: Build unsigned module
-        run: ./gradlew clean build -PmoduleVersion=${{ steps.version.outputs.version }}
-
-      - name: Sign module (if configured)
-        if: env.SIGNING_KEYSTORE_BASE64 != ''
+      # Signs the verified module in place of rebuilding it: -x zipModule makes signModule take
+      # build/Open-ECharts.unsigned.modl as is. Credentials go to ~/.gradle/gradle.properties
+      # (never onto a command line, where they would show up in process listings and logs).
+      - name: Sign module (when signing secrets are configured)
+        id: sign
         env:
           SIGNING_KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
           SIGNING_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
@@ -67,80 +111,113 @@ jobs:
           SIGNING_CERT_ALIAS: ${{ secrets.SIGNING_CERT_ALIAS }}
           SIGNING_CERT_PASSWORD: ${{ secrets.SIGNING_CERT_PASSWORD }}
         run: |
-          echo "$SIGNING_KEYSTORE_BASE64" | base64 -d > /tmp/keystore.jks
-          echo "$SIGNING_CERT_FILE_BASE64" | base64 -d > /tmp/cert.pem
-          ./gradlew signModule \
-            -PsignModule=true \
-            -Pignition.signing.keystoreFile=/tmp/keystore.jks \
-            -Pignition.signing.keystorePassword="$SIGNING_KEYSTORE_PASSWORD" \
-            -Pignition.signing.certFile=/tmp/cert.pem \
-            -Pignition.signing.certAlias="$SIGNING_CERT_ALIAS" \
-            -Pignition.signing.certPassword="$SIGNING_CERT_PASSWORD" \
-            -PmoduleVersion=${{ steps.version.outputs.version }}
-          rm -f /tmp/keystore.jks /tmp/cert.pem
+          mkdir -p build
+          cp "verified/Open-ECharts-${MODULE_VERSION}.unsigned.modl" build/Open-ECharts.unsigned.modl
 
-      - name: Prepare release artifacts
-        id: artifacts
-        run: |
-          MODL=$(find build -name '*.modl' | head -1)
-          BASENAME="Open-ECharts-${{ steps.version.outputs.version }}"
-
-          if echo "$MODL" | grep -q "unsigned"; then
-            FINAL="${BASENAME}.unsigned.modl"
-          else
-            FINAL="${BASENAME}.modl"
+          if [ -z "$SIGNING_KEYSTORE_BASE64" ]; then
+            echo "::warning::No signing secrets configured; publishing an UNSIGNED module."
+            echo "signed=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
+          for name in SIGNING_KEYSTORE_PASSWORD SIGNING_CERT_FILE_BASE64 SIGNING_CERT_ALIAS SIGNING_CERT_PASSWORD; do
+            if [ -z "${!name}" ]; then
+              echo "::error::SIGNING_KEYSTORE_BASE64 is set but $name is not; refusing a half-configured signing run."
+              exit 1
+            fi
+          done
 
-          cp "$MODL" "build/${FINAL}"
-          sha256sum "build/${FINAL}" > "build/${FINAL}.sha256"
+          umask 077
+          signing_dir="$RUNNER_TEMP/signing"
+          mkdir -p "$signing_dir" "$HOME/.gradle"
+          printf '%s' "$SIGNING_KEYSTORE_BASE64" | base64 --decode > "$signing_dir/keystore.jks"
+          printf '%s' "$SIGNING_CERT_FILE_BASE64" | base64 --decode > "$signing_dir/cert-chain"
 
-          echo "modl=build/${FINAL}" >> "$GITHUB_OUTPUT"
-          echo "checksum=build/${FINAL}.sha256" >> "$GITHUB_OUTPUT"
-          echo "name=${FINAL}" >> "$GITHUB_OUTPUT"
+          # Java .properties syntax: backslashes must be doubled.
+          prop() { printf '%s=%s\n' "$1" "${2//\\/\\\\}"; }
+          {
+            prop signModule true
+            prop ignition.signing.keystoreFile "$signing_dir/keystore.jks"
+            prop ignition.signing.keystorePassword "$SIGNING_KEYSTORE_PASSWORD"
+            prop ignition.signing.certFile "$signing_dir/cert-chain"
+            prop ignition.signing.certAlias "$SIGNING_CERT_ALIAS"
+            prop ignition.signing.certPassword "$SIGNING_CERT_PASSWORD"
+          } >> "$HOME/.gradle/gradle.properties"
 
-      - name: Generate release notes
-        id: notes
+          ./gradlew signModule -x zipModule -PmoduleVersion="$MODULE_VERSION"
+
+          test -f build/Open-ECharts.modl || { echo "::error::signModule produced no build/Open-ECharts.modl"; exit 1; }
+          unzip -l build/Open-ECharts.modl | grep -q 'signatures\.properties' \
+            || { echo "::error::build/Open-ECharts.modl carries no signatures.properties"; exit 1; }
+          echo "signed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Remove signing material
+        if: always()
         run: |
-          cat > /tmp/release-notes.md << 'NOTES'
-          ## Open ECharts ${{ steps.version.outputs.version }}
+          rm -rf "$RUNNER_TEMP/signing"
+          rm -f "$HOME/.gradle/gradle.properties"
 
-          ### Module Info
-          | Property | Value |
-          |----------|-------|
-          | Ignition SDK | 8.3.0 |
-          | Java | 17 |
-          | ECharts | 5.6.0 |
-          | ECharts-GL | 2.0.9 |
-          | Components | 40 (27 2D + 8 3D + 3 WebGL + 3 Industrial) |
+      - name: Stage release assets
+        id: assets
+        env:
+          SIGNED: ${{ steps.sign.outputs.signed }}
+        run: |
+          mkdir -p release
+          if [ "$SIGNED" = "true" ]; then
+            modl="Open-ECharts-${MODULE_VERSION}.modl"
+            cp build/Open-ECharts.modl "release/$modl"
+          else
+            modl="Open-ECharts-${MODULE_VERSION}.unsigned.modl"
+            cp build/Open-ECharts.unsigned.modl "release/$modl"
+          fi
+          cp "verified/Open-ECharts-${MODULE_VERSION}.sbom.cdx.json" release/
+          # Bare file name in the checksum file, so `sha256sum -c` works next to the download.
+          (cd release && sha256sum "$modl" > "$modl.sha256" && sha256sum -c "$modl.sha256")
+          echo "modl=$modl" >> "$GITHUB_OUTPUT"
+          ls -l release
 
-          ### Installation
-          1. Download the `.modl` file below
-          2. In your Ignition Gateway, go to **Config → Modules → Install or Upgrade a Module**
-          3. Upload the `.modl` file
-          4. Restart if prompted
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: release/${{ steps.assets.outputs.modl }}
 
-          ### Verify Integrity
-          ```
-          sha256sum -c Open-ECharts-${{ steps.version.outputs.version }}*.sha256
-          ```
-          NOTES
+      - name: Write release notes
+        env:
+          SIGNED: ${{ steps.sign.outputs.signed }}
+          MODL: ${{ steps.assets.outputs.modl }}
+        run: |
+          {
+            bash .github/scripts/release-notes.sh "$MODULE_VERSION"
+            echo
+            echo "---"
+            echo
+            if [ "$SIGNED" = "true" ]; then
+              echo "**\`$MODL\`** is signed."
+            else
+              echo "**\`$MODL\`** is **not signed**. A gateway only installs it when started with"
+              echo "\`-Dignition.allowunsignedmodules=true\` (development gateways only)."
+            fi
+            echo
+            echo "Verify the download:"
+            echo
+            echo '```bash'
+            echo "sha256sum -c $MODL.sha256"
+            echo "gh attestation verify $MODL --repo $GITHUB_REPOSITORY"
+            echo '```'
+            echo
+            echo "Installation: see [docs/INSTALL.md](https://github.com/$GITHUB_REPOSITORY/blob/$GITHUB_REF_NAME/docs/INSTALL.md)."
+          } > "$RUNNER_TEMP/release-notes.md"
+          cat "$RUNNER_TEMP/release-notes.md"
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v3
-        with:
-          tag_name: ${{ steps.version.outputs.tag }}
-          name: Open ECharts ${{ steps.version.outputs.version }}
-          body_path: /tmp/release-notes.md
-          draft: false
-          prerelease: ${{ contains(steps.version.outputs.version, '-') }}
-          files: |
-            ${{ steps.artifacts.outputs.modl }}
-            ${{ steps.artifacts.outputs.checksum }}
-
-      - name: Release summary
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PRERELEASE: ${{ needs.preflight.outputs.prerelease }}
         run: |
-          echo "## Release Published" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "**Version:** \`${{ steps.version.outputs.version }}\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "**Tag:** \`${{ steps.version.outputs.tag }}\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "**Artifact:** \`${{ steps.artifacts.outputs.name }}\`" >> "$GITHUB_STEP_SUMMARY"
+          flags=()
+          if [ "$PRERELEASE" = "true" ]; then flags+=(--prerelease); fi
+          gh release create "$GITHUB_REF_NAME" release/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --verify-tag \
+            --title "Open ECharts ${MODULE_VERSION}" \
+            --notes-file "$RUNNER_TEMP/release-notes.md" \
+            "${flags[@]}"

@@ -5,20 +5,109 @@
     "resources": {
       "type": "array",
       "description": "Resource names (Y axis rows).",
-      "items": { "type": "string" },
-      "default": ["Line 1", "Line 2", "Line 3", "Line 4"]
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "Line 1",
+        "Line 2",
+        "Line 3",
+        "Line 4"
+      ]
     },
     "timeSlots": {
       "type": "array",
       "description": "Time-slot labels (X axis columns).",
-      "items": { "type": "string" },
-      "default": ["06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"]
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "06:00",
+        "07:00",
+        "08:00",
+        "09:00",
+        "10:00",
+        "11:00",
+        "12:00",
+        "13:00",
+        "14:00",
+        "15:00",
+        "16:00",
+        "17:00",
+        "18:00"
+      ]
     },
     "utilization": {
       "type": "array",
-      "description": "Utilization matrix as rows of numbers (resources x timeSlots). Empty generates demo values. Bind to your data.",
-      "items": { "type": "array", "items": { "type": "number" } },
-      "default": []
+      "description": "Utilization matrix: one row of numbers per resource, one number per time slot (0 to maxValue). An empty matrix shows \"No data\". Bind to your data.",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      },
+      "default": [
+        [
+          62,
+          71,
+          85,
+          90,
+          88,
+          76,
+          40,
+          68,
+          82,
+          91,
+          87,
+          74,
+          58
+        ],
+        [
+          45,
+          58,
+          66,
+          72,
+          80,
+          79,
+          35,
+          61,
+          70,
+          77,
+          73,
+          64,
+          50
+        ],
+        [
+          88,
+          92,
+          95,
+          97,
+          93,
+          85,
+          55,
+          84,
+          90,
+          96,
+          94,
+          89,
+          78
+        ],
+        [
+          20,
+          34,
+          48,
+          55,
+          60,
+          52,
+          25,
+          44,
+          57,
+          63,
+          59,
+          41,
+          30
+        ]
+      ]
     },
     "maxValue": {
       "type": "number",
@@ -32,21 +121,73 @@
     },
     "option": {
       "type": "object",
-      "description": "Advanced override. If non-empty, this ECharts option is used verbatim and the domain props above are ignored.",
+      "description": "Advanced override. When non-empty, this ECharts option replaces the generated chart and the domain props are ignored.",
       "default": {}
     },
-    "theme": { "type": "string", "default": "" },
-    "renderer": { "type": "string", "enum": ["canvas", "svg"], "default": "canvas" },
-    "autoResize": { "type": "boolean", "default": true },
-    "resizeDebounceMs": { "type": "integer", "default": 150 },
-    "notMerge": { "type": "boolean", "default": false },
-    "lazyUpdate": { "type": "boolean", "default": true },
-    "showLoading": { "type": "boolean", "default": false },
-    "loadingOptions": { "type": "object", "default": {} },
-    "sanitizeTooltip": { "type": "boolean", "default": true },
+    "theme": {
+      "type": "string",
+      "description": "Name of a registered ECharts theme. Built-in themes: IgnitionIndustrialDark, IgnitionIndustrialLight. Leave empty for the ECharts default theme.",
+      "default": ""
+    },
+    "renderer": {
+      "type": "string",
+      "enum": [
+        "canvas",
+        "svg"
+      ],
+      "description": "Rendering engine: canvas (better perf) or svg (better quality/export).",
+      "default": "canvas"
+    },
+    "autoResize": {
+      "type": "boolean",
+      "description": "Automatically resize chart when container dimensions change.",
+      "default": true
+    },
+    "resizeDebounceMs": {
+      "type": "integer",
+      "description": "Debounce interval in milliseconds for resize events.",
+      "default": 150
+    },
+    "notMerge": {
+      "type": "boolean",
+      "description": "If true, setOption will not merge with previous option but replace entirely.",
+      "default": false
+    },
+    "lazyUpdate": {
+      "type": "boolean",
+      "description": "If true, chart update is deferred for better performance during rapid changes.",
+      "default": true
+    },
+    "showLoading": {
+      "type": "boolean",
+      "description": "Show the built-in ECharts loading animation.",
+      "default": false
+    },
+    "loadingOptions": {
+      "type": "object",
+      "description": "Options for the loading animation (text, color, etc.).",
+      "default": {}
+    },
+    "sanitizeTooltip": {
+      "type": "boolean",
+      "description": "Sanitises HTML in tooltip formatters and blocks non-http(s) links.",
+      "default": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label announced by screen readers.",
+      "default": ""
+    },
+    "maps": {
+      "type": "object",
+      "description": "Map definitions for map and geo series, keyed by map name. Each value is a GeoJSON FeatureCollection, or an object with an `svg` string. Set series.map (or geo.map) to the key.",
+      "default": {}
+    },
     "style": {
       "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
-      "default": { "classes": "" }
+      "default": {
+        "classes": ""
+      }
     }
   }
 }

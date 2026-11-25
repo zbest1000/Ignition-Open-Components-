@@ -1,0 +1,256 @@
+{
+  "custom": {},
+  "params": {},
+  "propConfig": {},
+  "props": {
+    "defaultSize": {
+      "height": 56,
+      "width": 1920
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "children": [
+          {
+            "meta": {
+              "name": "Icon"
+            },
+            "position": {
+              "basis": "20px",
+              "grow": 0,
+              "shrink": 0
+            },
+            "props": {
+              "color": "#ffffff",
+              "path": "material/bubble_chart"
+            },
+            "type": "ia.display.icon"
+          }
+        ],
+        "meta": {
+          "name": "BrandMark"
+        },
+        "position": {
+          "basis": "30px",
+          "grow": 0,
+          "shrink": 0
+        },
+        "props": {
+          "alignItems": "center",
+          "justify": "center",
+          "style": {
+            "classes": "Demo/BrandMark",
+            "height": "30px"
+          }
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "children": [
+          {
+            "meta": {
+              "name": "Plant"
+            },
+            "position": {
+              "basis": "auto",
+              "grow": 0,
+              "shrink": 0
+            },
+            "props": {
+              "style": {
+                "classes": "Demo/HeaderBrand"
+              },
+              "text": "Meridian Bottling Plant"
+            },
+            "type": "ia.display.label"
+          },
+          {
+            "meta": {
+              "name": "Product"
+            },
+            "position": {
+              "basis": "auto",
+              "grow": 0,
+              "shrink": 0
+            },
+            "props": {
+              "style": {
+                "classes": "Demo/HeaderMeta"
+              },
+              "text": "Open ECharts Demo"
+            },
+            "type": "ia.display.label"
+          }
+        ],
+        "meta": {
+          "name": "Brand"
+        },
+        "position": {
+          "basis": "auto",
+          "grow": 0,
+          "shrink": 0
+        },
+        "props": {
+          "direction": "column",
+          "justify": "center"
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "children": [],
+        "meta": {
+          "name": "Spacer"
+        },
+        "position": {
+          "basis": "0px",
+          "grow": 1,
+          "shrink": 1
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "meta": {
+          "name": "LineLabel"
+        },
+        "position": {
+          "basis": "auto",
+          "grow": 0,
+          "shrink": 0
+        },
+        "props": {
+          "style": {
+            "classes": "Demo/Eyebrow"
+          },
+          "text": "Line"
+        },
+        "type": "ia.display.label"
+      },
+      {
+        "meta": {
+          "name": "LineSelector"
+        },
+        "position": {
+          "basis": "230px",
+          "grow": 0,
+          "shrink": 0
+        },
+        "propConfig": {
+          "props.value": {
+            "binding": {
+              "config": {
+                "bidirectional": true,
+                "path": "session.custom.line"
+              },
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "options": [
+            {
+              "label": "Line 1  ·  Glass 330 mL",
+              "value": "L1"
+            },
+            {
+              "label": "Line 2  ·  PET 1.5 L",
+              "value": "L2"
+            },
+            {
+              "label": "Line 3  ·  Cans 500 mL",
+              "value": "L3"
+            }
+          ],
+          "showClearIcon": false,
+          "style": {
+            "height": "34px"
+          }
+        },
+        "type": "ia.input.dropdown"
+      },
+      {
+        "children": [
+          {
+            "meta": {
+              "name": "Time"
+            },
+            "position": {
+              "basis": "auto",
+              "grow": 0,
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "config": {
+                    "expression": "dateFormat(now(1000), \"HH:mm:ss\")"
+                  },
+                  "type": "expr"
+                }
+              }
+            },
+            "props": {
+              "style": {
+                "classes": "Demo/HeaderClock"
+              }
+            },
+            "type": "ia.display.label"
+          },
+          {
+            "meta": {
+              "name": "Date"
+            },
+            "position": {
+              "basis": "auto",
+              "grow": 0,
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "config": {
+                    "expression": "dateFormat(now(30000), \"EEE d MMM yyyy\")"
+                  },
+                  "type": "expr"
+                }
+              }
+            },
+            "props": {
+              "style": {
+                "classes": "Demo/HeaderMeta"
+              }
+            },
+            "type": "ia.display.label"
+          }
+        ],
+        "meta": {
+          "name": "Clock"
+        },
+        "position": {
+          "basis": "auto",
+          "grow": 0,
+          "shrink": 0
+        },
+        "props": {
+          "alignItems": "flex-end",
+          "direction": "column",
+          "justify": "center",
+          "style": {
+            "marginLeft": "8px"
+          }
+        },
+        "type": "ia.container.flex"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "alignItems": "center",
+      "style": {
+        "classes": "Demo/Header"
+      }
+    },
+    "type": "ia.container.flex"
+  }
+}

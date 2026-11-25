@@ -1,61 +1,76 @@
 # Security
 
-Open ECharts applies security measures to protect Perspective sessions from XSS and code injection when options are supplied from external or untrusted sources.
+What Open ECharts does to protect Perspective sessions when a chart `option` contains data from
+tags, databases or user input — and what it does not do.
 
-## Option Sanitisation
+## Option sanitising (`sanitizeTooltip`)
 
-Option sanitisation removes or limits dangerous content from ECharts option objects before they are passed to the chart engine.
+`sanitizeTooltip` is `true` by default. ECharts treats almost every option value as plain data,
+but some values reach the page as HTML, CSS or a URL. Those are what the sanitiser changes. The
+rules go by property name, so they apply at every level of the option (global, series, data
+item, ...). A value that fails a rule is removed, not repaired.
 
-### What It Does
+| Option value | Treatment |
+|--------------|-----------|
+| Tooltip HTML: `formatter` / `content` of a `tooltip` object, a `tooltip` given as a string, and the toolbox data view's `title` / `lang` | Sanitised with [DOMPurify](https://github.com/cure53/DOMPurify): scripts and event-handler attributes are removed, as are `<style>`, forms and form controls. A `style` attribute that could fetch something is removed. A URL attribute containing a template variable (`{b}`, `{c}`, ...) is removed unless the text before the variable already fixes scheme and host (`/icons/{b}.png` is kept, `https://{b}/x` is removed). |
+| `link` / `sublink` (title, treemap and sunburst nodes, series, levels) | Kept only if `http`, `https` or relative |
+| Colours: every property with `color` in its name, `fill`, `stroke` — as a string or in a palette array | Must be a single CSS value: dropped if it contains `<`, `>`, `;`, `{`, `}`, quotes, or anything that fetches (`url(...)` etc.). ECharts 6.1 writes tooltip colours into a `style` attribute without escaping them. |
+| Text and box style: `fontFamily`, `fontSize`, `fontWeight`, `padding`, `borderRadius`, `borderWidth`, ..., and any other string inside a `tooltip` object (except `className` and `appendTo`) | Same single-CSS-value rule (`fontFamily` may contain quotes) |
+| `tooltip.extraCssText` | Dropped if it could fetch an external resource or contains `@`, a backslash or a comment |
+| SVG maps in the `maps` property | Sanitised with DOMPurify's SVG profile before they are registered |
+| Function values | Dropped (props arriving from the gateway are JSON and cannot contain them anyway) |
 
-- **Strips functions**: All function-type values are removed recursively from the option tree.
-- **Caps sizes**: Arrays, strings, and nesting depth are limited to prevent DoS or memory exhaustion.
+Left exactly as given: `dataset.source`, and data rows that are plain value tuples such as
+`[x, y]`. ECharts HTML-escapes data values, names and categories itself when it puts them into a
+tooltip, including through `{a}` / `{b}` / `{c}` templates. Nothing is truncated.
 
-### Why It Matters
+A tooltip with `renderMode: "richText"` is drawn on the canvas, so its formatters are left as
+written; the component re-creates the chart if such an option follows one with an HTML tooltip.
 
-ECharts options can contain JavaScript functions (e.g., formatters, callbacks). If options come from tags, databases, or user input, they could be used to inject and execute arbitrary code in the browser. Sanitisation prevents this in Perspective sessions.
+Turning `sanitizeTooltip` on or off re-applies the whole option (a zoom or legend selection made
+in the chart is reset once).
 
-### Default Behavior
+### What it is not
 
-`sanitizeTooltip` is `true` by default. This strips all function-type values recursively from the option object before it is used.
+It is **not a sandbox**, and it does not make an untrusted `option` safe in general:
 
-### What Gets Stripped
+- It does not judge the *content* of a chart. Whoever controls the option controls what the
+  chart shows, including text that looks like part of your UI and links to any http(s) site.
+- Remote images are allowed: formatter HTML may contain `<img src="https://...">`, and an option
+  can use image URLs as symbols or graphic elements. The browser requests them, which tells that
+  server a session is open.
+- `tooltip.className` and `tooltip.appendTo` are not checked.
+- A very large or deeply nested option can still make the browser slow; no size limits are applied.
 
-- Tooltip formatter functions
-- Label callbacks
-- `renderItem` functions
-- Any function anywhere in the option tree
+If option content can be influenced by someone you do not trust, build the option in a script or
+binding you control and insert only the data values, rather than binding a whole `option` (or a
+formatter string) to that source.
 
-### Size Caps
+### Turning it off
 
-| Type | Limit |
-|------|-------|
-| Arrays | 5,000 items |
-| Strings | 50,000 characters |
-| Nesting depth | 20 levels |
+`sanitizeTooltip=false` passes the option, and SVG maps, to ECharts unchanged. Only do this when
+every part of the option comes from sources you control.
 
-### Circular Reference Detection
+## Event payloads
 
-Circular references in option objects are detected and handled to prevent infinite loops during sanitisation.
+Events passed to Perspective scripts contain only a fixed set of documented fields per event
+(see [COMPONENTS.md](COMPONENTS.md#shared-events)), copied as plain JSON data. DOM nodes,
+functions and ECharts internals are never included, and the parts that grow with the data are
+bounded (no `children` subtree in mouse events, at most 1000 indices per series in
+`onBrushSelected`).
 
-### Event Payload Sanitisation
+## Gateway surface
 
-Event payloads from ECharts are sanitised before being passed to Perspective scripts:
+The module adds no REST or servlet endpoints to the gateway and stores nothing on it. It serves
+its static JavaScript/CSS bundle through Perspective's resource mechanism. Themes are part of
+that bundle.
 
-- Only whitelisted keys are extracted
-- DOM and window references are excluded
+## No CDN dependency
 
-## When to Disable
+All chart libraries are bundled in the module; nothing is loaded from external hosts at runtime.
 
-Advanced users who fully control their option sources (e.g., options from trusted gateway scripts only) can set `sanitizeTooltip=false` to allow functions in options. This should only be done when:
+## Verifying a release
 
-- Options are not derived from tags, databases, or user input
-- You understand the security implications
-
-## No CDN Dependency
-
-All ECharts assets are bundled in the module. No external network calls are made for chart libraries. This reduces supply-chain and network-related risks.
-
-## Module Signing
-
-For production deployments, signing the module is recommended. See CONTRIBUTING.md for details.
+Each release provides a `.sha256` checksum, a CycloneDX SBOM of the bundled JavaScript libraries,
+and a GitHub build provenance attestation. Production gateways should run a signed module. See
+[INSTALL.md](INSTALL.md#2-download).

@@ -1,0 +1,184 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "option": {
+      "type": "object",
+      "description": "Advanced override. When non-empty, this ECharts option replaces the generated chart and the domain props are ignored.",
+      "default": {}
+    },
+    "title": {
+      "type": "string",
+      "description": "Caption above the value.",
+      "default": "Throughput"
+    },
+    "value": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "The number shown. When null, the last point of history is shown.",
+      "default": 1284
+    },
+    "unit": {
+      "type": "string",
+      "description": "Unit written after the value.",
+      "default": "units/h"
+    },
+    "decimals": {
+      "type": "integer",
+      "description": "Decimal places of the value.",
+      "default": 0
+    },
+    "previous": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Value of the previous period. When set, the change is measured against it.",
+      "default": 1210
+    },
+    "target": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Target value. The change is measured against it when previous is null, and it is drawn as a dashed line in the sparkline when it is near the history.",
+      "default": null
+    },
+    "deltaFormat": {
+      "type": "string",
+      "enum": [
+        "percent",
+        "absolute"
+      ],
+      "description": "Show the change in percent of the reference, or as a difference in the unit of the value.",
+      "default": "percent"
+    },
+    "deltaLabel": {
+      "type": "string",
+      "description": "Text after the change, e.g. \"vs last shift\". Blank gives \"vs previous\" or \"vs target\".",
+      "default": ""
+    },
+    "higherIsBetter": {
+      "type": "boolean",
+      "description": "True colours an increase as good and a decrease as bad; false the other way round (scrap, downtime, energy).",
+      "default": true
+    },
+    "history": {
+      "type": "array",
+      "description": "Recent values for the sparkline, oldest first: numbers, [time, value] pairs, or objects with a value.",
+      "default": [
+        1180,
+        1204,
+        1196,
+        1221,
+        1240,
+        1232,
+        1215,
+        1190,
+        1172,
+        1198,
+        1226,
+        1251,
+        1263,
+        1244,
+        1239,
+        1258,
+        1270,
+        1262,
+        1249,
+        1266,
+        1281,
+        1275,
+        1290,
+        1284
+      ]
+    },
+    "showSparkline": {
+      "type": "boolean",
+      "description": "Draw the history as a sparkline below the numbers.",
+      "default": true
+    },
+    "color": {
+      "type": "string",
+      "description": "Colour of the sparkline.",
+      "default": "#5470c6"
+    },
+    "goodColor": {
+      "type": "string",
+      "description": "Colour of a change in the wanted direction.",
+      "default": "#3ba272"
+    },
+    "badColor": {
+      "type": "string",
+      "description": "Colour of a change in the unwanted direction.",
+      "default": "#e05252"
+    },
+    "theme": {
+      "type": "string",
+      "description": "Name of a registered ECharts theme. Built-in themes: IgnitionIndustrialDark, IgnitionIndustrialLight. Leave empty for the ECharts default theme.",
+      "default": ""
+    },
+    "renderer": {
+      "type": "string",
+      "enum": [
+        "canvas",
+        "svg"
+      ],
+      "description": "Rendering engine: canvas (better perf) or svg (better quality/export).",
+      "default": "canvas"
+    },
+    "autoResize": {
+      "type": "boolean",
+      "description": "Automatically resize chart when container dimensions change.",
+      "default": true
+    },
+    "resizeDebounceMs": {
+      "type": "integer",
+      "description": "Debounce interval in milliseconds for resize events.",
+      "default": 150
+    },
+    "notMerge": {
+      "type": "boolean",
+      "description": "If true, setOption will not merge with previous option but replace entirely.",
+      "default": false
+    },
+    "lazyUpdate": {
+      "type": "boolean",
+      "description": "If true, chart update is deferred for better performance during rapid changes.",
+      "default": true
+    },
+    "showLoading": {
+      "type": "boolean",
+      "description": "Show the built-in ECharts loading animation.",
+      "default": false
+    },
+    "loadingOptions": {
+      "type": "object",
+      "description": "Options for the loading animation (text, color, etc.).",
+      "default": {}
+    },
+    "sanitizeTooltip": {
+      "type": "boolean",
+      "description": "Sanitises HTML in tooltip formatters and blocks non-http(s) links.",
+      "default": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label announced by screen readers.",
+      "default": ""
+    },
+    "maps": {
+      "type": "object",
+      "description": "Map definitions for map and geo series, keyed by map name. Each value is a GeoJSON FeatureCollection, or an object with an `svg` string. Set series.map (or geo.map) to the key.",
+      "default": {}
+    },
+    "style": {
+      "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
+      "default": {
+        "classes": ""
+      }
+    }
+  }
+}

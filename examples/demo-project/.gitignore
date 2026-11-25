@@ -1,0 +1,9 @@
+# The repository ignores every dist/ folder; the importable project archive is kept on purpose.
+!dist/
+dist/*
+!dist/OpenEChartsDemo.zip
+
+# Tool by-products
+__pycache__/
+*.pyc
+screenshots/*.html

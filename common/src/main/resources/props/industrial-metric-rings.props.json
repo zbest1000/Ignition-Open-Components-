@@ -1,0 +1,193 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "option": {
+      "type": "object",
+      "description": "Advanced override. When non-empty, this ECharts option replaces the generated chart and the domain props are ignored.",
+      "default": {}
+    },
+    "metrics": {
+      "type": "array",
+      "description": "One ring per metric, outermost first: objects { name, value, min, max, target, color, unit, decimals, thresholds }. Only name and value are needed; the rest override the shared props for that ring. Bind value to a tag. At most 12 metrics are drawn.",
+      "default": [
+        {
+          "name": "Power",
+          "value": 73,
+          "target": 80
+        },
+        {
+          "name": "Steam",
+          "value": 81,
+          "target": 75
+        },
+        {
+          "name": "Chilled water",
+          "value": 54,
+          "target": 70
+        },
+        {
+          "name": "Compressed air",
+          "value": 68,
+          "target": 85
+        }
+      ]
+    },
+    "min": {
+      "type": "number",
+      "description": "Start of the scale for metrics without their own min.",
+      "default": 0
+    },
+    "max": {
+      "type": "number",
+      "description": "End of the scale (a full ring) for metrics without their own max.",
+      "default": 100
+    },
+    "unit": {
+      "type": "string",
+      "description": "Unit written after the values, for metrics without their own unit.",
+      "default": "%"
+    },
+    "decimals": {
+      "type": "integer",
+      "description": "Decimal places of the values, for metrics without their own decimals.",
+      "default": 0
+    },
+    "centerTitle": {
+      "type": "string",
+      "description": "Caption below the value in the centre.",
+      "default": "Average load"
+    },
+    "centerValue": {
+      "type": [
+        "number",
+        "string",
+        "null"
+      ],
+      "description": "A number (formatted with decimals and unit) or a text shown in the centre instead of the calculated summary. Null to calculate.",
+      "default": null
+    },
+    "summary": {
+      "type": "string",
+      "enum": [
+        "product",
+        "average",
+        "min",
+        "max",
+        "sum",
+        "none"
+      ],
+      "description": "The value calculated for the centre. product multiplies the fill of the rings as fractions and gives a percentage (the OEE rule); average, min, max and sum work on the values as given; none shows only the caption.",
+      "default": "average"
+    },
+    "thresholds": {
+      "type": "array",
+      "description": "Colours rings by their value, overriding the metric colours. Value bands as objects { upTo, color }. A value takes the colour of the first band, in ascending order of upTo, whose upTo is greater than it; a band without upTo takes everything above. Example: [{\"upTo\": 60, \"color\": \"#e05252\"}, {\"upTo\": 85, \"color\": \"#e6a23c\"}, {\"color\": \"#3ba272\"}].",
+      "default": []
+    },
+    "showLabels": {
+      "type": "boolean",
+      "description": "List the value and name of every metric beside the rings.",
+      "default": true
+    },
+    "labelPosition": {
+      "type": "string",
+      "enum": [
+        "bottom",
+        "right"
+      ],
+      "description": "Where the list of values goes: below the rings, or to their right for a wide component.",
+      "default": "bottom"
+    },
+    "showTargets": {
+      "type": "boolean",
+      "description": "Mark the target of each metric that has one on its ring.",
+      "default": true
+    },
+    "ringThickness": {
+      "type": "number",
+      "description": "Thickness of all rings together in percent of the outer radius (5-90). 0 chooses it from the number of rings.",
+      "default": 0
+    },
+    "ringGap": {
+      "type": "number",
+      "description": "Space between two rings in percent of the room one ring has (0-90).",
+      "default": 25
+    },
+    "startAngle": {
+      "type": "number",
+      "description": "Angle in degrees where the rings start: 90 is the top, 0 the right, 180 the left. The rings run clockwise.",
+      "default": 90
+    },
+    "sweep": {
+      "type": "number",
+      "description": "Angle in degrees a full ring covers (30-360). 360 is a closed ring; startAngle 225 with sweep 270 gives a gauge that is open at the bottom.",
+      "default": 360
+    },
+    "theme": {
+      "type": "string",
+      "description": "Name of a registered ECharts theme. Built-in themes: IgnitionIndustrialDark, IgnitionIndustrialLight. Leave empty for the ECharts default theme.",
+      "default": ""
+    },
+    "renderer": {
+      "type": "string",
+      "enum": [
+        "canvas",
+        "svg"
+      ],
+      "description": "Rendering engine: canvas (better perf) or svg (better quality/export).",
+      "default": "canvas"
+    },
+    "autoResize": {
+      "type": "boolean",
+      "description": "Automatically resize chart when container dimensions change.",
+      "default": true
+    },
+    "resizeDebounceMs": {
+      "type": "integer",
+      "description": "Debounce interval in milliseconds for resize events.",
+      "default": 150
+    },
+    "notMerge": {
+      "type": "boolean",
+      "description": "If true, setOption will not merge with previous option but replace entirely.",
+      "default": false
+    },
+    "lazyUpdate": {
+      "type": "boolean",
+      "description": "If true, chart update is deferred for better performance during rapid changes.",
+      "default": true
+    },
+    "showLoading": {
+      "type": "boolean",
+      "description": "Show the built-in ECharts loading animation.",
+      "default": false
+    },
+    "loadingOptions": {
+      "type": "object",
+      "description": "Options for the loading animation (text, color, etc.).",
+      "default": {}
+    },
+    "sanitizeTooltip": {
+      "type": "boolean",
+      "description": "Sanitises HTML in tooltip formatters and blocks non-http(s) links.",
+      "default": true
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label announced by screen readers.",
+      "default": ""
+    },
+    "maps": {
+      "type": "object",
+      "description": "Map definitions for map and geo series, keyed by map name. Each value is a GeoJSON FeatureCollection, or an object with an `svg` string. Set series.map (or geo.map) to the key.",
+      "default": {}
+    },
+    "style": {
+      "$ref": "urn:ignition-schema:schemas/style-properties.schema.json",
+      "default": {
+        "classes": ""
+      }
+    }
+  }
+}

@@ -1,0 +1,261 @@
+{
+  "name": "MeridianDemo",
+  "tagType": "Folder",
+  "tags": [
+    {
+      "name": "L1",
+      "tagType": "Folder",
+      "tags": [
+        {
+          "name": "Speed",
+          "tagType": "AtomicTag",
+          "valueSource": "expr",
+          "dataType": "Float8",
+          "engUnit": "bph",
+          "expression": "if({[.]Running}, 34000 + 1400 * sin((getMinute(now(1000)) * 60 + getSecond(now(1000))) / 95.0), 0)"
+        },
+        {
+          "name": "SpeedSetpoint",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Float8",
+          "engUnit": "bph",
+          "value": 34200
+        },
+        {
+          "name": "Running",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Boolean",
+          "value": true
+        },
+        {
+          "name": "State",
+          "tagType": "AtomicTag",
+          "valueSource": "expr",
+          "dataType": "String",
+          "expression": "if({[.]Running}, \"Running\", \"Stopped\")"
+        },
+        {
+          "name": "Availability",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Float8",
+          "engUnit": "%",
+          "value": 87.7
+        },
+        {
+          "name": "Performance",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Float8",
+          "engUnit": "%",
+          "value": 91.6
+        },
+        {
+          "name": "Quality",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Float8",
+          "engUnit": "%",
+          "value": 98.7
+        },
+        {
+          "name": "GoodCount",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Int8",
+          "value": 216439
+        },
+        {
+          "name": "ScrapPercent",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Float8",
+          "engUnit": "%",
+          "value": 1.28
+        }
+      ]
+    },
+    {
+      "name": "L2",
+      "tagType": "Folder",
+      "tags": [
+        {
+          "name": "Speed",
+          "tagType": "AtomicTag",
+          "valueSource": "expr",
+          "dataType": "Float8",
+          "engUnit": "bph",
+          "expression": "if({[.]Running}, 22600 + 900 * sin((getMinute(now(1000)) * 60 + getSecond(now(1000))) / 120.0), 0)"
+        },
+        {
+          "name": "SpeedSetpoint",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Float8",
+          "engUnit": "bph",
+          "value": 22800
+        },
+        {
+          "name": "Running",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Boolean",
+          "value": true
+        },
+        {
+          "name": "State",
+          "tagType": "AtomicTag",
+          "valueSource": "expr",
+          "dataType": "String",
+          "expression": "if({[.]Running}, \"Running\", \"Stopped\")"
+        },
+        {
+          "name": "Availability",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Float8",
+          "engUnit": "%",
+          "value": 89.4
+        },
+        {
+          "name": "Performance",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Float8",
+          "engUnit": "%",
+          "value": 92.3
+        },
+        {
+          "name": "Quality",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Float8",
+          "engUnit": "%",
+          "value": 98.2
+        },
+        {
+          "name": "GoodCount",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Int8",
+          "value": 151600
+        },
+        {
+          "name": "ScrapPercent",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Float8",
+          "engUnit": "%",
+          "value": 1.82
+        }
+      ]
+    },
+    {
+      "name": "L3",
+      "tagType": "Folder",
+      "tags": [
+        {
+          "name": "Speed",
+          "tagType": "AtomicTag",
+          "valueSource": "expr",
+          "dataType": "Float8",
+          "engUnit": "cph",
+          "expression": "if({[.]Running}, 56500 + 2200 * sin((getMinute(now(1000)) * 60 + getSecond(now(1000))) / 80.0), 0)"
+        },
+        {
+          "name": "SpeedSetpoint",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Float8",
+          "engUnit": "cph",
+          "value": 57000
+        },
+        {
+          "name": "Running",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Boolean",
+          "value": true
+        },
+        {
+          "name": "State",
+          "tagType": "AtomicTag",
+          "valueSource": "expr",
+          "dataType": "String",
+          "expression": "if({[.]Running}, \"Running\", \"Stopped\")"
+        },
+        {
+          "name": "Availability",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Float8",
+          "engUnit": "%",
+          "value": 88.1
+        },
+        {
+          "name": "Performance",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Float8",
+          "engUnit": "%",
+          "value": 93.0
+        },
+        {
+          "name": "Quality",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Float8",
+          "engUnit": "%",
+          "value": 98.9
+        },
+        {
+          "name": "GoodCount",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Int8",
+          "value": 376100
+        },
+        {
+          "name": "ScrapPercent",
+          "tagType": "AtomicTag",
+          "valueSource": "memory",
+          "dataType": "Float8",
+          "engUnit": "%",
+          "value": 1.12
+        }
+      ]
+    },
+    {
+      "name": "Utilities",
+      "tagType": "Folder",
+      "tags": [
+        {
+          "name": "CompressedAir",
+          "tagType": "AtomicTag",
+          "valueSource": "expr",
+          "dataType": "Float8",
+          "engUnit": "bar",
+          "expression": "6.9 + 0.3 * sin((getMinute(now(1000)) * 60 + getSecond(now(1000))) / 140.0)"
+        },
+        {
+          "name": "ChilledWater",
+          "tagType": "AtomicTag",
+          "valueSource": "expr",
+          "dataType": "Float8",
+          "engUnit": "degC",
+          "expression": "3.8 + 0.8 * sin((getMinute(now(1000)) * 60 + getSecond(now(1000))) / 210.0)"
+        },
+        {
+          "name": "SteamHeader",
+          "tagType": "AtomicTag",
+          "valueSource": "expr",
+          "dataType": "Float8",
+          "engUnit": "bar",
+          "expression": "8.4 + 0.4 * sin((getMinute(now(1000)) * 60 + getSecond(now(1000))) / 170.0)"
+        }
+      ]
+    }
+  ]
+}

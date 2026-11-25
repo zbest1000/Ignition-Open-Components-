@@ -1,52 +1,98 @@
 # Open ECharts — Component Reference
 
-Comprehensive component reference for the **Open ECharts** Ignition Perspective module, which provides 40 chart components built on Apache ECharts 5.6.0 and ECharts-GL 2.0.9.
+Component reference for the **Open ECharts** Ignition Perspective module: 57 chart components built on Apache ECharts 6.1.0 and ECharts-GL 2.1.0.
 
 ---
 
 ## Overview
 
-Open ECharts uses a shared architecture centered on an **AbstractEChartComponent** base class. All chart components extend this base and share the same props interface, ensuring consistent behavior and configuration across the library. Each component provides:
+All components share one runtime and the same base properties and events. They are defined in a single manifest (`common/src/main/resources/components.manifest.json`), which gives each one:
 
-- **Default option** — A preconfigured ECharts option object tailored to its chart type
-- **Palette category** — Determines where the component appears in the Perspective designer palette (e.g., "Open Components / ECharts", "Open Components / ECharts 3D", "Open Components / Industrial")
+- **Default option** — the chart a component shows when dropped from the palette, specific to its chart type. A saved view whose `option` is empty shows it too.
+- **Palette category** — *Open Components / ECharts*, *ECharts 3D*, *Industrial* or *Scheduling*
+- **Default size**
 
-Components accept any valid ECharts option via the `option` prop; the default option serves as a starting point and can be fully overridden or merged.
+The ECharts components take any valid ECharts option in `option`. The industrial and scheduling components build their option from domain properties (`tasks`, `events`, `values`, ...) instead; see [Industrial](#industrial) and [Scheduling](#scheduling). The option examples in this document are illustrative starting points, not a copy of each default.
+
+The 11 components in *ECharts 3D* need ECharts-GL, which the browser downloads from the gateway the first time one of them is shown.
 
 ---
 
 ## Shared Properties
 
-All components share the following properties (from the props schema):
+All components have the following properties:
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
-| `option` | object | Varies per component | ECharts option JSON. Fully configurable; default varies per component. |
-| `theme` | string | `""` | Theme name. Supported values: `""`, `"IgnitionIndustrialDark"`, `"IgnitionIndustrialLight"`, or any custom registered theme. |
+| `option` | object | Varies per component | ECharts option. Left empty (`{}`), an ECharts component draws its default option. On industrial / scheduling components it is an advanced override: when non-empty it replaces the generated chart. |
+| `theme` | string | `""` | `"IgnitionIndustrialDark"`, `"IgnitionIndustrialLight"`, or `""` for the ECharts default. Changing it re-creates the chart. |
 | `renderer` | string | `"canvas"` | Rendering backend: `"canvas"` or `"svg"`. |
-| `autoResize` | boolean | `true` | When true, automatically resizes the chart when the container changes via ResizeObserver. |
+| `autoResize` | boolean | `true` | Resize the chart when its container changes size. |
 | `resizeDebounceMs` | integer | `150` | Debounce delay (ms) for resize handling. |
-| `notMerge` | boolean | `false` | When true, replaces the option entirely on update instead of merging. |
-| `lazyUpdate` | boolean | `true` | Defers updates for better performance. |
-| `showLoading` | boolean | `false` | Shows ECharts loading animation when true. |
-| `loadingOptions` | object | — | ECharts loading animation options (e.g., text, color, maskColor). |
-| `sanitizeTooltip` | boolean | `true` | Strips JavaScript functions from the option for security. |
+| `notMerge` | boolean | `false` | `true`: every update replaces the whole option. `false`: updates are merged into the current option, except `series`, which is replaced — a series removed from the option disappears from the chart. |
+| `lazyUpdate` | boolean | `true` | Applies an update on the next animation frame; of several changes within a frame only the latest is applied (after 500 ms if the tab gets no frame). `false` applies each change immediately. |
+| `showLoading` | boolean | `false` | Shows the ECharts loading animation. |
+| `loadingOptions` | object | `{}` | Loading animation options (text, color, maskColor, ...). |
+| `sanitizeTooltip` | boolean | `true` | Sanitises tooltip and data-view HTML, link URLs, colour and tooltip style strings, and SVG maps. Not a sandbox; see [SECURITY.md](SECURITY.md). Toggling it re-applies the whole option, which resets zoom once. |
+| `ariaLabel` | string | `""` | Accessible label announced by screen readers. |
+| `maps` | object | `{}` | Maps for `map`, `geo`, `map3D` and `geo3D`, keyed by map name. See [Maps](#maps). |
+
+### Maps
+
+ECharts ships no map geometry. Put each map in `maps` under a name and refer to that name in the
+option (`series.map`, `geo.map`, `geo3D.map`). A value is one of:
+
+- a GeoJSON FeatureCollection (regions are matched to data by `properties.name`)
+- `{ "geoJSON": <FeatureCollection>, "specialAreas": { ... } }`
+- `{ "svg": "<svg ...>...</svg>" }` (for `map` / `geo`; sanitised while `sanitizeTooltip` is `true`)
+
+```json
+{
+  "maps": {
+    "plant": {
+      "type": "FeatureCollection",
+      "features": [
+        { "type": "Feature", "properties": { "name": "North" },
+          "geometry": { "type": "Polygon", "coordinates": [[[0, 2], [3, 2], [3, 3], [0, 3], [0, 2]]] } },
+        { "type": "Feature", "properties": { "name": "South" },
+          "geometry": { "type": "Polygon", "coordinates": [[[0, 0], [3, 0], [3, 1], [0, 1], [0, 0]]] } }
+      ]
+    }
+  },
+  "option": {
+    "visualMap": { "min": 0, "max": 100 },
+    "series": [{ "type": "map", "map": "plant", "data": [{ "name": "North", "value": 80 }, { "name": "South", "value": 35 }] }]
+  }
+}
+```
+
+Map names are global to the browser page, not to a component: two components that register
+different maps under the same name overwrite each other, so give each map a unique name.
+Malformed entries are ignored. Changing a map re-applies the option in full, which resets zoom once.
+
+A chart whose option cannot be drawn shows the ECharts error message in place of the chart and
+redraws when the option is corrected. The 3D / WebGL components show "Loading chart…" while
+ECharts-GL downloads.
+
+Accessibility: ECharts' generated chart description (`aria.enabled`) is on by default; set `aria` in the option to configure or disable it.
 
 ---
 
 ## Shared Events
 
-All components emit the following events with the indicated payload shapes:
+All components emit the following events. Payloads contain only these fields, as plain JSON values; a field is omitted when ECharts does not supply it.
 
-| Event | Payload |
-|-------|---------|
-| `onClick` | `{ componentType, seriesType, seriesIndex, seriesName, name, dataIndex, value }` |
-| `onDoubleClick` | Same shape as `onClick` |
-| `onMouseOver` | Same shape as `onClick` |
-| `onMouseOut` | Same shape as `onClick` |
-| `onLegendSelectChanged` | Legend selection change payload |
-| `onDataZoom` | Data zoom range payload |
-| `onBrushSelected` | Brush selection payload |
+| Event | Payload fields |
+|-------|----------------|
+| `onClick`, `onDoubleClick`, `onMouseOver`, `onMouseOut` | `componentType`, `seriesType`, `seriesIndex`, `seriesName`, `name`, `dataIndex`, `data`, `dataType`, `value`, `color`, `percent` |
+| `onLegendSelectChanged` | `name` (the legend item toggled), `selected` (map of series name to boolean) |
+| `onDataZoom` | `start`, `end` (percent), `startValue`, `endValue`, `dataZoomId`, and `batch`: a list of entries with the same fields when the zoom came from a mouse/touch action |
+| `onBrushSelected` | `batch`: a list of entries with `brushId`, `brushIndex`, `brushName`, `areas`, `selected` |
+
+Two parts are bounded because payloads travel to the gateway. In mouse events, `data` is the data
+item without its `children` (for tree, treemap and sunburst nodes). In `onBrushSelected`, each
+`selected[]` entry's `dataIndex` holds at most the first 1000 selected indices and `dataIndexCount`
+the total; the event fires at most once per 100 ms while the brush moves, with the latest selection.
 
 ---
 
@@ -491,18 +537,10 @@ All components emit the following events with the indicated payload shapes:
 - **Palette category:** Open Components / ECharts
 - **Default size:** 600x400
 - **Description:** Custom series for user-defined rendering logic.
-- **Default option example:**
-```json
-{
-  "xAxis": {},
-  "yAxis": {},
-  "series": [{
-    "type": "custom",
-    "renderItem": "function (params, api) { return { type: 'rect', shape: api.coord([0, 0], [1, 1]) }; }",
-    "data": [[0, 0, 1, 1]]
-  }]
-}
-```
+- **Limitation:** a `custom` series needs a `renderItem` JavaScript function. Perspective
+  properties are JSON and cannot hold functions (a function written as a string is not
+  executed), so this component cannot currently draw custom series from the Designer. Use
+  `GraphicChart` for static shapes.
 
 #### 23. GraphicChart
 - **Component name:** GraphicChart
@@ -553,14 +591,16 @@ All components emit the following events with the indicated payload shapes:
 - **Palette category:** Open Components / ECharts
 - **Default size:** 700x500
 - **Description:** Geo maps with scatter, heatmap, and region series.
-- **Default option example:**
+- **Needs map data:** supply it in the [`maps`](#maps) property; the component drops with a
+  placeholder title until then.
+- **Default option example** (with a map named `plant` in `maps`):
 ```json
 {
-  "geo": { "map": "china", "roam": true },
+  "geo": { "map": "plant", "roam": true },
   "series": [{
     "type": "scatter",
     "coordinateSystem": "geo",
-    "data": [[116.4, 39.9, 100], [121.5, 31.2, 80]]
+    "data": [[1.5, 2.5, 100], [1.5, 0.5, 80]]
   }]
 }
 ```
@@ -570,16 +610,17 @@ All components emit the following events with the indicated payload shapes:
 - **Component ID:** `open.echarts.LinesChart`
 - **Palette category:** Open Components / ECharts
 - **Default size:** 700x500
-- **Description:** Lines on geo (flight paths, migration, etc.).
-- **Default option example:**
+- **Description:** Lines on geo (flight paths, migration, etc.). The default draws routes on a
+  cartesian grid, which needs no map.
+- **Default option example** (on a map named `plant` in [`maps`](#maps)):
 ```json
 {
-  "geo": { "map": "china" },
+  "geo": { "map": "plant" },
   "series": [{
     "type": "lines",
     "coordinateSystem": "geo",
     "data": [
-      { "coords": [[116.4, 39.9], [121.5, 31.2]], "lineStyle": {} }
+      { "coords": [[0.5, 0.5], [2.5, 2.5]] }
     ]
   }]
 }
@@ -666,7 +707,7 @@ Palette category: **Open Components / ECharts 3D**
   "grid3D": {},
   "series": [{
     "type": "surface",
-    "data": []
+    "data": [[0, 0, 0], [1, 0, 1], [2, 0, 0], [0, 1, 1], [1, 1, 2], [2, 1, 1], [0, 2, 0], [1, 2, 1], [2, 2, 0]]
   }]
 }
 ```
@@ -677,15 +718,12 @@ Palette category: **Open Components / ECharts 3D**
 - **Palette category:** Open Components / ECharts 3D
 - **Default size:** 700x500
 - **Description:** 3D map visualization.
-- **Default option example:**
+- **Needs map data:** supply it in the [`maps`](#maps) property; the component drops with a
+  placeholder title until then.
+- **Default option example** (with a map named `plant` in `maps`):
 ```json
 {
-  "geo3D": { "map": "china", "boxHeight": 10 },
-  "series": [{
-    "type": "scatter3D",
-    "coordinateSystem": "geo3D",
-    "data": [[116.4, 39.9, 100]]
-  }]
+  "series": [{ "type": "map3D", "map": "plant", "regionHeight": 3 }]
 }
 ```
 
@@ -698,12 +736,12 @@ Palette category: **Open Components / ECharts 3D**
 - **Default option example:**
 ```json
 {
-  "globe": {
-    "baseTexture": "",
-    "heightTexture": "",
-    "displacementScale": 0.1
-  },
-  "series": []
+  "globe": { "baseColor": "#3b6cb5", "shading": "color" },
+  "series": [{
+    "type": "scatter3D",
+    "coordinateSystem": "globe",
+    "data": [[-0.13, 51.5, 0], [139.7, 35.7, 0]]
+  }]
 }
 ```
 
@@ -716,11 +754,11 @@ Palette category: **Open Components / ECharts 3D**
 - **Default option example:**
 ```json
 {
-  "globe": {},
+  "globe": { "baseColor": "#3b6cb5", "shading": "color" },
   "series": [{
     "type": "lines3D",
     "coordinateSystem": "globe",
-    "data": []
+    "data": [[[-0.13, 51.5], [55.3, 25.2]]]
   }]
 }
 ```
@@ -730,17 +768,17 @@ Palette category: **Open Components / ECharts 3D**
 - **Component ID:** `open.echarts.Polygons3DChart`
 - **Palette category:** Open Components / ECharts 3D
 - **Default size:** 700x500
-- **Description:** 3D polygon visualization.
-- **Default option example:**
+- **Description:** 3D polygon visualization on `geo3D`.
+- **Needs map data:** `geo3D` needs a map from the [`maps`](#maps) property; the component drops
+  with a placeholder title until then. Give each polygon a `height`.
+- **Default option example** (with a map named `plant` in `maps`):
 ```json
 {
-  "xAxis3D": {},
-  "yAxis3D": {},
-  "zAxis3D": {},
-  "grid3D": {},
+  "geo3D": { "map": "plant" },
   "series": [{
     "type": "polygons3D",
-    "data": []
+    "coordinateSystem": "geo3D",
+    "data": [{ "name": "Zone", "height": 5, "coords": [[[1, 1.2], [2, 1.2], [2, 1.8], [1, 1.8], [1, 1.2]]] }]
   }]
 }
 ```
@@ -763,10 +801,9 @@ Palette category: **Open Components / ECharts 3D**
   "xAxis": {},
   "yAxis": {},
   "series": [{
-    "type": "scatter",
-    "large": true,
-    "largeThreshold": 500,
-    "data": []
+    "type": "scatterGL",
+    "symbolSize": 4,
+    "data": [[1, 2], [3, 4], [5, 6]]
   }]
 }
 ```
@@ -781,11 +818,12 @@ Palette category: **Open Components / ECharts 3D**
 ```json
 {
   "series": [{
-    "type": "graph",
-    "layout": "none",
-    "data": [],
-    "links": [],
-    "emphasis": { "focus": "adjacency" }
+    "type": "graphGL",
+    "symbolSize": 20,
+    "itemStyle": { "color": "#5470c6", "opacity": 1 },
+    "nodes": [{ "name": "A", "x": 0, "y": 0 }, { "name": "B", "x": 100, "y": 0 }, { "name": "C", "x": 50, "y": 80 }],
+    "edges": [{ "source": 0, "target": 1 }, { "source": 1, "target": 2 }],
+    "forceAtlas2": { "steps": 1, "maxSteps": 1 }
   }]
 }
 ```
@@ -795,15 +833,15 @@ Palette category: **Open Components / ECharts 3D**
 - **Component ID:** `open.echarts.FlowGLChart`
 - **Palette category:** Open Components / ECharts 3D
 - **Default size:** 700x500
-- **Description:** WebGL flow visualization (e.g., wind, particle flow).
+- **Description:** WebGL flow visualization (e.g., wind, particle flow). `data` is a regular grid of `[x, y, vx, vy]` rows.
 - **Default option example:**
 ```json
 {
-  "geo": { "map": "china" },
+  "xAxis": { "type": "value" },
+  "yAxis": { "type": "value" },
   "series": [{
     "type": "flowGL",
-    "coordinateSystem": "geo",
-    "data": []
+    "data": [[0, 0, 1, 0], [1, 0, 1, 1], [0, 1, 0, 1], [1, 1, -1, 1]]
   }]
 }
 ```
@@ -814,60 +852,527 @@ Palette category: **Open Components / ECharts 3D**
 
 Palette category: **Open Components / Industrial**
 
-#### 38. IndustrialTrend
-- **Component name:** IndustrialTrend
+These components build their chart from the properties listed here (in addition to the [shared properties](#shared-properties)). Setting a non-empty `option` replaces the generated chart. A chart with nothing to draw shows "No data".
+
+#### 38. Industrial Trend
 - **Component ID:** `open.industrial.Trend`
-- **Palette category:** Open Components / Industrial
 - **Default size:** 800x350
-- **Description:** Time-series trend with PV/SP (process variable / setpoint) and alarm limits.
-- **Default option example:**
-```json
-{
-  "xAxis": { "type": "time" },
-  "yAxis": { "type": "value" },
-  "series": [
-    { "type": "line", "name": "PV", "data": [] },
-    { "type": "line", "name": "SP", "data": [] },
-    { "type": "line", "name": "High Limit", "lineStyle": { "type": "dashed" }, "data": [] },
-    { "type": "line", "name": "Low Limit", "lineStyle": { "type": "dashed" }, "data": [] }
-  ]
-}
-```
+- **Description:** Time-series PV/SP trend with alarm limits and data zoom.
 
-#### 39. IndustrialOEE
-- **Component name:** IndustrialOEE
+| Property | Type | Description |
+|----------|------|-------------|
+| `data` | object | `{ pvData, spData, timeField, valueField }`. `pvData` / `spData` are arrays of `[time, value]` pairs or of objects read through `timeField` / `valueField` (defaults `"t"` / `"v"`). Drops with sample data. |
+| `limits` | object | `{ hiAlarm, hiWarning, loWarning, loAlarm }`: numbers (or null) drawn as horizontal markLines. |
+| `yAxisLabel` | string | Label for the Y axis (e.g. unit of measurement). |
+| `showSetpoint` | boolean | Whether to show the setpoint line. |
+| `showDataZoom` | boolean | Whether to show the data zoom slider. |
+
+#### 39. OEE Summary
 - **Component ID:** `open.industrial.OEE`
-- **Palette category:** Open Components / Industrial
 - **Default size:** 400x400
-- **Description:** Multi-ring OEE gauge (Availability, Performance, Quality).
-- **Default option example:**
+- **Description:** Overall Equipment Effectiveness rings with A/P/Q inputs: OEE and its factors as concentric rings with their names and values in the middle. Names, colours, thresholds, a target marker and the factors themselves can be customised; for rings that are not OEE at all, use Metric Rings.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `availability` | number | Availability in percent (0-100). |
+| `performance` | number | Performance in percent (0-100). |
+| `quality` | number | Quality in percent (0-100). |
+| `oeeOverride` | number / null | Overrides the calculated OEE, in percent; clamped to 0-100. When null, OEE is computed as A*P*Q/10000. |
+| `showLabels` | boolean | Show the names and values in the middle of the rings. |
+| `labels` | object | Ring names, e.g. for another language: `{ "oee": "GAE", "availability": "Verfügbarkeit", "performance": "Leistung", "quality": "Qualität" }`. Missing keys keep the English names. |
+| `colors` | object / array | Ring colours as `{ oee, availability, performance, quality }`, or as an array in ring order starting with OEE (for use with `metrics`). Rings without a colour use the theme palette. |
+| `thresholds` | array | Colours every ring by its value, overriding `colors`: `[{ "upTo": 60, "color": "#e05252" }, { "upTo": 85, "color": "#e6a23c" }, { "color": "#3ba272" }]`. A value takes the colour of the first band, in ascending order of `upTo`, whose `upTo` is greater than it; a band without `upTo` takes everything above. |
+| `target` | number / null | OEE target in percent (e.g. 85 for world class), drawn as a marker on the OEE ring. |
+| `decimals` | integer / null | Decimal places of all values. Null shows the factors as given and the calculated OEE as a whole percent. |
+| `metrics` | array | Optional factors `{ name, value, color, target }`, values in percent. When non-empty they replace availability, performance and quality, and OEE is their product, e.g. A x P x Q x a fourth loss factor. Up to four factors are labelled in the middle; with more, only OEE is. |
+
+Example: four factors, a world-class target and traffic-light colours.
+
 ```json
 {
-  "series": [
-    { "type": "gauge", "radius": "90%", "detail": { "formatter": "{value}%", "offsetCenter": [0, "-30%"] }, "data": [{ "value": 85, "name": "Availability" }] },
-    { "type": "gauge", "radius": "70%", "detail": { "formatter": "{value}%", "offsetCenter": [0, "-20%"] }, "data": [{ "value": 92, "name": "Performance" }] },
-    { "type": "gauge", "radius": "50%", "detail": { "formatter": "{value}%", "offsetCenter": [0, "-10%"] }, "data": [{ "value": 98, "name": "Quality" }] }
+  "metrics": [
+    { "name": "Availability", "value": 92 },
+    { "name": "Performance", "value": 95 },
+    { "name": "Quality", "value": 97 },
+    { "name": "Loading", "value": 88, "target": 90 }
+  ],
+  "target": 85,
+  "decimals": 1,
+  "thresholds": [
+    { "upTo": 60, "color": "#e05252" },
+    { "upTo": 85, "color": "#e6a23c" },
+    { "color": "#3ba272" }
   ]
 }
 ```
 
-#### 40. IndustrialPareto
-- **Component name:** IndustrialPareto
+#### 40. Pareto Chart
 - **Component ID:** `open.industrial.Pareto`
-- **Palette category:** Open Components / Industrial
 - **Default size:** 700x400
-- **Description:** Pareto chart: bar series with cumulative percentage line.
-- **Default option example:**
+- **Description:** Pareto analysis with categories, counts, and cumulative percentage.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `categories` | array | Category labels. Bars are drawn sorted by count, largest first. |
+| `counts` | array | Count for each category, in the same order as categories. Negative or non-numeric counts count as 0. |
+| `showCumulativeLine` | boolean | Show the cumulative percentage line. |
+| `show80PercentLine` | boolean | Show the 80% threshold markLine. |
+| `barLabel` | string | Label for the bar series. |
+| `lineLabel` | string | Label for the cumulative line series. |
+
+#### 41. SPC Chart
+- **Component ID:** `open.industrial.SPCChart`
+- **Default size:** 800x500
+- **Description:** Statistical Process Control — Individuals and Moving Range with run rules.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `values` | array | Measurements in time order. Bind to your sample data. |
+| `subgroupSize` | integer | 1 = Individuals & Moving Range; 2–10 = X-bar & R on consecutive subgroups. |
+| `showUCL` | boolean | Show the Upper Control Limit (UCL) markline. |
+| `showLCL` | boolean | Show the Lower Control Limit (LCL) markline. |
+| `showCenterLine` | boolean | Show the Center Line (process mean) markline. |
+| `showMRChart` | boolean | Show the MR (or R) chart below the main chart. |
+| `showRunRules` | boolean | Highlight points that violate Western Electric rules 1 and 4. |
+| `title` | string | Chart title. Leave blank for the default title. |
+
+---
+
+### Scheduling
+
+Palette category: **Open Components / Scheduling**
+
+These components build their chart from the properties listed here (in addition to the [shared properties](#shared-properties)). Setting a non-empty `option` replaces the generated chart.
+
+#### 42. State Timeline
+- **Component ID:** `open.industrial.StateTimeline`
+- **Default size:** 900x300
+- **Description:** Equipment state/alarm timeline with colour-coded event bars on lanes.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `events` | array | State events as objects: { lane, start (epoch ms), end (epoch ms), state, color? }. Bind to your equipment-state history. |
+| `stateColors` | object | Map of state name to colour, e.g. { "Running": "#91cc75" }. Merged over the built-in defaults. |
+| `title` | string | Chart title. Leave blank for the default title. |
+
+#### 43. Gantt Chart
+- **Component ID:** `open.industrial.Gantt`
+- **Default size:** 900x400
+- **Description:** Task scheduling with bars, milestones, and progress.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `tasks` | array | Gantt tasks: { name, start (epoch ms), end (epoch ms), progress?, category?, color?, milestone? }. Bind to your schedule data. |
+| `showProgress` | boolean | Overlay each task's progress (percent, 0-100) on its bar. |
+| `title` | string | Chart title. Leave blank for the default title. |
+
+#### 44. Schedule Calendar
+- **Component ID:** `open.industrial.ScheduleCalendar`
+- **Default size:** 900x250
+- **Description:** Annual calendar heatmap for shift schedules and resource allocation.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `year` | string | Period to render: a year ("2025") or a month ("2025-03"). Leave blank to use the current year. |
+| `entries` | array | Schedule entries: { date, shift, crew? } with date as a YYYY-MM-DD string. value and color are reserved and currently have no effect. Bind to your shift schedule. |
+| `shiftColors` | object | Map of shift name to colour. Merged over the built-in defaults. |
+| `showLegend` | boolean | Show the shift colour legend. |
+| `title` | string | Chart title. Leave blank for the default title. |
+
+#### 45. Shift Calendar
+- **Component ID:** `open.industrial.ShiftCalendar`
+- **Default size:** 900x300
+- **Description:** Crew shift patterns by weekday across a date range.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `patterns` | array | Shift patterns: { name, color, days } where days lists the weekdays worked (0 = Sunday .. 6 = Saturday). |
+| `crews` | array | Crew assignments: { crew, pattern } where pattern is the name of a shift pattern. startDate and rotationDays are reserved and currently unused. |
+| `dateRange` | array | Inclusive [startDate, endDate] as YYYY-MM-DD strings. |
+| `title` | string | Chart title. Leave blank for the default title. |
+
+#### 46. Downtime Tracker
+- **Component ID:** `open.industrial.DowntimeTracker`
+- **Default size:** 900x350
+- **Description:** Categorised downtime events on equipment timeline with reason codes.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `events` | array | Downtime events: { equipment, start (epoch ms), end (epoch ms), category, reason? }. reason is not charted. Bind to your downtime log. |
+| `categoryColors` | object | Map of downtime category to colour. Merged over the built-in defaults. |
+| `showSummary` | boolean | Show total downtime under the title. |
+| `title` | string | Chart title. Leave blank for the default title. |
+
+#### 47. Batch Timeline
+- **Component ID:** `open.industrial.BatchTimeline`
+- **Default size:** 900x350
+- **Description:** Batch recipe phase durations (S88 model) on timeline lanes.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `phases` | array | Batch phases (S88): { batch, phase, start (epoch ms), end (epoch ms), status? }. status is not charted. Bind to your batch records. |
+| `phaseColors` | object | Map of phase name to colour. Merged over the built-in defaults. |
+| `title` | string | Chart title. Leave blank for the default title. |
+
+#### 48. Resource Heatmap
+- **Component ID:** `open.industrial.ResourceHeatmap`
+- **Default size:** 800x400
+- **Description:** Equipment utilisation percentage as heatmap (resource x time).
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `resources` | array | Resource names (Y axis rows). |
+| `timeSlots` | array | Time-slot labels (X axis columns). |
+| `utilization` | array | Utilization matrix: one row of numbers per resource, one number per time slot (0 to maxValue). An empty matrix shows "No data". Bind to your data. |
+| `maxValue` | number | Maximum value for the colour scale (e.g. 100 for percent). |
+| `title` | string | Chart title. Leave blank for the default title. |
+
+---
+
+### KPI & Analysis
+
+Domain charts in the *Open Components / Industrial* palette category. Like the other industrial components they are driven by plain props you can bind to tags or query results; a non-empty `option` replaces the generated chart.
+
+#### 49. Metric Rings
+- **Component ID:** `open.industrial.MetricRings`
+- **Default size:** 400x400
+- **Description:** Concentric progress rings for any set of metrics, with targets, thresholds and a centre summary. One ring per metric, each on its own scale if needed (utilities load, tank levels, batch quality attributes, progress against plan). Rings scale with the component; one to six read best, at most 12 are drawn.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `metrics` | array | One ring per metric, outermost first: `{ name, value, min, max, target, color, unit, decimals, thresholds }`. Only `name` and `value` are needed; the rest override the shared props for that ring. A metric without a usable value stays as an empty ring showing "–". |
+| `min` | number | Start of the scale for metrics without their own `min` (default 0). |
+| `max` | number | End of the scale, a full ring, for metrics without their own `max` (default 100). Values outside the scale fill or empty the ring; the displayed number is not clamped. |
+| `unit` | string | Unit written after the values (default `%`). |
+| `decimals` | integer | Decimal places of the values. |
+| `centerTitle` | string | Caption below the value in the centre. |
+| `centerValue` | number / string / null | A number (formatted with `decimals` and `unit`) or a text shown in the centre instead of the calculated summary. |
+| `summary` | string | Centre value: `product` (multiplies the fill of the rings as fractions and gives a percentage, the OEE rule), `average`, `min`, `max`, `sum` (of the values as given), or `none`. |
+| `thresholds` | array | Colours rings by value, overriding metric colours: `[{ "upTo": 60, "color": "#e05252" }, { "upTo": 85, "color": "#e6a23c" }, { "color": "#3ba272" }]`. A value takes the colour of the first band, in ascending order of `upTo`, whose `upTo` is greater than it; a band without `upTo` takes everything above. |
+| `showLabels` | boolean | List the value and name of every metric beside the rings. |
+| `labelPosition` | string | `bottom` (default) or `right` (for a wide component). |
+| `showTargets` | boolean | Mark each metric's `target` on its ring. |
+| `ringThickness` | number | Thickness of all rings together in percent of the outer radius (5-90); 0 chooses it from the number of rings. |
+| `ringGap` | number | Space between rings in percent of the room one ring has (0-90). |
+| `startAngle` | number | Where the rings start, in degrees: 90 is the top. The rings run clockwise. |
+| `sweep` | number | Angle a full ring covers (30-360). `startAngle` 225 with `sweep` 270 gives a gauge open at the bottom. |
+
+Example: three utilities on their own scales, as a 270° gauge.
+
 ```json
 {
-  "xAxis": { "type": "category", "data": ["Defect A", "Defect B", "Defect C", "Defect D"] },
-  "yAxis": [
-    { "type": "value", "name": "Count" },
-    { "type": "value", "name": "Cumulative %", "max": 100, "axisLabel": { "formatter": "{value}%" } }
+  "metrics": [
+    { "name": "Compressed air", "value": 6.8, "max": 10, "unit": "bar", "decimals": 1, "target": 7 },
+    { "name": "Steam", "value": 11.2, "max": 16, "unit": "bar", "decimals": 1 },
+    { "name": "Chilled water", "value": 7.5, "min": 4, "max": 14, "unit": "°C", "decimals": 1, "target": 6 }
+  ],
+  "summary": "none",
+  "centerTitle": "Utilities",
+  "startAngle": 225,
+  "sweep": 270
+}
+```
+
+Bind a ring to a tag with a property binding on `props.metrics[0].value`.
+
+#### 50. Bullet Chart
+- **Component ID:** `open.industrial.BulletChart`
+- **Default size:** 600x300
+- **Description:** Actual versus target per item on qualitative bands (Stephen Few bullet graphs): a bar for the actual value, a marker for the target, and shaded poor / acceptable / good bands behind them. Made for "production vs plan per line". Scales start at zero.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `items` | array | One bullet per item: `{ name, value, target, max, ranges, color }`. `max` is the end of the item's scale (default 120 % of the target, extended if the value is larger); `ranges` are the item's band boundaries in the units of the value, e.g. `[600, 900]`. At most 60 items are drawn. |
+| `title` | string | Chart title. Leave blank for none. |
+| `orientation` | string | `horizontal` (default, one row per item) or `vertical`. |
+| `unit` | string | Unit written after the values. |
+| `decimals` | integer | Decimal places of the values. |
+| `percentOfTarget` | boolean | Draw every item as a percentage of its own target, so that all targets line up at 100 % and items with different targets or units compare directly. Labels keep the real values. |
+| `ranges` | array | Band boundaries in percent of the target, for items without their own `ranges`. Default `[75, 95]`. |
+| `bandColors` | array | Band colours from the lowest band to the highest. The default translucent greys work on light and dark themes. |
+| `color` | string | Bar colour, for items without their own `color`. |
+| `statusColors` | array | Optional. When set, a bar takes the colour of the band its value is in, lowest first, e.g. `["#e05252", "#e6a23c", "#3ba272"]`. |
+| `targetColor` | string | Colour of the target markers (drawn with a thin light outline). On a dark theme `#ffffff` gives a solid light marker. |
+| `showValues` | boolean | Write each value, and its percentage of the target, beside its bar. |
+
+Example: attainment per line, coloured by status.
+
+```json
+{
+  "items": [
+    { "name": "Line 1", "value": 1180, "target": 1200 },
+    { "name": "Line 2", "value": 860, "target": 1000 },
+    { "name": "Line 3", "value": 1320, "target": 1250 }
+  ],
+  "unit": "pcs",
+  "percentOfTarget": true,
+  "statusColors": ["#e05252", "#e6a23c", "#3ba272"]
+}
+```
+
+#### 51. KPI Tile
+- **Component ID:** `open.industrial.KpiTile`
+- **Default size:** 260x150
+- **Description:** One big number with its unit and a caption, the change versus the previous period or a target (arrow, amount and good/bad colour), and a sparkline of recent values. Drawn entirely by ECharts, so it follows the chart theme. Text sizes are fixed so that the tile reads from 160x100 upwards; in a larger tile the sparkline takes the extra room.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `title` | string | Caption above the value. |
+| `value` | number / null | The number shown. When null, the last point of `history` is shown. |
+| `unit` | string | Unit written after the value. |
+| `decimals` | integer | Decimal places of the value. |
+| `previous` | number / null | Value of the previous period. When set, the change is measured against it. |
+| `target` | number / null | Target value. The change is measured against it when `previous` is null; it is also drawn as a dashed line in the sparkline when it lies near the history. |
+| `deltaFormat` | string | `percent` (default, of the reference) or `absolute` (difference in the unit of the value). A reference of 0 always gives the difference. |
+| `deltaLabel` | string | Text after the change, e.g. `vs last shift`. Blank gives "vs previous" / "vs target". |
+| `higherIsBetter` | boolean | True colours an increase as good; false colours a decrease as good (scrap, downtime, energy). |
+| `history` | array | Recent values, oldest first: numbers, `[time, value]` pairs, or objects with a `value`. At least two points draw a sparkline. |
+| `showSparkline` | boolean | Draw the history below the numbers. |
+| `color` | string | Sparkline colour. |
+| `goodColor` | string | Colour of a change in the wanted direction. |
+| `badColor` | string | Colour of a change in the unwanted direction. |
+
+Example: scrap rate against a target, where lower is better.
+
+```json
+{
+  "title": "Scrap rate",
+  "value": 3.42,
+  "unit": "%",
+  "decimals": 2,
+  "previous": null,
+  "target": 2.5,
+  "deltaFormat": "absolute",
+  "higherIsBetter": false,
+  "history": [2.1, 2.3, 2.2, 2.6, 2.9, 2.7, 3.1, 3.0, 3.3, 3.42]
+}
+```
+
+#### 52. Waterfall Chart
+- **Component ID:** `open.industrial.Waterfall`
+- **Default size:** 700x400
+- **Description:** Bridge chart: an opening total, a sequence of increases and decreases, optional subtotals, and a closing total. Use it for OEE loss bridges, energy balances, cost variance or yield loss through process steps.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `steps` | array | Steps in order, as objects: { name, value, type? }. `type` is `"delta"` (default: adds `value` to the running total), `"subtotal"` (shows the running total; `value` is ignored) or `"total"` (shows the running total; a numeric `value` first sets it — use this for the opening total). Rows without a usable value are skipped. |
+| `title` | string | Chart title. Leave blank for no title. |
+| `unit` | string | Unit of the values, shown on the value axis and in tooltips. |
+| `decimals` | integer | Decimal places of value labels and tooltips (0–10). |
+| `increaseColor` | string | Colour of increases (positive deltas). |
+| `decreaseColor` | string | Colour of decreases (negative deltas). |
+| `totalColor` | string | Colour of total and subtotal bars. |
+| `showValues` | boolean | Label each bar with its value; deltas carry a sign (+12 / −38). |
+| `showConnectors` | boolean | Thin lines carrying the running total from bar to bar. |
+| `orientation` | string | `vertical` (default) or `horizontal` (steps run top to bottom; suits long step names). |
+| `startAtZero` | boolean | Start the value axis at zero. Turn off to zoom in on small changes of a large total (total bars are then cut off at the axis). Ignored when the running total reaches or crosses zero. |
+
+The running total starts at 0 and may go negative: bars that cross zero are drawn correctly on both sides of the axis. With more than 8 steps the category labels are rotated instead of wrapped.
+
+Example — OEE time-loss bridge (the default):
+
+```json
+[
+  { "name": "Planned time", "value": 480, "type": "total" },
+  { "name": "Breakdowns", "value": -38 },
+  { "name": "Changeover", "value": -27 },
+  { "name": "Run time", "type": "subtotal" },
+  { "name": "Minor stops", "value": -31 },
+  { "name": "Reduced speed", "value": -42 },
+  { "name": "Scrap & rework", "value": -14 },
+  { "name": "Productive time", "type": "total" }
+]
+```
+
+#### 53. Process Capability Histogram
+- **Component ID:** `open.industrial.CapabilityHistogram`
+- **Default size:** 700x420
+- **Description:** Histogram of measurements with specification limits, a fitted normal curve and capability statistics. The companion of the SPC Chart: SPC shows whether the process is stable, this shows whether it fits the tolerance.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `values` | array | Measurements. Non-numeric entries are ignored. Keep them in time order when `sigmaMethod` is `within`. |
+| `lsl` | number / null | Lower specification limit; null for none. |
+| `usl` | number / null | Upper specification limit; null for none. One-sided specifications are supported. |
+| `target` | number / null | Target (nominal) value; null for none. |
+| `bins` | string / integer | Number of bins (1–200), or `"auto"`: Freedman–Diaconis rule (Sturges when the interquartile range is 0, at most 60 bins), with the bin width rounded up to 1, 2 or 5 × 10^k and edges aligned to it. |
+| `showNormalCurve` | boolean | Overlay the normal distribution fitted to the mean and the selected sigma, scaled to the histogram (n × bin width × density). |
+| `showStats` | boolean | Show the readout: n, mean, sigma, capability indices, values out of spec. |
+| `sigmaMethod` | string | `overall` (default): sample standard deviation of all values; indices are reported as **Pp / Ppk**. `within`: average moving range ÷ 1.128, the short-term estimate the SPC Chart uses for its limits; indices are reported as **Cp / Cpk**. |
+| `decimals` | integer | Decimal places of the mean and bin edges (0–10); sigma is shown with one more. |
+| `unit` | string | Unit of the measurements (axis, readout, tooltips). |
+| `title` | string | Chart title. Leave blank for no title. |
+| `barColor` | string | Colour of the histogram inside the limits. |
+| `outOfSpecColor` | string | Colour of the part of the histogram outside the limits. |
+| `curveColor` | string | Colour of the normal curve and the mean line. |
+| `limitColor` | string | Colour of the LSL / USL lines. |
+| `targetColor` | string | Colour of the target line. |
+
+Statistics: Pp = (USL − LSL) / 6σ, Ppk = min((USL − x̄) / 3σ, (x̄ − LSL) / 3σ) with the overall σ; Cp / Cpk are the same formulas with the within σ. With one limit only, Pp/Cp are omitted and Ppk/Cpk is the index of the existing side (marked "USL only" / "LSL only"). Indices are omitted when σ is 0 or there are fewer than two values. A value exactly on a limit counts as in spec.
+
+Bins contain their lower edge and exclude their upper edge; the last bin contains both. The histogram is split exactly at LSL and USL, so a bin that straddles a limit is drawn in two colours by position; the exact number of out-of-spec values is in the readout. If LSL is greater than USL the two are swapped.
+
+Example — shaft diameter, 25 ± 0.05 mm:
+
+```json
+{ "values": [25.011, 24.994, 25.009, 25.027, "…"], "lsl": 24.95, "usl": 25.05, "target": 25, "unit": "mm", "decimals": 3 }
+```
+
+#### 54. Flow Diagram (Sankey)
+- **Component ID:** `open.industrial.FlowDiagram`
+- **Default size:** 800x450
+- **Description:** Sankey diagram of energy, material or product flow, built from source / target / value rows.
+
+Bind `flows` to a named query or dataset with one row per flow; the nodes are derived from the names in the rows. Duplicate rows are summed, rows with a zero, negative or non-numeric value are skipped. A Sankey diagram cannot draw loops, so flows that close a loop (including a node flowing into itself) are left out, chosen deterministically (the link that leads back to a node already on the path from the sources), and a note under the title says how many were left out. Labels point towards the middle of the diagram so they are never cut off at the edge; tooltips show values with `unit` and `decimals`, inflow and outflow separately where a node does not balance, and each link's share of its source.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `flows` | array | One row per flow: { source, target, value }. Nodes are created from the names used here. Rows with the same source and target are summed; rows whose value is not a positive number are skipped. A Sankey diagram cannot show loops: flows that close a loop (and flows from a node to itself) are left out and counted in a note under the title. |
+| `nodes` | array | Optional per-node overrides: { name, color, label }. name must match a name used in flows; color sets the node colour, label the text shown instead of the name. Nodes without an entry use the theme palette and their own name. |
+| `title` | string | Chart title. Leave blank for no title. |
+| `unit` | string | Unit written after every value, e.g. kWh, t, pcs. |
+| `decimals` | integer | Decimal places of the values in labels and tooltips (0 to 6). |
+| `orientation` | string | Direction of flow: horizontal (left to right) or vertical (top to bottom). One of: `horizontal`, `vertical`. |
+| `nodeAlign` | string | Column placement of nodes: justify puts end nodes in the last column, left packs nodes towards the start, right towards the end. One of: `justify`, `left`, `right`. |
+| `showValues` | boolean | Write each node's throughput next to its name. Turn off for small components. |
+| `linkColor` | string | Colour of the links: that of the source node, of the target node, or a gradient from one to the other. One of: `source`, `target`, `gradient`. |
+| `emphasis` | string | What is highlighted on hover: adjacency (the node or link and its direct neighbours), trajectory (everything up- and downstream), or none. One of: `adjacency`, `trajectory`, `none`. |
+| `nodeWidth` | number | Thickness of the node bars in pixels. |
+| `nodeGap` | number | Gap between neighbouring nodes of a column in pixels. |
+| `maxLabelLength` | integer | Node names longer than this many characters are shortened with an ellipsis in labels (tooltips show the full name). 0 = never shorten. |
+| `colors` | array | Node colour palette, used in order of first appearance. Leave empty to use the palette of the theme. Colours set in nodes take precedence. |
+
+Example `flows` (a named query returning `source`, `target`, `value` columns works as is):
+
+```json
+[
+  { "source": "Grid", "target": "Main bus", "value": 820 },
+  { "source": "Solar PV", "target": "Main bus", "value": 310 },
+  { "source": "Main bus", "target": "Production lines", "value": 540 },
+  { "source": "Production lines", "target": "Useful work", "value": 430 },
+  { "source": "Production lines", "target": "Losses", "value": 110 }
+]
+```
+
+Optional `nodes` overrides: `[{ "name": "Losses", "color": "#9aa0a6", "label": "Heat losses" }]`. For components smaller than about 450 px wide, turn `showValues` off.
+
+#### 55. Event Heatmap
+- **Component ID:** `open.industrial.EventHeatmap`
+- **Default size:** 760x380
+- **Description:** When does it happen? Event counts by hour of day and day of week (alarms, downtime starts, rejects).
+
+Two ways to feed it: bind `cells` to pre-aggregated counts (`GROUP BY` weekday and hour in the database), or bind `timestamps` to the raw event times and let the component bucket them (100,000 timestamps are handled in one pass). Cells with no events are drawn in neutral grey, outside the colour ramp, so "nothing" is never confused with "a little". Bars above and to the right show the totals per hour and per day.
+
+**Time zone.** Hours and weekdays of raw timestamps depend on the clock they are read on. The component never uses the time zone of the browser or gateway (two clients in different zones would show different charts); set `utcOffsetMinutes` instead. It applies to epoch milliseconds and to ISO strings that carry a zone (`Z`, `+02:00`). ISO strings without a zone (`2025-01-06T13:45:00`) are bucketed exactly as written. A fixed offset does not follow daylight saving time: for data that spans a DST change, aggregate in the database and bind `cells`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `cells` | array | Pre-aggregated counts, one row per cell: { day, hour, value }. day is 1 = Monday .. 7 = Sunday (0 is also Sunday, so JavaScript getDay() and PostgreSQL dow values work) or an English day name / one of dayLabels; hour is 0..23. Rows for the same cell are summed; invalid rows are skipped. Ignored while timestamps has entries. Clear this when you bind timestamps, otherwise the sample data shows whenever the binding returns no events. |
+| `timestamps` | array | Raw event times, bucketed by the component: epoch milliseconds, or ISO 8601 strings. Epoch values and strings with a zone (Z, +02:00) are instants and are shifted by utcOffsetMinutes; strings without a zone are taken as local wall-clock time exactly as written. Rows { timestamp \| t_stamp \| t, weight } are accepted too. When non-empty, replaces cells. |
+| `weights` | array | Optional weight of each timestamp, in the same order (e.g. downtime minutes, reject quantity). Leave empty to count every event as 1. When set, events without a valid non-negative weight are skipped. |
+| `utcOffsetMinutes` | number | Offset from UTC, in minutes, of the clock the hours and weekdays are read on (e.g. 60 for UTC+1, -300 for UTC-5). Applied to epoch and zoned timestamps. The zone of the browser or gateway is deliberately not used, so every client shows the same chart. A fixed offset does not follow daylight saving time: for data spanning a DST change, aggregate in the database and bind cells. |
+| `weekStart` | string | First day of the week (top row). One of: `monday`, `sunday`. |
+| `dayLabels` | array | Seven day labels, always Monday first (weekStart only changes the row order). |
+| `hourStep` | integer | Width of a column in hours: 1, 2, 3, 4 or 6. One of: `1`, `2`, `3`, `4`, `6`. |
+| `colors` | array | Colour ramp from low to high counts (two or more colours). The default is one hue with rising opacity, so it reads low-to-high on light and dark themes alike. Cells with no events are always drawn in neutral grey, outside this ramp. |
+| `showValues` | boolean | Write the count in each cell. Best with larger components or a coarser hourStep. |
+| `showTotals` | boolean | Show bars with the total per hour (above) and per day (right). |
+| `showLegend` | boolean | Show the colour scale below the chart. |
+| `max` | number | Count that gets the last colour of the ramp. 0 = automatic (the largest cell). Set a fixed value to keep colours comparable between periods. |
+| `valueLabel` | string | What is being counted, written after values in tooltips and the legend (e.g. alarms, stops, rejects). |
+| `title` | string | Chart title. Leave blank for no title. |
+
+Example `cells` (PostgreSQL: `SELECT EXTRACT(isodow FROM t_stamp) AS day, EXTRACT(hour FROM t_stamp) AS hour, COUNT(*) AS value ... GROUP BY 1, 2`):
+
+```json
+[
+  { "day": 1, "hour": 6, "value": 25 },
+  { "day": 1, "hour": 14, "value": 13 },
+  { "day": "Fri", "hour": 13, "value": 17 }
+]
+```
+
+`day` is 1 = Monday .. 7 = Sunday; 0 is also read as Sunday. MySQL `DAYOFWEEK()` and SQL Server `DATEPART(weekday, ...)` number Sunday as 1: use `WEEKDAY(t) + 1` (MySQL) or map the value in the query.
+
+Example `timestamps` with `utcOffsetMinutes: 60`: `[1736143200000, "2025-01-06T07:12:00Z", "2025-01-07T14:03:10+01:00"]`, optionally with `weights` (e.g. downtime minutes) `[12, 3.5, 40]`.
+
+#### 56. Radar Comparison
+- **Component ID:** `open.industrial.RadarComparison`
+- **Default size:** 560x460
+- **Description:** Compares lines, shifts, machines or suppliers across metrics with different units on one radar.
+
+Every axis is scaled to its own range (`min`..`max` of the metric, or derived from the data with 20 % padding when missing), so percentages, rates and durations can share one chart. **Outward is always better:** metrics with `higherIsBetter: false` (scrap, changeover time, energy per unit) are inverted so their lowest value lies on the rim. The range under each axis name is written from the centre value to the rim value. Tooltips show the real values with units, not the normalised positions. An optional `target` is drawn as a dashed outline. A radar needs at least three metrics; with fewer the component shows a notice instead.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `metrics` | array | The axes, at least three: { name, min, max, higherIsBetter, unit } (or just a name). Each axis is scaled to its own min..max, so metrics with different units can be compared; values outside the range are drawn at its ends. A missing min or max is taken from the data with some padding. Outward is always better: axes with higherIsBetter false are inverted, so their lowest value is at the rim. unit is written after values. |
+| `series` | array | The entities to compare (lines, shifts, machines, suppliers): { name, values }, with values in the same order as metrics, in real units. Extra values are ignored; a missing value is drawn at the centre and shown as a dash in the tooltip. |
+| `target` | object | Optional reference drawn as a dashed outline: { name, values, color } with values in the same order as metrics. Leave empty for none. |
+| `fill` | boolean | Fill the area of each series (the fill gets lighter as the number of series grows). |
+| `shape` | string | Shape of the grid. One of: `polygon`, `circle`. |
+| `showRange` | boolean | Write the range of each axis under its name, from the centre value to the rim value. |
+| `showLegend` | boolean | Show the legend. |
+| `decimals` | integer | Maximum decimal places of values in tooltips and axis ranges (0 to 6). |
+| `colors` | array | Series colours in order. Leave empty to use the palette of the theme. |
+| `title` | string | Chart title. Leave blank for no title. |
+
+Example:
+
+```json
+{
+  "metrics": [
+    { "name": "OEE", "unit": "%", "min": 40, "max": 100 },
+    { "name": "Scrap", "unit": "%", "min": 0, "max": 6, "higherIsBetter": false },
+    { "name": "Changeover", "unit": "min", "higherIsBetter": false }
   ],
   "series": [
-    { "type": "bar", "data": [50, 30, 15, 5] },
-    { "type": "line", "yAxisIndex": 1, "data": [50, 80, 95, 100] }
+    { "name": "Line 1", "values": [78, 1.8, 24] },
+    { "name": "Line 2", "values": [64, 3.9, 41] }
+  ],
+  "target": { "name": "Target", "values": [85, 2, 20] }
+}
+```
+
+#### 57. Dial Gauge
+- **Component ID:** `open.industrial.DialGauge`
+- **Default size:** 360x300
+- **Description:** A dial for one value, to bind a tag to, in four looks: `progress` (a thick rounded arc filled up to the value, with the scale around it), `stages` (a wide band coloured by value stages, with a needle), `grade` (a thin coloured band with the stage names written along it, and a pointer) and `minimal` (an arc and the value only, for small tiles). The value is printed with its unit and a caption, and takes the colour of the stage it is in. Line widths and text sizes follow the size of the component, from about 160x140 upwards; on small dials the scale numbers and stage names are left out. A value outside the scale stops the arc or pointer at the end of the scale and is still printed as it is; a value that is not a number shows a dash.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `value` | number / null | The value shown. Anything that is not a number draws an empty dial with a dash. |
+| `min` | number | Start of the scale. |
+| `max` | number | End of the scale. If it is not greater than `min`, the scale is 0 to 100. |
+| `unit` | string | Unit written after the value. |
+| `decimals` | integer | Decimal places of the value. |
+| `title` | string | Caption below the value; cut with an ellipsis when it does not fit. |
+| `variant` | string | `progress` (default), `stages`, `grade` or `minimal`. |
+| `stages` | array | Value bands as objects `{ upTo, color, name }`, the convention of the Metric Rings `thresholds`: a value belongs to the first stage, in ascending order of `upTo`, whose `upTo` is greater than it; a stage without `upTo` takes everything above. They colour the band in `stages` and `grade`, and the arc and value in `progress` and `minimal`. `name` is written along the band in `grade` (shortened or left out when the band is too narrow) and shown in the tooltip. |
+| `color` | string | Colour of the arc, pointer and value when there are no stages or none takes the value. |
+| `target` | number / null | A marker across the scale, e.g. a setpoint or limit. Not drawn outside the scale. |
+| `showScale` | boolean | Draw the ticks and numbers of the scale. `minimal` has none; `grade` has ticks only. |
+| `showValue` | boolean | Write the value in the dial. |
+| `splitNumber` | integer | Number of labelled divisions. 0 chooses one that gives round steps (0-120 in steps of 20). Scales from 10,000 are labelled in k, M or G. |
+| `startAngle` | number / null | Angle where the scale starts (90 top, 180 left, 0 right); it runs clockwise. Null centres the opening at the bottom. |
+| `sweep` | number / null | Angle the scale covers (30-360). Null is 180 for `grade` and 270 for the others. A scale with numbers stops at 340 so that its first and last number do not coincide. |
+
+Example: a quality score as a grade dial.
+
+```json
+{
+  "variant": "grade",
+  "value": 68,
+  "min": 0,
+  "max": 100,
+  "unit": "%",
+  "decimals": 0,
+  "title": "Quality score",
+  "target": null,
+  "stages": [
+    { "upTo": 25, "color": "#e05252", "name": "Grade D" },
+    { "upTo": 50, "color": "#e6a23c", "name": "Grade C" },
+    { "upTo": 75, "color": "#91cc75", "name": "Grade B" },
+    { "color": "#3ba272", "name": "Grade A" }
   ]
 }
 ```
@@ -878,43 +1383,60 @@ Palette category: **Open Components / Industrial**
 
 | # | Component | ID | Palette | Size |
 |---|-----------|-----|---------|------|
-| 1 | EChart | open.echarts.EChart | ECharts | 600x400 |
-| 2 | LineChart | open.echarts.LineChart | ECharts | 600x350 |
-| 3 | BarChart | open.echarts.BarChart | ECharts | 600x350 |
-| 4 | PieChart | open.echarts.PieChart | ECharts | 500x400 |
-| 5 | ScatterChart | open.echarts.ScatterChart | ECharts | 600x400 |
-| 6 | EffectScatterChart | open.echarts.EffectScatterChart | ECharts | 600x400 |
-| 7 | GaugeChart | open.echarts.GaugeChart | ECharts | 400x350 |
-| 8 | FunnelChart | open.echarts.FunnelChart | ECharts | 500x400 |
-| 9 | CandlestickChart | open.echarts.CandlestickChart | ECharts | 700x400 |
-| 10 | BoxplotChart | open.echarts.BoxplotChart | ECharts | 600x400 |
-| 11 | HeatmapChart | open.echarts.HeatmapChart | ECharts | 600x400 |
-| 12 | TreeChart | open.echarts.TreeChart | ECharts | 600x500 |
-| 13 | TreemapChart | open.echarts.TreemapChart | ECharts | 600x500 |
-| 14 | SunburstChart | open.echarts.SunburstChart | ECharts | 500x500 |
-| 15 | GraphChart | open.echarts.GraphChart | ECharts | 600x500 |
-| 16 | SankeyChart | open.echarts.SankeyChart | ECharts | 600x500 |
-| 17 | RadarChart | open.echarts.RadarChart | ECharts | 500x450 |
-| 18 | ParallelChart | open.echarts.ParallelChart | ECharts | 700x400 |
-| 19 | ThemeRiverChart | open.echarts.ThemeRiverChart | ECharts | 700x400 |
-| 20 | CalendarChart | open.echarts.CalendarChart | ECharts | 800x200 |
-| 21 | PictorialBarChart | open.echarts.PictorialBarChart | ECharts | 600x400 |
-| 22 | CustomChart | open.echarts.CustomChart | ECharts | 600x400 |
-| 23 | GraphicChart | open.echarts.GraphicChart | ECharts | 600x400 |
-| 24 | DatasetChart | open.echarts.DatasetChart | ECharts | 600x400 |
-| 25 | MapChart | open.echarts.MapChart | ECharts | 700x500 |
-| 26 | LinesChart | open.echarts.LinesChart | ECharts | 700x500 |
-| 27 | Bar3DChart | open.echarts.Bar3DChart | ECharts 3D | 700x500 |
-| 28 | Line3DChart | open.echarts.Line3DChart | ECharts 3D | 700x500 |
-| 29 | Scatter3DChart | open.echarts.Scatter3DChart | ECharts 3D | 700x500 |
-| 30 | SurfaceChart | open.echarts.SurfaceChart | ECharts 3D | 700x500 |
-| 31 | Map3DChart | open.echarts.Map3DChart | ECharts 3D | 700x500 |
-| 32 | GlobeChart | open.echarts.GlobeChart | ECharts 3D | 700x600 |
-| 33 | Lines3DChart | open.echarts.Lines3DChart | ECharts 3D | 700x500 |
-| 34 | Polygons3DChart | open.echarts.Polygons3DChart | ECharts 3D | 700x500 |
-| 35 | ScatterGLChart | open.echarts.ScatterGLChart | ECharts 3D | 600x400 |
-| 36 | GraphGLChart | open.echarts.GraphGLChart | ECharts 3D | 600x500 |
-| 37 | FlowGLChart | open.echarts.FlowGLChart | ECharts 3D | 700x500 |
-| 38 | IndustrialTrend | open.industrial.Trend | Industrial | 800x350 |
-| 39 | IndustrialOEE | open.industrial.OEE | Industrial | 400x400 |
-| 40 | IndustrialPareto | open.industrial.Pareto | Industrial | 700x400 |
+| 1 | ECharts Chart | open.echarts.EChart | ECharts | 600x400 |
+| 2 | Line Chart | open.echarts.LineChart | ECharts | 600x350 |
+| 3 | Bar Chart | open.echarts.BarChart | ECharts | 600x350 |
+| 4 | Pie Chart | open.echarts.PieChart | ECharts | 500x400 |
+| 5 | Scatter Chart | open.echarts.ScatterChart | ECharts | 600x400 |
+| 6 | Effect Scatter Chart | open.echarts.EffectScatterChart | ECharts | 600x400 |
+| 7 | Gauge Chart | open.echarts.GaugeChart | ECharts | 400x350 |
+| 8 | Funnel Chart | open.echarts.FunnelChart | ECharts | 500x400 |
+| 9 | Candlestick Chart | open.echarts.CandlestickChart | ECharts | 700x400 |
+| 10 | Boxplot Chart | open.echarts.BoxplotChart | ECharts | 600x400 |
+| 11 | Heatmap Chart | open.echarts.HeatmapChart | ECharts | 600x400 |
+| 12 | Tree Chart | open.echarts.TreeChart | ECharts | 600x500 |
+| 13 | Treemap Chart | open.echarts.TreemapChart | ECharts | 600x500 |
+| 14 | Sunburst Chart | open.echarts.SunburstChart | ECharts | 500x500 |
+| 15 | Graph Chart | open.echarts.GraphChart | ECharts | 600x500 |
+| 16 | Sankey Chart | open.echarts.SankeyChart | ECharts | 600x500 |
+| 17 | Radar Chart | open.echarts.RadarChart | ECharts | 500x450 |
+| 18 | Parallel Chart | open.echarts.ParallelChart | ECharts | 700x400 |
+| 19 | Theme River Chart | open.echarts.ThemeRiverChart | ECharts | 700x400 |
+| 20 | Calendar Chart | open.echarts.CalendarChart | ECharts | 800x200 |
+| 21 | Pictorial Bar Chart | open.echarts.PictorialBarChart | ECharts | 600x400 |
+| 22 | Custom Chart | open.echarts.CustomChart | ECharts | 600x400 |
+| 23 | Graphic Chart | open.echarts.GraphicChart | ECharts | 600x400 |
+| 24 | Dataset Chart | open.echarts.DatasetChart | ECharts | 600x400 |
+| 25 | Map Chart | open.echarts.MapChart | ECharts | 700x500 |
+| 26 | Lines Chart | open.echarts.LinesChart | ECharts | 700x500 |
+| 27 | Bar 3D Chart | open.echarts.Bar3DChart | ECharts 3D | 700x500 |
+| 28 | Line 3D Chart | open.echarts.Line3DChart | ECharts 3D | 700x500 |
+| 29 | Scatter 3D Chart | open.echarts.Scatter3DChart | ECharts 3D | 700x500 |
+| 30 | Surface Chart | open.echarts.SurfaceChart | ECharts 3D | 700x500 |
+| 31 | Map 3D Chart | open.echarts.Map3DChart | ECharts 3D | 700x500 |
+| 32 | Globe Chart | open.echarts.GlobeChart | ECharts 3D | 700x600 |
+| 33 | Lines 3D Chart | open.echarts.Lines3DChart | ECharts 3D | 700x500 |
+| 34 | Polygons 3D Chart | open.echarts.Polygons3DChart | ECharts 3D | 700x500 |
+| 35 | Scatter GL Chart | open.echarts.ScatterGLChart | ECharts 3D | 600x400 |
+| 36 | Graph GL Chart | open.echarts.GraphGLChart | ECharts 3D | 600x500 |
+| 37 | Flow GL Chart | open.echarts.FlowGLChart | ECharts 3D | 700x500 |
+| 38 | Industrial Trend | open.industrial.Trend | Industrial | 800x350 |
+| 39 | OEE Summary | open.industrial.OEE | Industrial | 400x400 |
+| 40 | Pareto Chart | open.industrial.Pareto | Industrial | 700x400 |
+| 41 | SPC Chart | open.industrial.SPCChart | Industrial | 800x500 |
+| 42 | State Timeline | open.industrial.StateTimeline | Scheduling | 900x300 |
+| 43 | Gantt Chart | open.industrial.Gantt | Scheduling | 900x400 |
+| 44 | Schedule Calendar | open.industrial.ScheduleCalendar | Scheduling | 900x250 |
+| 45 | Shift Calendar | open.industrial.ShiftCalendar | Scheduling | 900x300 |
+| 46 | Downtime Tracker | open.industrial.DowntimeTracker | Scheduling | 900x350 |
+| 47 | Batch Timeline | open.industrial.BatchTimeline | Scheduling | 900x350 |
+| 48 | Resource Heatmap | open.industrial.ResourceHeatmap | Scheduling | 800x400 |
+| 49 | Metric Rings | open.industrial.MetricRings | Industrial | 400x400 |
+| 50 | Bullet Chart | open.industrial.BulletChart | Industrial | 600x300 |
+| 51 | KPI Tile | open.industrial.KpiTile | Industrial | 260x150 |
+| 52 | Waterfall Chart | open.industrial.Waterfall | Industrial | 700x400 |
+| 53 | Process Capability Histogram | open.industrial.CapabilityHistogram | Industrial | 700x420 |
+| 54 | Flow Diagram (Sankey) | open.industrial.FlowDiagram | Industrial | 800x450 |
+| 55 | Event Heatmap | open.industrial.EventHeatmap | Industrial | 760x380 |
+| 56 | Radar Comparison | open.industrial.RadarComparison | Industrial | 560x460 |
+| 57 | Dial Gauge | open.industrial.DialGauge | Industrial | 360x300 |

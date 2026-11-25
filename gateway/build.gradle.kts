@@ -6,6 +6,9 @@ plugins {
 checkstyle {
     configFile = rootProject.file("config/checkstyle/checkstyle.xml")
     toolVersion = "10.12.5"
+    // The rules in checkstyle.xml report at severity "warning"; any violation fails the build.
+    maxWarnings = 0
+    maxErrors = 0
 }
 
 java {
@@ -22,11 +25,12 @@ dependencies {
     compileOnly(libs.ignition.gateway.api)
     compileOnly(libs.ignition.perspective.gateway)
     compileOnly(libs.ignition.perspective.common)
-    compileOnly(libs.ia.gson)
 
     testImplementation("org.junit.jupiter:junit-jupiter:6.0.3")
     testImplementation(libs.ignition.common)
     testImplementation(libs.ignition.gateway.api)
+    testImplementation(libs.ignition.perspective.gateway)
+    testImplementation(libs.ignition.perspective.common)
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

@@ -1,35 +1,69 @@
 {
   "name": "onDataZoom",
-  "description": "Fired when the data zoom range changes (inside zoom or slider).",
+  "description": "Fired when the data zoom range changes.",
   "schema": {
     "type": "object",
     "properties": {
-      "componentType": {
+      "start": {
+        "type": "number",
+        "description": "Start of the zoom window in percent (0-100)."
+      },
+      "end": {
+        "type": "number",
+        "description": "End of the zoom window in percent (0-100)."
+      },
+      "startValue": {
+        "type": [
+          "number",
+          "string"
+        ],
+        "description": "Start of the zoom window as an axis value. Only present when the zoom was set by value."
+      },
+      "endValue": {
+        "type": [
+          "number",
+          "string"
+        ],
+        "description": "End of the zoom window as an axis value. Only present when the zoom was set by value."
+      },
+      "dataZoomId": {
         "type": "string",
-        "description": "ECharts component type emitting the event (e.g. 'dataZoom')."
+        "description": "Id of the dataZoom component that changed."
       },
-      "seriesType": {
-        "type": "string",
-        "description": "Series type, when applicable."
-      },
-      "seriesIndex": {
-        "type": "integer",
-        "description": "Index of the series, when applicable."
-      },
-      "seriesName": {
-        "type": "string",
-        "description": "Series name, when applicable."
-      },
-      "name": {
-        "type": "string",
-        "description": "Associated name, when applicable."
-      },
-      "dataIndex": {
-        "type": "integer",
-        "description": "Index of the data item, when applicable."
-      },
-      "value": {
-        "description": "Associated value, when applicable."
+      "batch": {
+        "type": "array",
+        "description": "One entry per dataZoom component when the change came from an inside (wheel/drag) zoom or a dispatched action; the top-level fields may then be absent.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "start": {
+              "type": "number",
+              "description": "Start of the zoom window in percent (0-100)."
+            },
+            "end": {
+              "type": "number",
+              "description": "End of the zoom window in percent (0-100)."
+            },
+            "startValue": {
+              "type": [
+                "number",
+                "string"
+              ],
+              "description": "Start of the zoom window as an axis value. Only present when the zoom was set by value."
+            },
+            "endValue": {
+              "type": [
+                "number",
+                "string"
+              ],
+              "description": "End of the zoom window as an axis value. Only present when the zoom was set by value."
+            },
+            "dataZoomId": {
+              "type": "string",
+              "description": "Id of the dataZoom component that changed."
+            }
+          }
+        }
       }
     }
   }

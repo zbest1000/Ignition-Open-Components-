@@ -1,0 +1,12 @@
+{
+  "base": {
+    "style": {
+      "color": "#e6e7ef",
+      "fontSize": "20px",
+      "fontVariantNumeric": "tabular-nums",
+      "fontWeight": "500",
+      "lineHeight": "24px",
+      "whiteSpace": "nowrap"
+    }
+  }
+}

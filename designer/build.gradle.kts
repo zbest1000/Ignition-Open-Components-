@@ -6,6 +6,9 @@ plugins {
 checkstyle {
     configFile = rootProject.file("config/checkstyle/checkstyle.xml")
     toolVersion = "10.12.5"
+    // The rules in checkstyle.xml report at severity "warning"; any violation fails the build.
+    maxWarnings = 0
+    maxErrors = 0
 }
 
 java {
@@ -21,6 +24,17 @@ dependencies {
     compileOnly(libs.ignition.designer.api)
     compileOnly(libs.ignition.perspective.common)
     compileOnly(libs.ignition.perspective.designer)
-    compileOnly(libs.google.guava)
-    compileOnly(libs.google.jsr305)
+
+    testImplementation("org.junit.jupiter:junit-jupiter:6.0.3")
+    testImplementation(libs.ignition.common)
+    testImplementation(libs.ignition.designer.api)
+    testImplementation(libs.ignition.perspective.common)
+    testImplementation(libs.ignition.perspective.designer)
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+tasks.test {
+    useJUnitPlatform()
+    // The hook tests build Swing icons; no display is needed for that.
+    systemProperty("java.awt.headless", "true")
 }
