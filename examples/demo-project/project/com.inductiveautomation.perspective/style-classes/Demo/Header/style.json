@@ -1,0 +1,13 @@
+{
+  "base": {
+    "style": {
+      "backgroundColor": "#141425",
+      "borderBottom": "1px solid #2a2a42",
+      "boxSizing": "border-box",
+      "color": "#e6e7ef",
+      "fontFamily": "\"Inter\", \"Segoe UI\", \"Helvetica Neue\", Arial, sans-serif",
+      "gap": "16px",
+      "padding": "0 20px"
+    }
+  }
+}

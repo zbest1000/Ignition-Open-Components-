@@ -1,0 +1,7 @@
+{
+  "title": "Open ECharts Demo — Meridian Bottling Plant",
+  "description": "Showcase of the Open ECharts Perspective components on simulated plant data. Needs no tags and no database.",
+  "parent": "",
+  "enabled": true,
+  "inheritable": false
+}

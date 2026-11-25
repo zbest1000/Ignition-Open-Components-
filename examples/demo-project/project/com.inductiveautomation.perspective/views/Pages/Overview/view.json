@@ -1,0 +1,2438 @@
+{
+  "custom": {
+    "data": {}
+  },
+  "params": {},
+  "propConfig": {
+    "custom.data": {
+      "binding": {
+        "config": {
+          "expression": "runScript(\"demo.data.overview\", 5000, {session.custom.line})"
+        },
+        "type": "expr"
+      },
+      "persistent": false
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 1024,
+      "width": 1712
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "meta": {
+                  "name": "Eyebrow"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "style": {
+                    "classes": "Demo/Eyebrow"
+                  },
+                  "text": "Plant overview"
+                },
+                "type": "ia.display.label"
+              },
+              {
+                "meta": {
+                  "name": "Title"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "style": {
+                    "classes": "Demo/PageTitle"
+                  },
+                  "text": "Meridian Bottling Plant"
+                },
+                "type": "ia.display.label"
+              },
+              {
+                "meta": {
+                  "name": "Subtitle"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.meta.subtitle"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "style": {
+                    "classes": "Demo/PageSubtitle"
+                  }
+                },
+                "type": "ia.display.label"
+              }
+            ],
+            "meta": {
+              "name": "Titles"
+            },
+            "position": {
+              "basis": "0px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Stack"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "meta": {
+              "name": "Sku"
+            },
+            "position": {
+              "basis": "auto",
+              "grow": 0,
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "config": {
+                    "path": "view.custom.data.meta.sku"
+                  },
+                  "type": "property"
+                }
+              }
+            },
+            "props": {
+              "style": {
+                "classes": "Demo/Chip"
+              }
+            },
+            "type": "ia.display.label"
+          },
+          {
+            "meta": {
+              "name": "State"
+            },
+            "position": {
+              "basis": "auto",
+              "grow": 0,
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "config": {
+                    "path": "view.custom.data.meta.state"
+                  },
+                  "type": "property"
+                }
+              }
+            },
+            "props": {
+              "style": {
+                "classes": "Demo/Chip"
+              }
+            },
+            "type": "ia.display.label"
+          }
+        ],
+        "meta": {
+          "name": "Heading"
+        },
+        "position": {
+          "basis": "auto",
+          "grow": 0,
+          "shrink": 0
+        },
+        "props": {
+          "alignItems": "flex-end",
+          "style": {
+            "classes": "Demo/Row"
+          }
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "meta": {
+                  "name": "Kpi"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.decimals": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.oee.decimals"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.deltaLabel": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.oee.deltaLabel"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.higherIsBetter": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.oee.higherIsBetter"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.history": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.oee.history"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.previous": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.oee.previous"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.target": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.oee.target"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.title": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.oee.title"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.unit": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.oee.unit"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.value": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.oee.value"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "badColor": "#e05252",
+                  "color": "#6f8ce8",
+                  "goodColor": "#3ba272",
+                  "theme": "IgnitionIndustrialDark"
+                },
+                "type": "open.industrial.KpiTile"
+              }
+            ],
+            "meta": {
+              "name": "KpiOee"
+            },
+            "position": {
+              "basis": "172px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Tile",
+                "height": "112px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "children": [
+              {
+                "meta": {
+                  "name": "Kpi"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.decimals": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.throughput.decimals"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.deltaLabel": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.throughput.deltaLabel"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.higherIsBetter": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.throughput.higherIsBetter"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.history": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.throughput.history"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.previous": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.throughput.previous"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.target": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.throughput.target"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.title": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.throughput.title"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.unit": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.throughput.unit"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.value": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.throughput.value"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "badColor": "#e05252",
+                  "color": "#6f8ce8",
+                  "goodColor": "#3ba272",
+                  "theme": "IgnitionIndustrialDark"
+                },
+                "type": "open.industrial.KpiTile"
+              }
+            ],
+            "meta": {
+              "name": "KpiThroughput"
+            },
+            "position": {
+              "basis": "172px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Tile",
+                "height": "112px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "children": [
+              {
+                "meta": {
+                  "name": "Kpi"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.decimals": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.good.decimals"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.deltaLabel": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.good.deltaLabel"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.higherIsBetter": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.good.higherIsBetter"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.history": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.good.history"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.previous": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.good.previous"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.target": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.good.target"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.title": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.good.title"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.unit": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.good.unit"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.value": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.good.value"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "badColor": "#e05252",
+                  "color": "#6f8ce8",
+                  "goodColor": "#3ba272",
+                  "theme": "IgnitionIndustrialDark"
+                },
+                "type": "open.industrial.KpiTile"
+              }
+            ],
+            "meta": {
+              "name": "KpiGood"
+            },
+            "position": {
+              "basis": "172px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Tile",
+                "height": "112px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "children": [
+              {
+                "meta": {
+                  "name": "Kpi"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.decimals": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.scrap.decimals"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.deltaLabel": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.scrap.deltaLabel"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.higherIsBetter": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.scrap.higherIsBetter"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.history": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.scrap.history"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.previous": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.scrap.previous"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.target": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.scrap.target"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.title": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.scrap.title"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.unit": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.scrap.unit"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.value": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.scrap.value"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "badColor": "#e05252",
+                  "color": "#6f8ce8",
+                  "goodColor": "#3ba272",
+                  "theme": "IgnitionIndustrialDark"
+                },
+                "type": "open.industrial.KpiTile"
+              }
+            ],
+            "meta": {
+              "name": "KpiScrap"
+            },
+            "position": {
+              "basis": "172px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Tile",
+                "height": "112px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "children": [
+              {
+                "meta": {
+                  "name": "Kpi"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.decimals": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.downtime.decimals"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.deltaLabel": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.downtime.deltaLabel"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.higherIsBetter": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.downtime.higherIsBetter"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.history": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.downtime.history"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.previous": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.downtime.previous"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.target": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.downtime.target"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.title": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.downtime.title"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.unit": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.downtime.unit"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.value": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.downtime.value"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "badColor": "#e05252",
+                  "color": "#6f8ce8",
+                  "goodColor": "#3ba272",
+                  "theme": "IgnitionIndustrialDark"
+                },
+                "type": "open.industrial.KpiTile"
+              }
+            ],
+            "meta": {
+              "name": "KpiDowntime"
+            },
+            "position": {
+              "basis": "172px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Tile",
+                "height": "112px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "children": [
+              {
+                "meta": {
+                  "name": "Kpi"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.decimals": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.energy.decimals"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.deltaLabel": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.energy.deltaLabel"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.higherIsBetter": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.energy.higherIsBetter"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.history": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.energy.history"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.previous": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.energy.previous"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.target": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.energy.target"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.title": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.energy.title"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.unit": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.energy.unit"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.value": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.kpi.energy.value"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "badColor": "#e05252",
+                  "color": "#6f8ce8",
+                  "goodColor": "#3ba272",
+                  "theme": "IgnitionIndustrialDark"
+                },
+                "type": "open.industrial.KpiTile"
+              }
+            ],
+            "meta": {
+              "name": "KpiEnergy"
+            },
+            "position": {
+              "basis": "172px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Tile",
+                "height": "112px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          }
+        ],
+        "meta": {
+          "name": "Kpis"
+        },
+        "position": {
+          "basis": "auto",
+          "grow": 0,
+          "shrink": 0
+        },
+        "props": {
+          "style": {
+            "classes": "Demo/Row"
+          },
+          "wrap": "wrap"
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "grow": 0,
+                      "shrink": 0
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardTitle"
+                      },
+                      "text": "OEE"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "Hint"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardHint"
+                      },
+                      "text": "selected line  ·  last 8 h"
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "Header"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "alignItems": "center",
+                  "style": {
+                    "classes": "Demo/CardHeader"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Chart"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "propConfig": {
+                      "props.availability": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.oee.availability"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.performance": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.oee.performance"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.quality": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.oee.quality"
+                          },
+                          "type": "property"
+                        }
+                      }
+                    },
+                    "props": {
+                      "colors": {
+                        "availability": "#48b8d0",
+                        "oee": "#6f8ce8",
+                        "performance": "#b08bd9",
+                        "quality": "#d98bb6"
+                      },
+                      "showLabels": false,
+                      "style": {
+                        "alignSelf": "stretch",
+                        "minWidth": "0px"
+                      },
+                      "target": 85,
+                      "theme": "IgnitionIndustrialDark"
+                    },
+                    "type": "open.industrial.OEE"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "meta": {
+                                  "name": "Dot"
+                                },
+                                "position": {
+                                  "basis": "8px",
+                                  "grow": 0,
+                                  "shrink": 0
+                                },
+                                "props": {
+                                  "style": {
+                                    "backgroundColor": "#6f8ce8",
+                                    "borderRadius": "50%",
+                                    "height": "8px"
+                                  }
+                                },
+                                "type": "ia.container.flex"
+                              },
+                              {
+                                "meta": {
+                                  "name": "Label"
+                                },
+                                "position": {
+                                  "basis": "auto",
+                                  "grow": 0,
+                                  "shrink": 0
+                                },
+                                "props": {
+                                  "style": {
+                                    "classes": "Demo/StatLabel"
+                                  },
+                                  "text": "OEE"
+                                },
+                                "type": "ia.display.label"
+                              }
+                            ],
+                            "meta": {
+                              "name": "Caption"
+                            },
+                            "position": {
+                              "basis": "auto",
+                              "grow": 0,
+                              "shrink": 0
+                            },
+                            "props": {
+                              "alignItems": "center",
+                              "style": {
+                                "classes": "Demo/Stat"
+                              }
+                            },
+                            "type": "ia.container.flex"
+                          },
+                          {
+                            "meta": {
+                              "name": "Value"
+                            },
+                            "position": {
+                              "basis": "auto",
+                              "grow": 0,
+                              "shrink": 0
+                            },
+                            "propConfig": {
+                              "props.text": {
+                                "binding": {
+                                  "config": {
+                                    "expression": "numberFormat({view.custom.data.oee.oee}, \"0.0\") + \" %\""
+                                  },
+                                  "type": "expr"
+                                }
+                              }
+                            },
+                            "props": {
+                              "style": {
+                                "classes": "Demo/StatValueLarge"
+                              }
+                            },
+                            "type": "ia.display.label"
+                          }
+                        ],
+                        "meta": {
+                          "name": "Oee"
+                        },
+                        "position": {
+                          "basis": "auto",
+                          "grow": 0,
+                          "shrink": 0
+                        },
+                        "props": {
+                          "direction": "column"
+                        },
+                        "type": "ia.container.flex"
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "meta": {
+                              "name": "Dot"
+                            },
+                            "position": {
+                              "basis": "8px",
+                              "grow": 0,
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "backgroundColor": "#48b8d0",
+                                "borderRadius": "50%",
+                                "height": "8px"
+                              }
+                            },
+                            "type": "ia.container.flex"
+                          },
+                          {
+                            "meta": {
+                              "name": "Label"
+                            },
+                            "position": {
+                              "basis": "0px",
+                              "grow": 1,
+                              "shrink": 1
+                            },
+                            "props": {
+                              "style": {
+                                "classes": "Demo/StatLabel"
+                              },
+                              "text": "Availability"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "Value"
+                            },
+                            "position": {
+                              "basis": "auto",
+                              "grow": 0,
+                              "shrink": 0
+                            },
+                            "propConfig": {
+                              "props.text": {
+                                "binding": {
+                                  "config": {
+                                    "expression": "numberFormat({view.custom.data.oee.availability}, \"0.0\") + \" %\""
+                                  },
+                                  "type": "expr"
+                                }
+                              }
+                            },
+                            "props": {
+                              "style": {
+                                "classes": "Demo/StatValue"
+                              }
+                            },
+                            "type": "ia.display.label"
+                          }
+                        ],
+                        "meta": {
+                          "name": "Availability"
+                        },
+                        "position": {
+                          "basis": "auto",
+                          "grow": 0,
+                          "shrink": 0
+                        },
+                        "props": {
+                          "alignItems": "center",
+                          "style": {
+                            "classes": "Demo/Stat"
+                          }
+                        },
+                        "type": "ia.container.flex"
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "meta": {
+                              "name": "Dot"
+                            },
+                            "position": {
+                              "basis": "8px",
+                              "grow": 0,
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "backgroundColor": "#b08bd9",
+                                "borderRadius": "50%",
+                                "height": "8px"
+                              }
+                            },
+                            "type": "ia.container.flex"
+                          },
+                          {
+                            "meta": {
+                              "name": "Label"
+                            },
+                            "position": {
+                              "basis": "0px",
+                              "grow": 1,
+                              "shrink": 1
+                            },
+                            "props": {
+                              "style": {
+                                "classes": "Demo/StatLabel"
+                              },
+                              "text": "Performance"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "Value"
+                            },
+                            "position": {
+                              "basis": "auto",
+                              "grow": 0,
+                              "shrink": 0
+                            },
+                            "propConfig": {
+                              "props.text": {
+                                "binding": {
+                                  "config": {
+                                    "expression": "numberFormat({view.custom.data.oee.performance}, \"0.0\") + \" %\""
+                                  },
+                                  "type": "expr"
+                                }
+                              }
+                            },
+                            "props": {
+                              "style": {
+                                "classes": "Demo/StatValue"
+                              }
+                            },
+                            "type": "ia.display.label"
+                          }
+                        ],
+                        "meta": {
+                          "name": "Performance"
+                        },
+                        "position": {
+                          "basis": "auto",
+                          "grow": 0,
+                          "shrink": 0
+                        },
+                        "props": {
+                          "alignItems": "center",
+                          "style": {
+                            "classes": "Demo/Stat"
+                          }
+                        },
+                        "type": "ia.container.flex"
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "meta": {
+                              "name": "Dot"
+                            },
+                            "position": {
+                              "basis": "8px",
+                              "grow": 0,
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "backgroundColor": "#d98bb6",
+                                "borderRadius": "50%",
+                                "height": "8px"
+                              }
+                            },
+                            "type": "ia.container.flex"
+                          },
+                          {
+                            "meta": {
+                              "name": "Label"
+                            },
+                            "position": {
+                              "basis": "0px",
+                              "grow": 1,
+                              "shrink": 1
+                            },
+                            "props": {
+                              "style": {
+                                "classes": "Demo/StatLabel"
+                              },
+                              "text": "Quality"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "Value"
+                            },
+                            "position": {
+                              "basis": "auto",
+                              "grow": 0,
+                              "shrink": 0
+                            },
+                            "propConfig": {
+                              "props.text": {
+                                "binding": {
+                                  "config": {
+                                    "expression": "numberFormat({view.custom.data.oee.quality}, \"0.0\") + \" %\""
+                                  },
+                                  "type": "expr"
+                                }
+                              }
+                            },
+                            "props": {
+                              "style": {
+                                "classes": "Demo/StatValue"
+                              }
+                            },
+                            "type": "ia.display.label"
+                          }
+                        ],
+                        "meta": {
+                          "name": "Quality"
+                        },
+                        "position": {
+                          "basis": "auto",
+                          "grow": 0,
+                          "shrink": 0
+                        },
+                        "props": {
+                          "alignItems": "center",
+                          "style": {
+                            "classes": "Demo/Stat"
+                          }
+                        },
+                        "type": "ia.container.flex"
+                      }
+                    ],
+                    "meta": {
+                      "name": "Legend"
+                    },
+                    "position": {
+                      "basis": "166px",
+                      "grow": 0,
+                      "shrink": 0
+                    },
+                    "props": {
+                      "direction": "column",
+                      "justify": "center",
+                      "style": {
+                        "gap": "10px",
+                        "paddingRight": "8px"
+                      }
+                    },
+                    "type": "ia.container.flex"
+                  }
+                ],
+                "meta": {
+                  "name": "Body"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "alignItems": "center",
+                  "style": {
+                    "gap": "8px"
+                  }
+                },
+                "type": "ia.container.flex"
+              }
+            ],
+            "meta": {
+              "name": "Oee"
+            },
+            "position": {
+              "basis": "300px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Card",
+                "minHeight": "250px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "grow": 0,
+                      "shrink": 0
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardTitle"
+                      },
+                      "text": "Throughput"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "Hint"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardHint"
+                      },
+                      "text": "line speed against setpoint  ·  last 2 h"
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "Header"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "alignItems": "center",
+                  "style": {
+                    "classes": "Demo/CardHeader"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "meta": {
+                  "name": "Chart"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.data": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.trend.data"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.yAxisLabel": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.trend.yAxisLabel"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "showDataZoom": false,
+                  "showSetpoint": true,
+                  "theme": "IgnitionIndustrialDark"
+                },
+                "type": "open.industrial.Trend"
+              }
+            ],
+            "meta": {
+              "name": "Throughput"
+            },
+            "position": {
+              "basis": "480px",
+              "grow": 2,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Card",
+                "minHeight": "250px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "grow": 0,
+                      "shrink": 0
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardTitle"
+                      },
+                      "text": "OEE by line"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "Hint"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardHint"
+                      },
+                      "text": "last 8 h  ·  target 85 %"
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "Header"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "alignItems": "center",
+                  "style": {
+                    "classes": "Demo/CardHeader"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "meta": {
+                  "name": "Chart"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.metrics": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.rings.metrics"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "centerTitle": "Plant",
+                  "decimals": 0,
+                  "labelPosition": "right",
+                  "summary": "average",
+                  "theme": "IgnitionIndustrialDark",
+                  "thresholds": [
+                    {
+                      "color": "#e05252",
+                      "upTo": 65
+                    },
+                    {
+                      "color": "#e6a23c",
+                      "upTo": 80
+                    },
+                    {
+                      "color": "#3ba272"
+                    }
+                  ],
+                  "unit": "%"
+                },
+                "type": "open.industrial.MetricRings"
+              }
+            ],
+            "meta": {
+              "name": "Lines"
+            },
+            "position": {
+              "basis": "280px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Card",
+                "minHeight": "250px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          }
+        ],
+        "meta": {
+          "name": "Performance"
+        },
+        "position": {
+          "basis": "auto",
+          "grow": 1,
+          "shrink": 0
+        },
+        "props": {
+          "style": {
+            "classes": "Demo/Row"
+          },
+          "wrap": "wrap"
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "grow": 0,
+                      "shrink": 0
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardTitle"
+                      },
+                      "text": "Line states"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "Hint"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardHint"
+                      },
+                      "text": "all lines  ·  last 8 h"
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "Header"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "alignItems": "center",
+                  "style": {
+                    "classes": "Demo/CardHeader"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "meta": {
+                  "name": "Chart"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.events": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.states.events"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.stateColors": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.states.stateColors"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "theme": "IgnitionIndustrialDark",
+                  "title": " "
+                },
+                "type": "open.industrial.StateTimeline"
+              }
+            ],
+            "meta": {
+              "name": "States"
+            },
+            "position": {
+              "basis": "480px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Card",
+                "minHeight": "250px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "grow": 0,
+                      "shrink": 0
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardTitle"
+                      },
+                      "text": "Downtime by category"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "Hint"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardHint"
+                      },
+                      "text": "plant  ·  last 24 h  ·  minutes"
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "Header"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "alignItems": "center",
+                  "style": {
+                    "classes": "Demo/CardHeader"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "meta": {
+                  "name": "Chart"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.categories": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.pareto.categories"
+                      },
+                      "type": "property"
+                    }
+                  },
+                  "props.counts": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.pareto.counts"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "barLabel": "Downtime (min)",
+                  "theme": "IgnitionIndustrialDark"
+                },
+                "type": "open.industrial.Pareto"
+              }
+            ],
+            "meta": {
+              "name": "Pareto"
+            },
+            "position": {
+              "basis": "520px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Card",
+                "minHeight": "250px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          }
+        ],
+        "meta": {
+          "name": "Availability"
+        },
+        "position": {
+          "basis": "auto",
+          "grow": 1,
+          "shrink": 0
+        },
+        "props": {
+          "style": {
+            "classes": "Demo/Row"
+          },
+          "wrap": "wrap"
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "grow": 0,
+                      "shrink": 0
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardTitle"
+                      },
+                      "text": "Output against plan"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "Hint"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardHint"
+                      },
+                      "text": "this shift  ·  k units"
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "Header"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "alignItems": "center",
+                  "style": {
+                    "classes": "Demo/CardHeader"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "meta": {
+                  "name": "Chart"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.items": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.bullet.items"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "color": "#6f8ce8",
+                  "decimals": 1,
+                  "statusColors": [
+                    "#e05252",
+                    "#e6a23c",
+                    "#3ba272"
+                  ],
+                  "targetColor": "#e6e7ef",
+                  "theme": "IgnitionIndustrialDark",
+                  "unit": "k"
+                },
+                "type": "open.industrial.BulletChart"
+              }
+            ],
+            "meta": {
+              "name": "Plan"
+            },
+            "position": {
+              "basis": "300px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Card",
+                "minHeight": "250px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "grow": 0,
+                      "shrink": 0
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardTitle"
+                      },
+                      "text": "Alarm load"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "Hint"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardHint"
+                      },
+                      "text": "by weekday and hour (UTC)  ·  last 4 weeks"
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "Header"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "alignItems": "center",
+                  "style": {
+                    "classes": "Demo/CardHeader"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "meta": {
+                  "name": "Chart"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.cells": {
+                    "binding": {
+                      "config": {
+                        "path": "view.custom.data.heatmap.cells"
+                      },
+                      "type": "property"
+                    }
+                  }
+                },
+                "props": {
+                  "hourStep": 1,
+                  "showLegend": false,
+                  "theme": "IgnitionIndustrialDark",
+                  "valueLabel": "alarms"
+                },
+                "type": "open.industrial.EventHeatmap"
+              }
+            ],
+            "meta": {
+              "name": "Alarms"
+            },
+            "position": {
+              "basis": "440px",
+              "grow": 2,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Card",
+                "minHeight": "250px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "grow": 0,
+                      "shrink": 0
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardTitle"
+                      },
+                      "text": "Utilities"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "meta": {
+                      "name": "Hint"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "props": {
+                      "style": {
+                        "classes": "Demo/CardHint"
+                      },
+                      "text": "live"
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "Header"
+                },
+                "position": {
+                  "basis": "auto",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "alignItems": "center",
+                  "style": {
+                    "classes": "Demo/CardHeader"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "Air"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "propConfig": {
+                      "props.decimals": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.air.decimals"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.max": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.air.max"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.min": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.air.min"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.stages": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.air.stages"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.target": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.air.target"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.title": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.air.title"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.unit": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.air.unit"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.value": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.air.value"
+                          },
+                          "type": "property"
+                        }
+                      }
+                    },
+                    "props": {
+                      "color": "#6f8ce8",
+                      "showScale": false,
+                      "style": {
+                        "minWidth": "0px"
+                      },
+                      "theme": "IgnitionIndustrialDark",
+                      "variant": "progress"
+                    },
+                    "type": "open.industrial.DialGauge"
+                  },
+                  {
+                    "meta": {
+                      "name": "Chilled"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "propConfig": {
+                      "props.decimals": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.chilled.decimals"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.max": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.chilled.max"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.min": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.chilled.min"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.stages": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.chilled.stages"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.target": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.chilled.target"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.title": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.chilled.title"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.unit": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.chilled.unit"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.value": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.chilled.value"
+                          },
+                          "type": "property"
+                        }
+                      }
+                    },
+                    "props": {
+                      "color": "#6f8ce8",
+                      "showScale": false,
+                      "style": {
+                        "minWidth": "0px"
+                      },
+                      "theme": "IgnitionIndustrialDark",
+                      "variant": "progress"
+                    },
+                    "type": "open.industrial.DialGauge"
+                  },
+                  {
+                    "meta": {
+                      "name": "Steam"
+                    },
+                    "position": {
+                      "basis": "0px",
+                      "grow": 1,
+                      "shrink": 1
+                    },
+                    "propConfig": {
+                      "props.decimals": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.steam.decimals"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.max": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.steam.max"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.min": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.steam.min"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.stages": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.steam.stages"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.target": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.steam.target"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.title": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.steam.title"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.unit": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.steam.unit"
+                          },
+                          "type": "property"
+                        }
+                      },
+                      "props.value": {
+                        "binding": {
+                          "config": {
+                            "path": "view.custom.data.steam.value"
+                          },
+                          "type": "property"
+                        }
+                      }
+                    },
+                    "props": {
+                      "color": "#6f8ce8",
+                      "showScale": false,
+                      "style": {
+                        "minWidth": "0px"
+                      },
+                      "theme": "IgnitionIndustrialDark",
+                      "variant": "progress"
+                    },
+                    "type": "open.industrial.DialGauge"
+                  }
+                ],
+                "meta": {
+                  "name": "Dials"
+                },
+                "position": {
+                  "basis": "0px",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "style": {
+                    "classes": "Demo/Row",
+                    "gap": "4px"
+                  }
+                },
+                "type": "ia.container.flex"
+              }
+            ],
+            "meta": {
+              "name": "Utilities"
+            },
+            "position": {
+              "basis": "340px",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "Demo/Card",
+                "minHeight": "250px",
+                "minWidth": "0px"
+              }
+            },
+            "type": "ia.container.flex"
+          }
+        ],
+        "meta": {
+          "name": "Plant"
+        },
+        "position": {
+          "basis": "auto",
+          "grow": 1,
+          "shrink": 0
+        },
+        "props": {
+          "style": {
+            "classes": "Demo/Row"
+          },
+          "wrap": "wrap"
+        },
+        "type": "ia.container.flex"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "classes": "Demo/Page"
+      }
+    },
+    "type": "ia.container.flex"
+  }
+}
